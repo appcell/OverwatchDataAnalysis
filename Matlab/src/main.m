@@ -3,7 +3,7 @@ close all;
 clear;
 
 %% File read-in
-v = VideoReader('./../videos/1.mp4');
+v = VideoReader('./../../videos/1.mp4');
 v.CurrentTime = 219;
 width = v.Width;
 height = v.Height;
