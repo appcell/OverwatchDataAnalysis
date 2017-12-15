@@ -17,9 +17,12 @@ class VideoLoader:
     @staticmethod
     def load_from_file(path):
         cap = cv2.VideoCapture(path)
+        
         while cap.isOpened():
             ret, frame = cap.read()
-            yield ret, frame
+            if not ret:
+                break
+            yield frame
         cap.release()
 
 
@@ -27,8 +30,7 @@ if __name__ == '__main__':
     start_time = time.time()
     path = '../../videos/1.mp4'
     count = 0
-    for ret, frame in VideoLoader.load_from_file(path):
-        if not ret: break
+    for frame in VideoLoader.load_from_file(path):
         count += 1
         if count==1:
             print "---------  frame is a %s  ----------"%type(frame)
