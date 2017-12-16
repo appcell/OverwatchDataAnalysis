@@ -16,7 +16,7 @@ class VideoLoader:
     Return a iterator that iterates over all frames of the video.
     """
     def get_frame_iterator(self):
-        self.cap.set(cv2.CAP_PROP_POS_AVI_RATIO, 0)
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES , 0)
         while self.cap.isOpened():
             ret, frame = self.cap.read()
             if not ret:
@@ -24,10 +24,10 @@ class VideoLoader:
             yield frame
 
     """
-    Get specific frame from video.
+    Get a specific frame from video.
     """
     def get_frame(self, frame_index):
-        self.cap.set(cv2.CAP_PROP_POS_AVI_RATIO, frame_index)
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES , frame_index)
         ret, frame = self.cap.read()
         if ret:
             return frame
@@ -39,8 +39,6 @@ class VideoLoader:
     """
     def close(self):
         self.cap.release()
-
-
 
 
 if __name__ == '__main__':
