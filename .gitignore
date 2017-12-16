@@ -1,2 +1,3 @@
 /videos
-/Python/.idea
+/python/.idea
+*.pyc
