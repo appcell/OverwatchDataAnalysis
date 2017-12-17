@@ -1,3 +1,4 @@
 /videos
 /python/.idea
 *.pyc
+*.orig
