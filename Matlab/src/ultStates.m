@@ -1,4 +1,4 @@
-function [ults,ultsVar]= ultStates(oneFrame)
+function [ults,ultsVar]= ultStates(v)
 %This function is used to detect the Ultimate states for a certain 720p
 %full screen shot in OWL series (S1) The visiting team is at the left top
 %corner and the home team is at the top right corner.
@@ -13,6 +13,7 @@ function [ults,ultsVar]= ultStates(oneFrame)
 visitingUlt=imresize(rgb2gray(imread('./../../images/visitingUlt.png')),0.6);
 homeUlt=imresize(rgb2gray(imread('./../../images/homeUlt.png')),0.75);
 
+oneFrame = readFrame(v);
 %initialize ults and ultsVar
 ults=[1:1:12];
 ultsVar=[1:1:12];
