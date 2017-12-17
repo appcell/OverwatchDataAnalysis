@@ -13,13 +13,13 @@ I = imcrop(Itemp, [800, 200, 355, 166]);
 Gx = [-1 1];
 Gy = Gx';
 Igray = rgb2gray(I);
-Igray = adapthisteq(Igray, 'clipLimit', 0.6, 'Distribution', 'exponential');
+%Igray = adapthisteq(Igray, 'clipLimit', 0.6, 'Distribution', 'exponential');
 
 %% Another gradient computation for edge detection
 red = I(:,:,1);
 green = I(:,:,2);
 blue = I(:,:,3);
-[Gmag,Gdir] = imgradient(green, 'prewitt');
+[Gmag,Gdir] = imgradient(red, 'prewitt');
 maxx = max(Gmag(:));
 TGmag = (Gmag > 0.2*maxx).*Gmag;
 TGmag = imfill(TGmag, 'holes');
@@ -34,7 +34,8 @@ BWExpanded = expandByPixel(BW);
 figure
 imshowpair(I, label2rgb(bwlabel(BW, 4)), 'montage');
 figure
-imshowpair(I, TGmag, 'montage');
+%imshowpair(I, TGmag, 'montage');
+imshowpair(I, Igray, 'montage');
 
 %% Process each labelled obj. One obj could be either container or avatar itself, or skill icon.
 regionsTemp = regionprops(BW,'Area', 'BoundingBox','PixelList');
