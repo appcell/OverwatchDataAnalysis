@@ -10,8 +10,8 @@ function [ults,ultsVar]= ultStates(oneFrame)
 
 %set the 2 different ult icons from visiting side and home side, and scale
 %them to compare with 720p video.
-visitingUlt=imresize(rgb2gray(imread('visitingUlt.png')),0.6);
-homeUlt=imresize(rgb2gray(imread('homeUlt.png')),0.75);
+visitingUlt=imresize(rgb2gray(imread('./../../images/visitingUlt.png')),0.6);
+homeUlt=imresize(rgb2gray(imread('./../../images/homeUlt.png')),0.75);
 
 %initialize ults and ultsVar
 ults=[1:1:12];

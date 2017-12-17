@@ -1,14 +1,16 @@
-function res = removeSmallObj(BW, minAreaLimit, minWHRatio, maxWHRatio)
+function res = removeSmallObj(BW, minAreaLimit, minWHRatio, maxWHRatio, minAreaRatio, maxAreaRatio)
 regionsTemp = regionprops(BW,'Area', 'BoundingBox','PixelList');
 NR = numel(regionsTemp);
 res = zeros(size(BW, 1), size(BW, 2));
 validRegions = [];
 for k = 1:NR
     area = prod(regionsTemp(k).BoundingBox(3:4));
+    actArea = size(regionsTemp(k).PixelList, 1);
     w = regionsTemp(k).BoundingBox(3);
     h = regionsTemp(k).BoundingBox(4);
-    if area > minAreaLimit % Region is valid if area > 500
-        if minWHRatio <= w/h && w/h <= maxWHRatio
+    maxArea = w*h;
+    if area > minAreaLimit
+        if minWHRatio <= w/h && w/h <= maxWHRatio && actArea/maxArea >= minAreaRatio && actArea/maxArea <= maxAreaRatio
             validRegions  = [validRegions; regionsTemp(k)];
         end     
     end
