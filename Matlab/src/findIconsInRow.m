@@ -49,7 +49,7 @@ function res = isInImage(pos, w, h)
     y = pos(2);
     iw = pos(3);
     ih = pos(4);
-    if x >= 0 && x <= w ...
+    if x >= 5 && x <= w ...
             && y >= 0 && y <= h ...
             && x + iw >= 0 && x + iw <= w ...
             && y + ih >= 0 && y + ih <= h
@@ -67,19 +67,22 @@ posArr = zeros(totalIconsNum, 4);
 for i = 1:totalIconsNum
     icon = iconsArr{i};
     icon = imresize(icon,21/size(icon, 1));
-%     IRed = I(:,:,1);
+
     IGreen = I(:,:,2);
+    iconGreen = icon(:, :, 2);
+    c2 = normxcorr2(normalizeGrayScaleImg(iconGreen),normalizeGrayScaleImg(IGreen));
+    c2Max = max(c2(:));
+    
+%     IRed = I(:,:,1);
 %     IBlue = I(:,:,3);
 %     iconRed = icon(:, :, 1);
-    iconGreen = icon(:, :, 2);
 %     iconBlue = icon(:, :, 3);
 %     c1 = normxcorr2(normalizeGrayScaleImg(iconRed),normalizeGrayScaleImg(IRed));
-    c2 = normxcorr2(normalizeGrayScaleImg(iconGreen),normalizeGrayScaleImg(IGreen));
 %     c3 = normxcorr2(normalizeGrayScaleImg(iconBlue),normalizeGrayScaleImg(IBlue));
 %     c1Max = max(c1(:));
-    c2Max = max(c2(:));
 %     c3Max = max(c3(:));
 %     meanC = (c1Max + c2Max + c3Max) / 3;
+
     meanC = c2Max;
     [ypeak, xpeak] = find(c2==max(c2(:)));
     

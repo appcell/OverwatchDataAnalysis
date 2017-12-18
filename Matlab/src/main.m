@@ -14,7 +14,7 @@ end
 %% Elimination evens analysis
 eventList = {struct, struct};
 tic;
-for time = 15.5:0.5:20
+for time = 10:0.5:30
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2)); % Rescale to width = 1280, currently consider 16:9 only
