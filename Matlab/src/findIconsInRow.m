@@ -1,12 +1,14 @@
 function charas = findIconsInRow(rowNum, Itemp, charaNamesArr, iconsArr)
 
-Iright = imcrop(Itemp, [1145, 110 + (rowNum-1)*35 - 1, 100, 37]);
+Ileft = imcrop(Itemp, [963, 110 + (rowNum-1)*35 - 1, 205, 37]);
+Iright = imcrop(Itemp, [1130, 110 + (rowNum-1)*35 - 1, 115, 37]);
+
+
 charaRight = matchIcon(Iright, charaNamesArr, iconsArr);
 if charaRight.name == "empty"
     charaLeft = struct('name', "empty", 'pos', [], 'coeff', 0, 'team', 0);
     charas = {charaLeft, charaRight};
 else
-    Ileft = imcrop(Itemp, [963, 110 + (rowNum-1)*35 - 1, 205, 37]);
     charaLeft = matchIcon(Ileft, charaNamesArr, iconsArr);
     color1 = Itemp(1, 1, :);
     color2 = Itemp(1, 1280, :);
@@ -38,7 +40,27 @@ else
             charaRight.team = 2;
         end  
     end
+%% Preprocess: remove potential empty rows
+    Iright = imcrop(Iright, charaRight.pos + [-5 0 10 0]);
+    Ileft = imcrop(Ileft, charaLeft.pos + [-5 0 10 0]);
+    filledRight = edge(rgb2gray(Iright), 'Prewitt', 0.1);
+    filledLeft = edge(rgb2gray(Ileft), 'Prewitt', 0.1);
+    % If an recognition is valid, there must be large vertical gradient lines
+    % on its left & right sides.
+    sumLeft1 = sum(sum(filledLeft(:,1:7)) > (0.3*charaLeft.pos(4)));
+    sumLeft2 = sum(sum(filledLeft(:,end-7:end)) > (0.3*charaLeft.pos(4)));
+    if ~(sumLeft1 >= 1 && sumLeft2 >= 1)
+        charaLeft.name = "empty";
+    end
+    
+    sumRight1 = sum(sum(filledRight(:,1:5)) > (0.3*charaRight.pos(4)));
+    sumRight2 = sum(sum(filledRight(:,end-5:end)) > (0.3*charaRight.pos(4)));
+    if ~(sumRight1 >= 1 && sumRight2 >= 1)
+        charaRight.name = "empty";
+    end
     charas = {charaLeft, charaRight};
+    
+    
 end
 
 end

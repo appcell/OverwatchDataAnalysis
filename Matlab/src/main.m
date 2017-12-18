@@ -1,4 +1,4 @@
-clc;
+
 close all;
 clear;
 
@@ -14,11 +14,11 @@ end
 %% Elimination evens analysis
 eventList = {struct, struct};
 tic;
-for time = 10:0.5:30
+for time = 5:0.5:60
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2)); % Rescale to width = 1280, currently consider 16:9 only
-
+%     figure;imshow(Itemp);
     charas = getKillEvents(Itemp, eventList, charaNamesArr, iconsArr);
     for i = size(charas, 1):-1:1
         chara1 = charas(i, 1); % left
