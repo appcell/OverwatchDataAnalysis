@@ -7,14 +7,16 @@ v = VideoReader('./../../videos/1.mp4');
 % Icons read-in
 charaNamesArr = ["ana", "bastion", "doomfist", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "riptire", "roadhog", "soldier76", "sombra", "symmetra", "torbjon", "tracer", "widowmaker", "winston", "zarya", "zenyatta", "meka", "shield", "supercharger", "teleporter", "turret"];
 iconsArr = {};
+iconHeight = 22;
 for i=1:size(charaNamesArr, 2)
-    iconsArr{i} = imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    icon = imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    iconsArr{i} = imresize(icon,iconHeight/size(icon, 1));
 end
 
 %% Elimination evens analysis
 eventList = {struct, struct};
 tic;
-for time = 5:0.5:60
+for time = 48:0.5:50
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2)); % Rescale to width = 1280, currently consider 16:9 only
@@ -40,6 +42,7 @@ for time = 5:0.5:60
             end
         end
     end
+    time
 end
 toc
 
