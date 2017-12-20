@@ -1,5 +1,6 @@
 /videos
 /results
-/Python/.idea
+/python/.idea
+/python/src/test.py
 *.pyc
 *.orig
