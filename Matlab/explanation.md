@@ -1,27 +1,29 @@
-关于目前的main.m, 我对代码做一下简单解释：
+# Killfeed 识别
 
-这段代码选取了视频某一帧图像的右上角有击杀事件的部分，对其进行预处理，提取出英雄头像、技能图标的具体位置。
+killfeed 识别的代码分散在main.m, getKillEvents.m 和 findIconsInRow.m
 
-1. File read-in
+## main.m
 
-读取视频，对帧图像进行裁切（只留右上角），并将RGB图像转化为灰度
+17行开始循环读入帧， getKillEvents获取当前帧的killfeed，记在nx2的矩阵里。
+23-42行 将当前帧的killfeed加上当前时间写入到视频总表eventList中。如果一行的右边的角色识别失败（name == "empty"), 该行视为无效，不记入eventList
 
-这里adapthiseq对灰度图进一步处理，主要是增强对比度
+## getKillEvents.m
+画面上同时最多有6条killfeed，其高度固定。killfeed更新时，从顶端插入新的feed，旧feed依次下移直到移出第6行。所以这里的逻辑是，从上往下依次识别，如果某一行的feed和eventList中最新事件相同，说明下方的feed都是前一帧已有的旧feed，在这里中断循环避免重复识别。
+在视频刚被读取之后，eventList被初始化成1x2的矩阵。所以如果size(eventList, 1) == 1说明eventList是空的，此时直接用findIconsInRow识别图标并记入charas。
+如果eventList非空，则判断一下当前行是否和eventList底部重复，根据上述逻辑判断是否需要中止循环。
 
-2. Another gradient computation for edge detection
+## findIconsInRow.m
 
-通过imgradient得出灰度图的梯度图，并进一步处理。重点是imfill和bwareaopen两个函数。
+3-4行切图，各个尺寸都是经验位置，考虑了英文选手名的长度（3-12）。切完图后用matchIcon来找图中的icon并识别。
+如果右方的chara没识别出来，说明该行feed无效，直接返回。
 
-前者填补梯度图上的hole（具体请参考matlab文档）得到所有obj的大致轮廓，后者初步移除噪音，在这个视频里如果obj面积小于300都视为噪音
+识别出两个chara以后，根据icon周围的颜色来判断一下chara处于哪个队。一个全屏录像左上和右上两个角分别是两个队在本场比赛中的代表色。
 
-3. Preprocess: remove small objs
+这里的“周围”指的是左边图标的左上角往左数5px，右边图标的右上角往右数5px。另外考虑到feed背景框是半透明的，像素颜色受光照影响，19-20行对color做了（某种意义上的）normalization。normalize以后的color和代表色做比较，颜色更接近的队伍就是chara所属的队。
 
-在bwareaopen之后，其实还有很多噪音没被移除，比如一些很长的线条面积也超过了300。所以我又手写了一个removeSmallObj来去掉这些杂线，这个func可以去掉所有长宽比不符合要求的连通分量
+43行起有一个postprocess，用来去除无中生有的识别结果（有时在空画面里也能以较大的几率识别出英雄）。一个正确的识别结果至少应该在方框内，而方框的左右两侧都会在edge图上有一条直线， 所以如果左右两侧没有直线那么就认为识别出的头像的位置是错的。
 
-removeBorder是我写的另一个预处理函数。因为owl右上角击杀都带有背景框，有时两个背景框因为距离太近被合到一起，识别为一整个obj。这个func通过一些取巧的办法判断一个大obj到底是一个背景框还是多个背景框或者头像的合并产物，并将它们分割。目前的判断方法是给整个图像labelling，每一个像素行不应该横跨偶数个label。（这个方法是有问题的，因为不能分辨自杀，还在改进）
+注意这里的逻辑反过来是不成立的，i.e. 有头像之后可以通过两侧有直线来判断头像位置识别有效，但是不能通过寻找直线来判断头像的位置，因为有些英雄（比如猩猩/堡垒）的头像自带直线型edge。（如果这个问题能解决，那么matlab版本就不用优化了）
 
-完了再去一次噪音，把每个obj都扩大一像素以便之后处理。到这时所有的背景框或者头像框的准确位置应该都能抓到了。技能图标位于两个头像的中间，所以不需要找
+matchIcon： 将每个icon和当前切好的图做一次卷积，寻找cross-correlation的最大值。最大值最大的icon就是识别出的chara的icon。（这个部分很慢，起码要多线程解决，能放到gpu上是坠吼的）识别出来以后记录下icon对应的角色，icon在图中的位置等等信息。
 
-4. Process each labelled obj
-
-根据长宽比，判断每个obj到底是头像，背景框还是技能图标

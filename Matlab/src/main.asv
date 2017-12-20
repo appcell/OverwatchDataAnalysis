@@ -1,23 +1,24 @@
-clc;
+
 close all;
 clear;
 
 %% File read-in
 v = VideoReader('./../../videos/1.mp4');
-
 % Icons read-in
 charaNamesArr = ["ana", "bastion", "doomfist", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "riptire", "roadhog", "soldier76", "sombra", "symmetra", "torbjon", "tracer", "widowmaker", "winston", "zarya", "zenyatta", "meka", "shield", "supercharger", "teleporter", "turret"];
 iconsArr = {};
 for i=1:size(charaNamesArr, 2)
     iconsArr{i} = imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
 end
+
+%% Elimination evens analysis
 eventList = {struct, struct};
 tic;
-for time = 15.5:0.5:20
+for time = 48:0.5:60
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2)); % Rescale to width = 1280, currently consider 16:9 only
-    %% Elimination evens analysis
+%     figure;imshow(Itemp);
     charas = getKillEvents(Itemp, eventList, charaNamesArr, iconsArr);
     for i = size(charas, 1):-1:1
         chara1 = charas(i, 1); % left
@@ -26,7 +27,9 @@ for time = 15.5:0.5:20
         chara2 = charas(i, 2); % right
         chara2{1}.player = "";
         chara2{1}.time = time;
-        if chara1{1}.name == "empty" && chara2{1}.name ~= "empty"
+        if (chara1{1}.name == "empty" && chara2{1}.name ~= "empty")...
+            || (chara1{1}.name == "mercy" && chara2{1}.name ~= "empty" && chara1{1}.team == chara2{1}.team)
+            ||
             eventList{end+1, 1} = chara1{1};
             eventList{end, 2} = chara2{1};
         elseif chara1{1}.name ~= "empty" && chara2{1}.name ~= "empty"
@@ -41,6 +44,7 @@ for time = 15.5:0.5:20
     end
 end
 toc
+
 %% Killfeed console output
 for i = 2:size(eventList, 1)
     chara1 = eventList(i, 1); % left

@@ -7,14 +7,17 @@ v = VideoReader('./../../videos/1.mp4');
 % Icons read-in
 charaNamesArr = ["ana", "bastion", "doomfist", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "riptire", "roadhog", "soldier76", "sombra", "symmetra", "torbjon", "tracer", "widowmaker", "winston", "zarya", "zenyatta", "meka", "shield", "supercharger", "teleporter", "turret"];
 iconsArr = {};
+iconHeight = 21;
 for i=1:size(charaNamesArr, 2)
-    iconsArr{i} = imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    icon =  imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    icon = imresize(icon,iconHeight/size(icon, 1));
+    iconsArr{i} = icon;
 end
 
 %% Elimination evens analysis
 eventList = {struct, struct};
 tic;
-for time = 5:0.5:60
+for time = 48:0.5:60
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2)); % Rescale to width = 1280, currently consider 16:9 only
@@ -27,17 +30,9 @@ for time = 5:0.5:60
         chara2 = charas(i, 2); % right
         chara2{1}.player = "";
         chara2{1}.time = time;
-        if chara1{1}.name == "empty" && chara2{1}.name ~= "empty"
+        if chara2{1}.name ~= "empty"
             eventList{end+1, 1} = chara1{1};
             eventList{end, 2} = chara2{1};
-        elseif chara1{1}.name ~= "empty" && chara2{1}.name ~= "empty"
-            if chara1{1}.name == "mercy" && chara1{1}.team == chara2{1}.team
-                eventList{end+1, 1} = chara1{1};
-                eventList{end, 2} = chara2{1};
-            else
-                eventList{end+1, 1} = chara1{1};
-                eventList{end, 2} = chara2{1};
-            end
         end
     end
 end

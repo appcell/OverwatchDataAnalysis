@@ -15,9 +15,9 @@ else
     if charaLeft.name ~= "empty"
         pos = charaLeft.pos(1:2);
         pos = pos - [5 0];
-        color = Ileft(pos(2), pos(1), :);
-        colorTemp1 = abs(double(color1) - double(color));
-        colorTemp2 = abs(double(color2) - double(color));
+        color = double(Ileft(pos(2), pos(1), :));
+        colorTemp1 = abs(double(color1) - (color + mean(color1) - mean(color)));
+        colorTemp2 = abs(double(color2) - (color + mean(color2) - mean(color)));
         diff1 = max(colorTemp1);
         diff2 = max(colorTemp2);
         if diff1 <= diff2
@@ -40,7 +40,7 @@ else
             charaRight.team = 2;
         end  
     end
-%% Preprocess: remove potential empty rows
+%% Postprocess: remove potential empty rows
     Iright = imcrop(Iright, charaRight.pos + [-5 0 10 0]);
     Ileft = imcrop(Ileft, charaLeft.pos + [-5 0 10 0]);
     filledRight = edge(rgb2gray(Iright), 'Prewitt', 0.1);
@@ -88,8 +88,9 @@ coeffArr = zeros(totalIconsNum, 1);
 posArr = zeros(totalIconsNum, 4);
 for i = 1:totalIconsNum
     icon = iconsArr{i};
-    icon = imresize(icon,21/size(icon, 1));
+%     imshow(edge(rgb2gray(icon), 'Prewitt', 0.1));
 
+    % Why green? Because with other channels D.Va cannot get recognized.
     IGreen = I(:,:,2);
     iconGreen = icon(:, :, 2);
     c2 = normxcorr2(normalizeGrayScaleImg(iconGreen),normalizeGrayScaleImg(IGreen));
