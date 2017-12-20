@@ -7,8 +7,11 @@ v = VideoReader('./../../videos/1.mp4');
 % Icons read-in
 charaNamesArr = ["ana", "bastion", "doomfist", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "riptire", "roadhog", "soldier76", "sombra", "symmetra", "torbjon", "tracer", "widowmaker", "winston", "zarya", "zenyatta", "meka", "shield", "supercharger", "teleporter", "turret"];
 iconsArr = {};
+iconHeight = 21;
 for i=1:size(charaNamesArr, 2)
-    iconsArr{i} = imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    icon =  imread(convertStringsToChars("./../../images/icons/" + charaNamesArr(i) + ".png"));
+    icon = imresize(icon,iconHeight/size(icon, 1));
+    iconsArr{i} = icon;
 end
 
 %% Elimination evens analysis

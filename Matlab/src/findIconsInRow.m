@@ -88,8 +88,9 @@ coeffArr = zeros(totalIconsNum, 1);
 posArr = zeros(totalIconsNum, 4);
 for i = 1:totalIconsNum
     icon = iconsArr{i};
-    icon = imresize(icon,21/size(icon, 1));
+%     imshow(edge(rgb2gray(icon), 'Prewitt', 0.1));
 
+    % Why green? Because with other channels D.Va cannot get recognized.
     IGreen = I(:,:,2);
     iconGreen = icon(:, :, 2);
     c2 = normxcorr2(normalizeGrayScaleImg(iconGreen),normalizeGrayScaleImg(IGreen));
