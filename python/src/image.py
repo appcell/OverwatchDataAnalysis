@@ -15,10 +15,3 @@ def to_gray(img):
 def crop_by_limit(img, y, h, x, w):
     return img[y: y + h, x: x + w]
 
-
-class KillFeedProcess:
-    def __init__(self, frame, file_id):
-        self.file_id = file_id
-
-        cropped = crop_by_limit(frame, 100, 250, 1000, 300)
-
