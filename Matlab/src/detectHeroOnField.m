@@ -13,6 +13,8 @@ heroOnField = {};
 width = 42;
 height = 26;
 
+
+%% Judge Team Left
 for i = 1:6
     xmin = 61 + (i-1) * 72;
     ymin = 48;
@@ -30,6 +32,8 @@ for i = 1:6
     
 end
 
+
+%%Judge Team right
 for i = 1:6
     xmin = 862 + (i-1) * 72;
     ymin = 48;
