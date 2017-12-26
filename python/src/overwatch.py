@@ -15,6 +15,9 @@ class KillFeed:
         self.character1 = character1
         self.character2 = character2
         self.event = event
+        #: the x coordinate of the icon in the killfeed item image
+        self.character1_x = None
+        self.character2_x = None
 
     def __eq__(self, other):
         """
@@ -30,6 +33,10 @@ class KillFeed:
         else:
             return False
 
+    def __str__(self):
+        if self.character1 is None:
+            return "time:" + str(self.time) + " character2:" + self.character2
+        return "time:" + str(self.time) + " character1:" + self.character1 + " character2:" + self.character2
 
 ANA = "ana"
 BASTION = "bastion"
@@ -90,13 +97,11 @@ def get_resized_icons(height=1080):
     Resize the icons in ICON_KILLFEED_DICT to other resolution. Default is 1080p.
     If this function is not run, ICON_KILLFEED_DICT contains icon in 1080p resolution.
     Only supports 16:9 resolution now.
-    Result size for 720p: (33, 23)
     @param height: the height of the frame
     @return: the resized dictionary
     """
     ratio = height*1.0/1080
-    print "resized size:", (int(round(ICON_KILLFEED_1080P_WIDTH*ratio)), int(round(ICON_KILLFEED_1080P_HEIGHT*ratio)))
-
+    # print "resized size:", (int(round(ICON_KILLFEED_1080P_WIDTH*ratio)), int(round(ICON_KILLFEED_1080P_HEIGHT*ratio)))
     return {obj: cv2.resize(img,
                             (int(round(ICON_KILLFEED_1080P_WIDTH*ratio)), int(round(ICON_KILLFEED_1080P_HEIGHT*ratio))))
             for (obj, img) in ICON_KILLFEED_DICT_1080P.iteritems()}
