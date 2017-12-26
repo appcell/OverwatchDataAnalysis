@@ -4,7 +4,7 @@ charaNamesArr = {'ana', 'bastion', 'doomfist', 'dva', 'genji', 'hanzo', 'junkrat
 iconsArr = {};
 iconsArrG ={};
 for i=1:size(charaNamesArr, 2)
-    icons = (imread([charaNamesArr{i},'.png']));
+    icons = (imread(['./../../images/icons/',charaNamesArr{i},'.png']));
     iconsArrG{i} = im2double(rgb2gray(icons));
 end
 
@@ -19,8 +19,8 @@ for i = 1:6
     xmin = 61 + (i-1) * 72;
     ymin = 48;
     heroIcon = imcrop(oneFrame,[xmin,ymin,width,height]);
-    figure
-    imshow(heroIcon)
+%     figure
+%     imshow(heroIcon)
 %     icons = imresize(heroIcon, [30,40]);
     heroIconMatrix = im2double(rgb2gray(imcrop(heroIcon,[13,2,20,20])));
 
@@ -38,8 +38,8 @@ for i = 1:6
     xmin = 862 + (i-1) * 72;
     ymin = 48;
     heroIcon = imcrop(oneFrame,[xmin,ymin,width,height]);
-    figure
-    imshow(heroIcon)
+%     figure
+%     imshow(heroIcon)
 %     icons = imresize(heroIcon, [30,40]);
     heroIconMatrix = im2double(rgb2gray(imcrop(heroIcon,[13,2,20,20])));
     for j = 1:size(charaNamesArr,2)
