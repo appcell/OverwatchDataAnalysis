@@ -7,7 +7,6 @@ import cv2
 import image
 import overwatch
 import time
-from matplotlib import pyplot as plt
 import numpy as np
 
 
@@ -29,18 +28,23 @@ def analyze_video(video_loader):
             print index/video_loader.fps, k
         index += step
         frame = video_loader.get_frame(index)
-    # for k in killfeed_list:
-    #     print k
+    video_loader.close()
 
 
 class FrameAnalyzer:
+    """
+    The analyzer for a frame in a game.
+    Analyses in 1280x720 resolution.
+    """
     def __init__(self, frame, frame_time):
         """
         @param frame: frame: a numpy.ndarray image representing this frame
         """
         #: the frame to analyze
-        self.frame = cv2.resize(frame, (1280, 720))  # resize the image to 720p
+        self.frame = cv2.resize(frame, (1280, 720))  # Resize the image to 720p.
         self.time = frame_time
+        self.icons = overwatch.KillfeedIcons(720)
+        self.fstruc = overwatch.OWLFrameStructure(720)  # Using OWL frame structure now.
 
     def get_killfeed(self, killfeed_last=None):
         """
@@ -52,7 +56,7 @@ class FrameAnalyzer:
         @return: a list of new killfeeds in this frame
         """
         result = []
-        for i in range(5):
+        for i in range(overwatch.KILLFEED_ITEM_MAX_COUNT_IN_SCREEN):
             killfeed_in_row = self._get_killfeed_in_row(i)
             if killfeed_in_row is None or killfeed_in_row == killfeed_last:
                 break
@@ -62,21 +66,24 @@ class FrameAnalyzer:
 
     def _get_killfeed_in_row(self, row_number):
         # Crop the image and get the desired row.
-        # TODO save these parameters as static value
-        killfeed_image = image.crop_by_limit(self.frame, 116 + row_number*35, 23, 963, 1270-963)
+        killfeed_image = image.crop_by_limit(self.frame,
+                                             self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
+                                             self.icons.ICON_CHARACTER_HEIGHT,
+                                             self.fstruc.KILLFEED_RIGHT_X - self.fstruc.KILLFEED_MAX_WIDTH,
+                                             self.fstruc.KILLFEED_MAX_WIDTH)
         # cv2.imshow("row"+str(row_number), killfeed_image)
         name = "killfeed_image"+str(row_number)
         icons_weights = self._get_icons_weights(killfeed_image, name)
         # TODO Only needs two best matches in the end. Keep three while debugging.
-        best_matches = [["", -1, -1], ["", -1, -1], ["", -1, -1]]
+        best_matches = [self.KillfeedIconMatch("", -1, -1)] * 3
         for item in icons_weights:
-            if item[1] > best_matches[0][1]:
+            if item.score > best_matches[0].score:
                 best_matches.insert(0, item)
                 best_matches.pop()
-            elif item[1] > best_matches[1][1]:
+            elif item.score > best_matches[1].score:
                 best_matches.insert(1, item)
                 best_matches.pop()
-            elif item[1] > best_matches[2][1]:
+            elif item.score > best_matches[2].score:
                 best_matches.pop()
                 best_matches.append(item)
 
@@ -88,14 +95,14 @@ class FrameAnalyzer:
             for j in range(1, edge_image.shape[1]):
                 edge_span[i, j] = sum(edge_image[i, j-1: j+1])  # Get the "spanned" edge image.
         edge_sum = edge_span.sum(0)  # Sum the result on y axis.
-        edge_sum = edge_sum/(255*overwatch.ICON_KILLFEED_720P_HEIGHT)  # Normalize the result.
-
+        edge_sum = edge_sum/(255 * self.icons.ICON_CHARACTER_HEIGHT)  # Normalize the result.
+        # todo Detect right edge too.
         matched_icons = []
         for item in best_matches:
-            if item[1] < 0.6:  # todo save 0.6 as a constant
+            if item.score < 0.6:  # todo save 0.6 as a constant
                 continue
-            edge_scores = edge_sum[item[2]-2: item[2]+2]
-            threshold = (overwatch.ICON_KILLFEED_720P_HEIGHT - 1.0)/overwatch.ICON_KILLFEED_720P_HEIGHT
+            edge_scores = edge_sum[item.x-2: item.x+2]
+            threshold = (self.icons.ICON_CHARACTER_HEIGHT - 1.0) / self.icons.ICON_CHARACTER_HEIGHT
             if max(edge_scores if len(edge_scores) > 0 else [0]) >= threshold:
                 # The metric is that there should be a vertical edge
                 # between left 3 pixels to the icon position
@@ -108,7 +115,9 @@ class FrameAnalyzer:
         if len(matched_icons) == 0:
             return
         elif len(matched_icons) == 1:
-            if matched_icons[0][2] < 177:  # todo save this as a constant. The smallest x value of the character 2 icon (when player 2 name is very long)
+            if matched_icons[0].x < self.fstruc.KILLFEED_MAX_WIDTH - self.fstruc.KILLFEED_CHARACTER2_MAX_WIDTH:
+                # If the only icon found is not in the right place, this might be a killfeed that only shows half.
+                # Leave it alone for this frame, and deal with it in later frames.
                 return
             return self._generate_suicide_killfeed(matched_icons)
         else:
@@ -116,49 +125,55 @@ class FrameAnalyzer:
 
     def _get_icons_weights(self, killfeed_image, name=""):
         result = []
-        for (object_name, object_icon) in overwatch.ICON_KILLFEED_DICT_720P.iteritems():
+        for (object_name, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
             # Match in gray scale
             # killfeed_gray = image.to_gray(killfeed_image)
             # template_gray = image.to_gray(object_icon)
             # match_result = cv2.matchTemplate(killfeed_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+
             # Match in original color, which seems not really hurting the performance.
             match_result = cv2.matchTemplate(killfeed_image, object_icon, cv2.TM_CCOEFF_NORMED)
 
             # Find two most possible location of this character's icon in the killfeed image.
             # Mask the pixels around the first location to find the second one.
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
-            result.append([object_name, max_val, max_loc[0]])
+            result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
             half_mask_width = 5
             mask_index_left = max((max_loc[0] - half_mask_width, 0))
-            mask_index_right = min((max_loc[0] + half_mask_width + 1, 1270-963-34))  # TODO link this to killfeed constant of this resolution
-            try:  # todo remove try catch block
-                match_result[0, mask_index_left: mask_index_right] = [-1] * (mask_index_right - mask_index_left)
-            except:
-                print mask_index_left, mask_index_right
-                exit(0)
+            mask_index_right = min((max_loc[0] + half_mask_width + 1,
+                                    self.fstruc.KILLFEED_MAX_WIDTH - self.icons.ICON_CHARACTER_WIDTH))
+            match_result[0, mask_index_left: mask_index_right] = [-1] * (mask_index_right - mask_index_left)
+
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
-            result.append([object_name, max_val, max_loc[0]])
-            # if object_name == overwatch.DVA:
-            #     print name, max(match_result[0])
-            #     cv2.imshow("mc_"+name, match_result)
+            result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
         return result
+
+    class KillfeedIconMatch:
+        """
+        A helper class to store the intermediate result of a recognized icon in the killfeed.
+        """
+        def __init__(self, object_name, score, x):
+            #: The name of the recognized object.
+            self.object_name = object_name
+            #: The score of this match.
+            self.score = score
+            #: The x coordinate of the recognized object in the killfeed image.
+            self.x = x
 
     def _generate_suicide_killfeed(self, matched_icons):
         return overwatch.KillFeed("test", self.time, character2=matched_icons[0][0], event="suicide")
 
     def _generate_non_suicide_killfeed(self, best_matches):
-        try:  # todo remove try catch block
-            if best_matches[0][2] > best_matches[1][2]:
-                best_matches = [best_matches[1], best_matches[0]]
-        except:
-            print best_matches
-
-        return overwatch.KillFeed("test", self.time, character1=best_matches[0][0], character2=best_matches[1][0])
+        if best_matches[0].x > best_matches[1].x:
+            best_matches = [best_matches[1], best_matches[0]]
+        return overwatch.KillFeed("test", self.time, character1=best_matches[0].object_name, character2=best_matches[1].object_name)
 
 
 if __name__ == '__main__':
-    # path = '../../videos/2.mp4'
     path = '../../videos/SDvsNYXL_Preseason.mp4'
     video = video.VideoLoader(path)
+    t = time.time()
     analyze_video(video)
+    print "time:", time.time()-t
     video.close()
+

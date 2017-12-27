@@ -3,6 +3,7 @@
 """
 import image
 import cv2
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class KillFeed:
@@ -34,9 +35,11 @@ class KillFeed:
             return False
 
     def __str__(self):
+        # todo make this more user-friendly
         if self.character1 is None:
             return "time:" + str(self.time) + " character2:" + self.character2
         return "time:" + str(self.time) + " character1:" + self.character1 + " character2:" + self.character2
+
 
 ANA = "ana"
 BASTION = "bastion"
@@ -84,33 +87,75 @@ NON_CHARACTER_OBJECT_LIST = [MEKA, RIPTIRE, SHIELD, SUPERCHARGER, TELEPORTER, TU
 #: All possible object in the killfeed.
 KILLFEED_OBJECT_LIST = CHARACTER_LIST + NON_CHARACTER_OBJECT_LIST
 
-
-#: The dictionary that maps the name of object to its image in killfeed. This is the 1080p version of the icons.
-ICON_KILLFEED_DICT_1080P = {obj: image.read_img("./../../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
-#: The size of the 1080p icons in killfeed.
-ICON_KILLFEED_1080P_WIDTH = 49
-ICON_KILLFEED_1080P_HEIGHT = 34
+#: The max number of killfeeds in a screen in the same time.
+KILLFEED_ITEM_MAX_COUNT_IN_SCREEN = 6
 
 
-def get_resized_icons(height=1080):
-    """
-    Resize the icons in ICON_KILLFEED_DICT to other resolution. Default is 1080p.
-    If this function is not run, ICON_KILLFEED_DICT contains icon in 1080p resolution.
-    Only supports 16:9 resolution now.
-    @param height: the height of the frame
-    @return: the resized dictionary
-    """
-    ratio = height*1.0/1080
-    # print "resized size:", (int(round(ICON_KILLFEED_1080P_WIDTH*ratio)), int(round(ICON_KILLFEED_1080P_HEIGHT*ratio)))
-    return {obj: cv2.resize(img,
-                            (int(round(ICON_KILLFEED_1080P_WIDTH*ratio)), int(round(ICON_KILLFEED_1080P_HEIGHT*ratio))))
-            for (obj, img) in ICON_KILLFEED_DICT_1080P.iteritems()}
+class KillfeedIcons:
+    def __init__(self, frame_height=1080):
+        """
+        Only supports 16:9 resolution now.
+        @param frame_height: the height of the whole frame.
+        """
+        self._width_1080p = 49
+        self._height_1080p = 34
+        self._icon_dic_1080p = KillfeedIcons._read_1080p_icons()
+
+        ratio = frame_height*1.0/1080
+        self.ICON_CHARACTER_WIDTH = int(round(self._width_1080p * ratio))
+        self.ICON_CHARACTER_HEIGHT = int(round(self._height_1080p * ratio))
+        self.ICONS_CHARACTER = self._get_resized_icons()
+
+    @staticmethod
+    def _read_1080p_icons():
+        return {obj: image.read_img("./../../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
+
+    def _get_resized_icons(self):
+        """
+        Resize the icons in ICON_KILLFEED_DICT to other resolution.
+        If this function is not run, ICON_KILLFEED_DICT contains icon in 1080p resolution.
+        Only supports 16:9 resolution now.
+        @return: the resized dictionary
+        """
+        return {obj: cv2.resize(img, (self.ICON_CHARACTER_WIDTH, self.ICON_CHARACTER_HEIGHT))
+                for (obj, img) in self._icon_dic_1080p.iteritems()}
 
 
-#: The dictionary that maps the name of object to its image in killfeed. This is the 720p version of the icons.
-ICON_KILLFEED_DICT_720P = get_resized_icons(720)
-#: The size of the 720p icons in killfeed.
-ICON_KILLFEED_720P_WIDTH = 33
-ICON_KILLFEED_720P_HEIGHT = 23
+class AbstractGameFrameStructureMeta(type):
+    def __call__(cls, *args, **kwargs):
+        obj = type.__call__(cls, *args, **kwargs)
+        obj.check_abstract_fields()
+        return obj
 
+
+class AbstractGameFrameStructure(object):
+    __metaclass__ = AbstractGameFrameStructureMeta
+    #: The y value of the top most pixel of the icon in the first killfeed.
+    KILLFEED_TOP_Y = None
+    #: The x value of the right most pixel of killfeeds.
+    KILLFEED_RIGHT_X = None
+    #: The max width of an killfeed item.
+    KILLFEED_MAX_WIDTH = None
+    #: The max width of the second character's icon and name in the killfeed.
+    KILLFEED_CHARACTER2_MAX_WIDTH = None
+
+    def __init__(self, frame_height=720):
+        #: The height of a killfeed item.
+        self.KILLFEED_ITEM_HEIGHT = 35
+
+    def check_abstract_fields(self):
+        if (self.KILLFEED_TOP_Y is None or
+        self.KILLFEED_RIGHT_X is None or
+        self.KILLFEED_MAX_WIDTH is None or
+        self.KILLFEED_CHARACTER2_MAX_WIDTH is None):
+            raise NotImplementedError('Subclasses must define all abstract attributes of killfeeds')
+
+
+class OWLFrameStructure(AbstractGameFrameStructure):
+    def __init__(self, frame_height=720):
+        AbstractGameFrameStructure.__init__(self, frame_height)
+        self.KILLFEED_TOP_Y = 116
+        self.KILLFEED_RIGHT_X = 1270
+        self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure at this number.
+        self.KILLFEED_CHARACTER2_MAX_WIDTH = 140
 
