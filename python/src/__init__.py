@@ -87,9 +87,11 @@ class FrameAnalyzer:
                 best_matches.pop()
                 best_matches.append(item)
 
+        print row_number, best_matches
+
         # Edge detection around the found icons.
         edge_image = cv2.Canny(killfeed_image, 100, 200)  # Generate the edges in this killfeed image.
-        # cv2.imshow(str(row_number), edge_image)
+        cv2.imshow(str(row_number), edge_image)
         edge_span = np.zeros(edge_image.shape)
         for i in range(edge_image.shape[0]):
             for j in range(1, edge_image.shape[1]):
@@ -111,7 +113,6 @@ class FrameAnalyzer:
                 # A vertical line should have a width of no more than 2.
                 matched_icons.append(item)
 
-        # print "row", row_number, best_matches, [max(edge_sum[best_matches[i][2]-2: best_matches[i][2]+2]) for i in range(3)]
         if len(matched_icons) == 0:
             return
         elif len(matched_icons) == 1:
@@ -160,6 +161,10 @@ class FrameAnalyzer:
             #: The x coordinate of the recognized object in the killfeed image.
             self.x = x
 
+        def __str__(self):
+            return "KillfeedIconMatch<"+self.object_name+", "+str(self.score)+", "+str(self.x)+">"
+        __repr__ = __str__
+
     def _generate_suicide_killfeed(self, matched_icons):
         return overwatch.KillFeed("test", self.time, character2=matched_icons[0][0], event="suicide")
 
@@ -170,7 +175,8 @@ class FrameAnalyzer:
 
 
 if __name__ == '__main__':
-    path = '../../videos/SDvsNYXL_Preseason.mp4'
+    # path = '../../videos/SDvsNYXL_Preseason.mp4'
+    path = '../../videos/2.mp4'
     video = video.VideoLoader(path)
     t = time.time()
     analyze_video(video)
