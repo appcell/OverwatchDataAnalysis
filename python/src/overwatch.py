@@ -90,6 +90,24 @@ KILLFEED_OBJECT_LIST = CHARACTER_LIST + NON_CHARACTER_OBJECT_LIST
 #: The max number of killfeeds in a screen in the same time.
 KILLFEED_ITEM_MAX_COUNT_IN_SCREEN = 6
 
+ULTIMATE_SKILL_DICT = {
+    'LEFT': 'visitingUlt',
+    'RIGHT': 'homeUlt',
+}
+
+
+class UltimateSkillIcons:
+    def __init__(self, frame_height=None):
+        self.ICONS = self._read_1080p_icons()
+
+    @staticmethod
+    def _read_1080p_icons():
+        return {key: image.read_img("./../../images/" + value + ".png")
+                for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
+
+    def _get_resized_icons(self):
+        pass
+
 
 class KillfeedIcons:
     def __init__(self, frame_height=1080):
@@ -140,15 +158,42 @@ class AbstractGameFrameStructure(object):
     #: The max width of the second character's icon and name in the killfeed.
     KILLFEED_CHARACTER2_MAX_WIDTH = None
 
+    PLAYERS_STATUS_ZONE_X = None
+    PLAYERS_STATUS_ZONE_Y = None
+    PLAYERS_STATUS_ZONE_WIDTH = None
+    PLAYERS_STATUS_ZONE_HEIGHT = None
+
+    ULTIMATE_TOP_X_LEFT = None
+    ULTIMATE_TOP_X_RIGHT = None
+    ULTIMATE_TOP_Y = None
+    ULTIMATE_WIDTH = None
+    ULTIMATE_HEIGHT = None
+    ULTIMATE_MAX_WIDTH = None
+
     def __init__(self, frame_height=720):
         #: The height of a killfeed item.
         self.KILLFEED_ITEM_HEIGHT = 35
+        self.ULTIMATE_ITEM_X = 70
 
     def check_abstract_fields(self):
-        if (self.KILLFEED_TOP_Y is None or
-        self.KILLFEED_RIGHT_X is None or
-        self.KILLFEED_MAX_WIDTH is None or
-        self.KILLFEED_CHARACTER2_MAX_WIDTH is None):
+        if (
+            self.KILLFEED_TOP_Y is None or
+            self.KILLFEED_RIGHT_X is None or
+            self.KILLFEED_MAX_WIDTH is None or
+            self.KILLFEED_CHARACTER2_MAX_WIDTH is None
+            or
+            self.PLAYERS_STATUS_ZONE_X is None or
+            self.PLAYERS_STATUS_ZONE_Y is None or
+            self.PLAYERS_STATUS_ZONE_WIDTH is None or
+            self.PLAYERS_STATUS_ZONE_HEIGHT is None or
+
+            self.ULTIMATE_TOP_X_LEFT is None or
+            self.ULTIMATE_TOP_X_RIGHT is None or
+            self.ULTIMATE_TOP_Y is None or
+            self.ULTIMATE_WIDTH is None or
+            self.ULTIMATE_HEIGHT is None or
+            self.ULTIMATE_MAX_WIDTH is None
+        ):
             raise NotImplementedError('Subclasses must define all abstract attributes of killfeeds')
 
 
@@ -159,6 +204,18 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.KILLFEED_RIGHT_X = 1270
         self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure at this number.
         self.KILLFEED_CHARACTER2_MAX_WIDTH = 140
+
+        self.PLAYERS_STATUS_ZONE_X = 0
+        self.PLAYERS_STATUS_ZONE_Y = 40
+        self.PLAYERS_STATUS_ZONE_HEIGHT = 60
+        self.PLAYERS_STATUS_ZONE_WIDTH = 1280
+
+        self.ULTIMATE_TOP_X_LEFT = 37
+        self.ULTIMATE_TOP_X_RIGHT = 833
+        self.ULTIMATE_TOP_Y = 6
+        self.ULTIMATE_HEIGHT = 26
+        self.ULTIMATE_WIDTH = 26
+        self.ULTIMATE_MAX_WIDTH = self.ULTIMATE_ITEM_X * 6
 
 
 class OverwatchGame:
