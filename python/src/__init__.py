@@ -2,12 +2,15 @@
 @Author: Xiaochen (leavebody) Li
 Partially adapted from Matlab code.
 """
-import video
+import time
+
 import cv2
+import numpy as np
+from skimage.measure import compare_ssim as ssim
+
 import image
 import overwatch
-import time
-import numpy as np
+import video
 
 
 def analyze_video(video_loader):
@@ -65,16 +68,17 @@ class FrameAnalyzer:
         return result
 
     def _get_killfeed_in_row(self, row_number):
+        """
+        Get the killfeed in a row.
+        @param row_number: The row number. Should be an integer in range(6).
+        @return: None if there is no killfeed in this row; A overwatch.Killfeed object if a killfeed is found in this row.
+        """
         # Crop the image and get the desired row.
-        killfeed_image = image.crop_by_limit(self.frame,
-                                             self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
-                                             self.icons.ICON_CHARACTER_HEIGHT,
-                                             self.fstruc.KILLFEED_RIGHT_X - self.fstruc.KILLFEED_MAX_WIDTH,
-                                             self.fstruc.KILLFEED_MAX_WIDTH)
-        # cv2.imshow("row"+str(row_number), killfeed_image)
-        name = "killfeed_image"+str(row_number)
-        icons_weights = self._get_icons_weights(killfeed_image, name)
-        # TODO Only needs two best matches in the end. Keep three while debugging.
+        killfeed_image = self.get_killfeed_row_image(row_number)
+        edge_validation = self._validate_edge(killfeed_image, title=str(row_number))
+
+        icons_weights = self._get_icons_weights(killfeed_image, edge_validation)
+        # TODO Only need two best matches in the end. Keep three while debugging.
         best_matches = [self.KillfeedIconMatch("", -1, -1)] * 3
         for item in icons_weights:
             if item.score > best_matches[0].score:
@@ -87,29 +91,15 @@ class FrameAnalyzer:
                 best_matches.pop()
                 best_matches.append(item)
 
-        print row_number, best_matches
-
-        # Edge detection around the found icons.
-        edge_image = cv2.Canny(killfeed_image, 100, 200)  # Generate the edges in this killfeed image.
-        cv2.imshow(str(row_number), edge_image)
-        edge_span = np.zeros(edge_image.shape)
-        for i in range(edge_image.shape[0]):
-            for j in range(1, edge_image.shape[1]):
-                edge_span[i, j] = sum(edge_image[i, j-1: j+1])  # Get the "spanned" edge image.
-        edge_sum = edge_span.sum(0)  # Sum the result on y axis.
-        edge_sum = edge_sum/(255 * self.icons.ICON_CHARACTER_HEIGHT)  # Normalize the result.
-        # todo Detect right edge too.
         matched_icons = []
         for item in best_matches:
             if item.score < 0.6:  # todo save 0.6 as a constant
                 continue
-            edge_scores = edge_sum[item.x-2: item.x+2]
-            threshold = (self.icons.ICON_CHARACTER_HEIGHT - 1.0) / self.icons.ICON_CHARACTER_HEIGHT
-            if max(edge_scores if len(edge_scores) > 0 else [0]) >= threshold:
+            if edge_validation[item.x]:
                 # The metric is that there should be a vertical edge
                 # between left 3 pixels to the icon position
                 # and right 1 pixel to the icon position
-                # with no more than 1 pixels in the vertical line missing.
+                # with no more than 2 pixels in the vertical line missing.
                 # A vertical line should have a width of no more than 2.
                 matched_icons.append(item)
 
@@ -124,7 +114,28 @@ class FrameAnalyzer:
         else:
             return self._generate_non_suicide_killfeed(matched_icons[:2])
 
-    def _get_icons_weights(self, killfeed_image, name=""):
+    def _get_icons_weights(self, killfeed_image, edge_validation, name=""):
+        """
+        Get possible icon and their weights in the killfeed image.
+        @param killfeed_image: The killfeed image.
+        @param edge_validation: A list of boolean. Should be the result of _validate_edge()
+        @param name:
+        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
+        """
+        valid_pixel_count = edge_validation.count(True)
+        if valid_pixel_count <= 7:
+            return self._get_icons_weights_discrete(killfeed_image, edge_validation, name)
+        else:
+            return self._get_icons_weights_full(killfeed_image, edge_validation, name)
+
+    def _get_icons_weights_full(self, killfeed_image, edge_validation, name=""):
+        """
+        Use match template in cv2 to get possible icon and their weights in the killfeed image.
+        @param killfeed_image: The killfeed image.
+        @param edge_validation: A list of boolean. Should be the result of _validate_edge()
+        @param name:
+        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
+        """
         result = []
         for (object_name, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
             # Match in gray scale
@@ -138,7 +149,8 @@ class FrameAnalyzer:
             # Find two most possible location of this character's icon in the killfeed image.
             # Mask the pixels around the first location to find the second one.
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
-            result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
+            if edge_validation[max_loc[0]]:
+                result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
             half_mask_width = 5
             mask_index_left = max((max_loc[0] - half_mask_width, 0))
             mask_index_right = min((max_loc[0] + half_mask_width + 1,
@@ -146,8 +158,117 @@ class FrameAnalyzer:
             match_result[0, mask_index_left: mask_index_right] = [-1] * (mask_index_right - mask_index_left)
 
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
-            result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
+            if edge_validation[max_loc[0]]:
+                result.append(self.KillfeedIconMatch(object_name, max_val, max_loc[0]))
         return result
+
+    def _get_icons_weights_discrete(self, killfeed_image, edge_validation, name=""):
+        """
+        An alternate way to get weights of icons. Only matches the icon where the pixel passes edge validation.
+        Experiments show that when there are less than 8 valid pixels in edge_validation,
+        this method is faster than _get_icons_weights_full().
+        @param killfeed_image: The killfeed image.
+        @param edge_validation: A list of boolean. Should be the result of _validate_edge()
+        @param name:
+        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
+        """
+        result_raw = []
+        for x in range(len(edge_validation)):
+            if not edge_validation[x]:
+                continue
+            to_compare = image.crop_by_limit(killfeed_image, 0, self.icons.ICON_CHARACTER_HEIGHT, x, self.icons.ICON_CHARACTER_WIDTH)
+            best_score = -1
+            best_name = ""
+            for (object_name, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
+                # Matching in original color.
+                score = self._match_template_score(to_compare, object_icon)
+                if score > best_score:
+                    best_score = score
+                    best_name = object_name
+            result_raw.append(self.KillfeedIconMatch(best_name, best_score, x))
+        mask = [False]*len(edge_validation)
+        result_raw.sort(key=self.KillfeedIconMatch.get_score, reverse=True)
+        # print "raw:", result_raw
+        result = []
+        for match in result_raw:
+            if mask[match.x]:
+                continue
+            mask_left_index = max(0, match.x-5)
+            mask_right_index = min(len(mask), match.x+5)
+            mask[mask_left_index:mask_right_index] = [True]*(mask_right_index-mask_left_index)
+            result.append(match)
+        # if len(result)>0:
+        #     print name, "discrete", edge_validation.count(True), result
+        return result
+
+    @staticmethod
+    def _match_template_score(image1, image2):
+        """
+        Get the TM_CCOEFF_NORMED score of the two input images. Two input image should have the same shape and size.
+        @param image1:
+        @param image2:
+        @return: The TM_CCOEFF_NORMED score of the two input images.
+        """
+        return cv2.matchTemplate(image1, image2, cv2.TM_CCOEFF_NORMED)[0][0]
+
+    @staticmethod
+    def _ssim_score(image1, image2):
+        """
+        Get the SSIM score of the two input images. Two input image should have the same shape and size.
+        @param image1:
+        @param image2:
+        @return: The SSIM score of the two input images.
+        """
+        s = ssim(image1, image2, multichannel=True)
+        return s
+
+    def _validate_edge(self, killfeed_image, title="default"):
+        """
+        Use canny to find vertical edges in the killfeed image,
+        and use the edges to get the possible positions of icons
+        in the killfeed.
+        @param killfeed_image: The killfeed image.
+        @param title:
+        @return: A list of boolean, result[i] is True if there can be a icon starting from x=i,
+                and result[i] is false if x=i can starts an icon.
+        """
+        edge_detection_image = killfeed_image
+        edge_image = cv2.Canny(edge_detection_image, 100, 200)  # Generate the edges in this killfeed image.
+        #####################################################################################
+        ################################### test edges ######################################
+        #####################################################################################
+        # cv2.imshow(title, edge_image)
+        #####################################################################################
+        ################################### end test   ######################################
+        #####################################################################################
+        edge_span = np.zeros(edge_image.shape)
+        for i in range(edge_image.shape[0]):
+            for j in range(1, edge_image.shape[1]):
+                edge_span[i, j] = sum(edge_image[i, j-1: j+1])  # Get the "spanned" edge image.
+        edge_sum = edge_span.sum(0)  # Sum the result on y axis.
+        edge_sum = edge_sum/(255 * self.icons.ICON_CHARACTER_HEIGHT)  # Normalize the result.
+        edge_validation = [False, False]
+        threshold_left = (self.icons.ICON_CHARACTER_HEIGHT - 2.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
+        threshold_right = (self.icons.ICON_CHARACTER_HEIGHT - 5.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
+        truecount = 0
+        for i in range(2, self.fstruc.KILLFEED_MAX_WIDTH - 37):
+            edge_scores_left = edge_sum[i-2: i+2]
+            edge_scores_right = edge_sum[i+33: i+36]
+
+            if (max(edge_scores_left) >= threshold_left and
+            max(edge_scores_right) >= threshold_right):
+                # The metric is that there should be a vertical edge
+                # between left 3 pixels to the icon position
+                # and right 1 pixel to the icon position
+                # with no more than 2 pixels in the vertical line missing.
+                # A vertical line should have a width of no more than 2.
+                edge_validation.append(True)
+                truecount += 1
+            else:
+                edge_validation.append(False)
+        # print truecount
+        edge_validation.extend([False]*5)
+        return edge_validation
 
     class KillfeedIconMatch:
         """
@@ -165,13 +286,30 @@ class FrameAnalyzer:
             return "KillfeedIconMatch<"+self.object_name+", "+str(self.score)+", "+str(self.x)+">"
         __repr__ = __str__
 
+        @staticmethod
+        def get_score(match):
+            return match.score
+
     def _generate_suicide_killfeed(self, matched_icons):
-        return overwatch.KillFeed("test", self.time, character2=matched_icons[0][0], event="suicide")
+        return overwatch.KillFeed("test", self.time, character2=matched_icons[0].object_name, event="suicide")
 
     def _generate_non_suicide_killfeed(self, best_matches):
         if best_matches[0].x > best_matches[1].x:
             best_matches = [best_matches[1], best_matches[0]]
         return overwatch.KillFeed("test", self.time, character1=best_matches[0].object_name, character2=best_matches[1].object_name)
+
+    def get_killfeed_row_image(self, row_number):
+        """
+        Get the cropped image of a killfeed by its row number.
+        @param row_number: An integer in range(6).
+        @return: The cropped killfeed image.
+        """
+        assert row_number in range(6)
+        return image.crop_by_limit(self.frame,
+                                   self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
+                                   self.icons.ICON_CHARACTER_HEIGHT,
+                                   self.fstruc.KILLFEED_RIGHT_X - self.fstruc.KILLFEED_MAX_WIDTH,
+                                   self.fstruc.KILLFEED_MAX_WIDTH)
 
 
 if __name__ == '__main__':

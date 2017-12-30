@@ -104,6 +104,7 @@ class KillfeedIcons:
         ratio = frame_height*1.0/1080
         self.ICON_CHARACTER_WIDTH = int(round(self._width_1080p * ratio))
         self.ICON_CHARACTER_HEIGHT = int(round(self._height_1080p * ratio))
+
         self.ICONS_CHARACTER = self._get_resized_icons()
 
     @staticmethod
