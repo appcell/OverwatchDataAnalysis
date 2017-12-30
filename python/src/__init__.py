@@ -39,7 +39,7 @@ class FrameAnalyzer:
     The analyzer for a frame in a game.
     Analyses in 1280x720 resolution.
     """
-    def __init__(self, frame, frame_time):
+    def __init__(self, frame, frame_time, game=None):
         """
         @param frame: frame: a numpy.ndarray image representing this frame
         """
@@ -48,6 +48,8 @@ class FrameAnalyzer:
         self.time = frame_time
         self.icons = overwatch.KillfeedIcons(720)
         self.fstruc = overwatch.OWLFrameStructure(720)  # Using OWL frame structure now.
+        #: The OverwatchGame object for this frame.
+        self.game = game
 
     def get_killfeed(self, killfeed_last=None):
         """
@@ -60,24 +62,54 @@ class FrameAnalyzer:
         """
         result = []
         for i in range(overwatch.KILLFEED_ITEM_MAX_COUNT_IN_SCREEN):
-            killfeed_in_row = self._get_killfeed_in_row(i)
+            killfeed_image = self.get_killfeed_row_image(i)
+            killfeed_analyzer = KillfeedAnalyzer(killfeed_image, self)
+            killfeed_in_row = killfeed_analyzer.get_killfeed()
             if killfeed_in_row is None or killfeed_in_row == killfeed_last:
                 break
             result.append(killfeed_in_row)
         result.reverse()  # Reverse the list to make it from bottom to top.
         return result
 
-    def _get_killfeed_in_row(self, row_number):
+    def get_killfeed_row_image(self, row_number):
+        """
+        Get the cropped image of a killfeed by its row number.
+        @param row_number: An integer in range(6).
+        @return: The cropped killfeed image.
+        """
+        assert row_number in range(6)
+        return image.crop_by_limit(self.frame,
+                                   self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
+                                   self.icons.ICON_CHARACTER_HEIGHT,
+                                   self.fstruc.KILLFEED_RIGHT_X - self.fstruc.KILLFEED_MAX_WIDTH,
+                                   self.fstruc.KILLFEED_MAX_WIDTH)
+
+    def set_team_color(self):
+        self.game.color_team1 = self.frame[1][1][:]
+        self.game.color_team2 = self.frame[1][1278][:]
+
+
+class KillfeedAnalyzer:
+    """
+    Analyze a single killfeed row.
+    """
+    def __init__(self, killfeed_image, frame):
+        """
+        @param killfeed_image: The cropped image of a killfeed.
+        @param frame: The FrameAnalyzer that this killfeed is in.
+        """
+        self.killfeed_image = killfeed_image
+        self.fstruc = frame.fstruc
+        self.icons = frame.icons
+        self.time = frame.time
+
+    def get_killfeed(self):
         """
         Get the killfeed in a row.
-        @param row_number: The row number. Should be an integer in range(6).
         @return: None if there is no killfeed in this row; A overwatch.Killfeed object if a killfeed is found in this row.
         """
-        # Crop the image and get the desired row.
-        killfeed_image = self.get_killfeed_row_image(row_number)
-        edge_validation = self._validate_edge(killfeed_image, title=str(row_number))
-
-        icons_weights = self._get_icons_weights(killfeed_image, edge_validation)
+        edge_validation = self._validate_edge(self.killfeed_image)
+        icons_weights = self._get_icons_weights(self.killfeed_image, edge_validation)
         # TODO Only need two best matches in the end. Keep three while debugging.
         best_matches = [self.KillfeedIconMatch("", -1, -1)] * 3
         for item in icons_weights:
@@ -250,7 +282,7 @@ class FrameAnalyzer:
         edge_validation = [False, False]
         threshold_left = (self.icons.ICON_CHARACTER_HEIGHT - 2.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
         threshold_right = (self.icons.ICON_CHARACTER_HEIGHT - 5.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
-        truecount = 0
+        # truecount = 0
         for i in range(2, self.fstruc.KILLFEED_MAX_WIDTH - 37):
             edge_scores_left = edge_sum[i-2: i+2]
             edge_scores_right = edge_sum[i+33: i+36]
@@ -263,7 +295,7 @@ class FrameAnalyzer:
                 # with no more than 2 pixels in the vertical line missing.
                 # A vertical line should have a width of no more than 2.
                 edge_validation.append(True)
-                truecount += 1
+                # truecount += 1
             else:
                 edge_validation.append(False)
         # print truecount
@@ -297,19 +329,6 @@ class FrameAnalyzer:
         if best_matches[0].x > best_matches[1].x:
             best_matches = [best_matches[1], best_matches[0]]
         return overwatch.KillFeed("test", self.time, character1=best_matches[0].object_name, character2=best_matches[1].object_name)
-
-    def get_killfeed_row_image(self, row_number):
-        """
-        Get the cropped image of a killfeed by its row number.
-        @param row_number: An integer in range(6).
-        @return: The cropped killfeed image.
-        """
-        assert row_number in range(6)
-        return image.crop_by_limit(self.frame,
-                                   self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
-                                   self.icons.ICON_CHARACTER_HEIGHT,
-                                   self.fstruc.KILLFEED_RIGHT_X - self.fstruc.KILLFEED_MAX_WIDTH,
-                                   self.fstruc.KILLFEED_MAX_WIDTH)
 
 
 if __name__ == '__main__':

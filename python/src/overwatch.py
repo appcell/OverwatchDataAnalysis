@@ -160,3 +160,15 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure at this number.
         self.KILLFEED_CHARACTER2_MAX_WIDTH = 140
 
+
+class OverwatchGame:
+    """
+    Holds the basic information of a game.
+    """
+    def __init__(self, team1name, team2name):
+        #: The name of both team.
+        self.name_team1 = team1name
+        self.name_team2 = team2name
+        #: The theme color of both team. In format [b,g,r] and each color is in [0,256).
+        self.color_team1 = None
+        self.color_team2 = None
