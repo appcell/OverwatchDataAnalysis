@@ -25,6 +25,7 @@ def analyze_video(video_loader):
     frame = video_loader.get_frame(index)
     while frame is not None:
         analyzer = FrameAnalyzer(frame, index)
+        # analyzer.get_ultmate_list()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
@@ -47,9 +48,14 @@ class FrameAnalyzer:
         self.frame = cv2.resize(frame, (1280, 720))  # Resize the image to 720p.
         self.time = frame_time
         self.icons = overwatch.KillfeedIcons(720)
+        self.ultimate_icons = overwatch.UltimateSkillIcons(720)
         self.fstruc = overwatch.OWLFrameStructure(720)  # Using OWL frame structure now.
         #: The OverwatchGame object for this frame.
         self.game = game
+
+    def get_ultmate_list(self):
+        f = UltimateSkillAnalyzer(self.frame, self.fstruc, self.ultimate_icons, self.time)
+        return f.ultimate_match()
 
     def get_killfeed(self, killfeed_last=None):
         """
@@ -330,6 +336,101 @@ class KillfeedAnalyzer:
         if best_matches[0].x > best_matches[1].x:
             best_matches = [best_matches[1], best_matches[0]]
         return overwatch.KillFeed("test", self.time, character1=best_matches[0].object_name, character2=best_matches[1].object_name)
+
+
+class UltimateSkillAnalyzer:
+    def __init__(self, frame, fstruc, ultimate_icons, frame_time):
+        self.frame = frame
+        self.fstruc = fstruc
+        self.ultimate_icons = ultimate_icons
+        self.time = int(round(frame_time / 30))
+
+    def _player_status_image(self):
+        return image.crop_by_limit(
+            self.frame,
+            self.fstruc.PLAYERS_STATUS_ZONE_Y,
+            self.fstruc.PLAYERS_STATUS_ZONE_HEIGHT,
+            self.fstruc.PLAYERS_STATUS_ZONE_X,
+            self.fstruc.PLAYERS_STATUS_ZONE_WIDTH,
+        )
+
+    def _ultimate_image(self, player_status_image, flag):
+        assert flag in ['LEFT', 'RIGHT']
+        if flag == 'LEFT':
+            return image.crop_by_limit(
+                player_status_image,
+                self.fstruc.ULTIMATE_TOP_Y,
+                self.fstruc.ULTIMATE_HEIGHT,
+                self.fstruc.ULTIMATE_TOP_X_LEFT,
+                self.fstruc.ULTIMATE_MAX_WIDTH,
+            )
+        else:
+            return image.crop_by_limit(
+                player_status_image,
+                self.fstruc.ULTIMATE_TOP_Y,
+                self.fstruc.ULTIMATE_HEIGHT,
+                self.fstruc.ULTIMATE_TOP_X_RIGHT,
+                self.fstruc.ULTIMATE_MAX_WIDTH,
+            )
+
+    def ultimate_match(self):
+        m = self._player_status_image()
+        left, right = self._ultimate_image(m, 'LEFT'), self._ultimate_image(m, 'RIGHT')
+        return self._get_left_player_ultimate_skill(left) + self._get_right_player_ultimate_skill(right)
+
+    def _get_player_ultimate_skill(self, skill_image, flag):
+        assert flag in ['LEFT', 'RIGHT']
+        result = []
+
+        for i in range(6):
+            img = image.crop_by_limit(
+                skill_image,
+                self.fstruc.ULTIMATE_TOP_Y,
+                self.fstruc.ULTIMATE_HEIGHT,
+                i * self.fstruc.ULTIMATE_ITEM_X,
+                self.fstruc.ULTIMATE_WIDTH,
+                )
+            icons = self.ultimate_icons.ICONS.get(flag)
+            if self._match_ultimate_skill(icons, img, flag):
+                result.append(True)
+            else:
+                result.append(False)
+        return result
+
+    def _get_left_player_ultimate_skill(self, skill_image):
+        return self._get_player_ultimate_skill(skill_image, 'LEFT')
+
+    def _get_right_player_ultimate_skill(self, skill_image):
+        return self._get_player_ultimate_skill(skill_image, 'RIGHT')
+
+    @staticmethod
+    def _match_ultimate_skill(template, ultimate_image, flag):
+        assert flag in ['LEFT', 'RIGHT']
+        if flag == 'LEFT':
+            resize = 0.6
+            max_flash = 230
+            min_flash = 196
+            max_weight = 0.9615
+        else:
+            resize = 0.75
+            max_flash = 160
+            min_flash = 90
+            max_weight = 0.934
+
+        template, ultimate_image = image.to_gray(cv2.resize(template,
+                                                            None,
+                                                            fx=resize,
+                                                            fy=resize)),\
+                                   image.to_gray(ultimate_image)
+        weight = cv2.matchTemplate(ultimate_image, template, cv2.TM_CCORR_NORMED).max()
+        # to avoid possible explosion effect
+        flash = np.mean(ultimate_image)
+        if flash > max_flash:
+            weight = 1
+
+        if weight > max_weight and flash > min_flash:
+            return True
+        return False
 
 
 if __name__ == '__main__':
