@@ -102,6 +102,7 @@ class KillfeedAnalyzer:
         self.fstruc = frame.fstruc
         self.icons = frame.icons
         self.time = frame.time
+        self.frame_analyzer = frame
 
     def get_killfeed(self):
         """
