@@ -1,5 +1,17 @@
 # Overwatch Replay Analyzer (ORA) v0.1
 
+## 开发与运行环境
+
+### 开发环境
+
+Matlab： >= 2016b
+Python: 2.x
+
+### 运行环境
+
+GUI版本： Windows 7, Windows 8, Windows 10, MacOS >= 10
+命令行版本： 待定
+
 ## 需求说明
 
 v0.1 需求列表
@@ -27,27 +39,13 @@ v0.1 需求列表
 
 3. 将捕捉到的数据按标准格式记录并保存于用户指定路径，标准格式见/docs
 
-## 开发与运行环境
 
-### 开发环境
-
-Matlab： >= 2016b
-
-Python: 2.x
-
-### 运行环境
-
-GUI版本： Windows 7, Windows 8, Windows 10, MacOS >= 10
-
-命令行版本： 待定
 
 
 ## 计划deadline列表
 
 * 2018.1.9 Matlab版本内测
-
 * 2018.1.18 Python版本发布Alpha版并内测
-
 * 2018.1.29 Python版本发布Beta版并于NGA公测
 
 
