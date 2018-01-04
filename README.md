@@ -5,11 +5,13 @@
 ### 开发环境
 
 Matlab： >= 2016b
+
 Python: 2.x
 
 ### 运行环境
 
 GUI版本： Windows 7, Windows 8, Windows 10, MacOS >= 10
+
 命令行版本： 待定
 
 ## 需求说明
