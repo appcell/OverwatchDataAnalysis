@@ -13,7 +13,7 @@ import overwatch
 import video
 
 
-def analyze_video(video_loader):
+def analyze_video(video_loader, owgame):
     """
     Analyze the killfeed of an video.
     @param video_loader: a video.VideoLoader object
@@ -24,7 +24,9 @@ def analyze_video(video_loader):
     index = 0
     frame = video_loader.get_frame(index)
     while frame is not None:
-        analyzer = FrameAnalyzer(frame, index)
+        analyzer = FrameAnalyzer(frame, index, owgame)
+        if index == 0:
+            analyzer.set_team_color()
         # analyzer.get_ultmate_list()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
@@ -70,7 +72,7 @@ class FrameAnalyzer:
         for i in range(overwatch.KILLFEED_ITEM_MAX_COUNT_IN_SCREEN):
             killfeed_image = self.get_killfeed_row_image(i)
             killfeed_analyzer = KillfeedAnalyzer(killfeed_image, self)
-            killfeed_in_row = killfeed_analyzer.get_killfeed()
+            killfeed_in_row = killfeed_analyzer.get_killfeed("row: "+str(i))
             if killfeed_in_row is None or killfeed_in_row == killfeed_last:
                 break
             result.append(killfeed_in_row)
@@ -83,7 +85,6 @@ class FrameAnalyzer:
         @param row_number: An integer in range(6).
         @return: The cropped killfeed image.
         """
-        assert row_number in range(6)
         return image.crop_by_limit(self.frame,
                                    self.fstruc.KILLFEED_TOP_Y + row_number*self.fstruc.KILLFEED_ITEM_HEIGHT,
                                    self.icons.ICON_CHARACTER_HEIGHT,
@@ -99,6 +100,9 @@ class KillfeedAnalyzer:
     """
     Analyze a single killfeed row.
     """
+    RIGHT = 1
+    LEFT = 0
+
     def __init__(self, killfeed_image, frame):
         """
         @param killfeed_image: The cropped image of a killfeed.
@@ -110,12 +114,17 @@ class KillfeedAnalyzer:
         self.time = frame.time
         self.frame_analyzer = frame
 
-    def get_killfeed(self):
+        self.killfeed = None
+
+    def get_killfeed(self, title="Default"):
         """
         Get the killfeed in a row.
         @return: None if there is no killfeed in this row; A overwatch.Killfeed object if a killfeed is found in this row.
         """
-        edge_validation = self._validate_edge(self.killfeed_image)
+        if self.killfeed is not None:
+            return self.killfeed
+
+        edge_validation = self._validate_edge(self.killfeed_image, title)
         icons_weights = self._get_icons_weights(self.killfeed_image, edge_validation)
         # TODO Only need two best matches in the end. Keep three while debugging.
         best_matches = [self.KillfeedIconMatch("", -1, -1)] * 3
@@ -129,7 +138,6 @@ class KillfeedAnalyzer:
             elif item.score > best_matches[2].score:
                 best_matches.pop()
                 best_matches.append(item)
-
         matched_icons = []
         for item in best_matches:
             if item.score < 0.6:  # todo save 0.6 as a constant
@@ -141,7 +149,6 @@ class KillfeedAnalyzer:
                 # with no more than 2 pixels in the vertical line missing.
                 # A vertical line should have a width of no more than 2.
                 matched_icons.append(item)
-
         if len(matched_icons) == 0:
             return
         elif len(matched_icons) == 1:
@@ -149,9 +156,9 @@ class KillfeedAnalyzer:
                 # If the only icon found is not in the right place, this might be a killfeed that only shows half.
                 # Leave it alone for this frame, and deal with it in later frames.
                 return
-            return self._generate_suicide_killfeed(matched_icons)
+            return self._generate_killfeed(matched_icons)
         else:
-            return self._generate_non_suicide_killfeed(matched_icons[:2])
+            return self._generate_killfeed(matched_icons[:2])
 
     def _get_icons_weights(self, killfeed_image, edge_validation, name=""):
         """
@@ -290,9 +297,9 @@ class KillfeedAnalyzer:
         threshold_left = (self.icons.ICON_CHARACTER_HEIGHT - 2.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
         threshold_right = (self.icons.ICON_CHARACTER_HEIGHT - 5.0) / self.icons.ICON_CHARACTER_HEIGHT  # todo save this as constant
         # truecount = 0
-        for i in range(2, self.fstruc.KILLFEED_MAX_WIDTH - 37):
+        for i in range(2, self.fstruc.KILLFEED_MAX_WIDTH - 38):
             edge_scores_left = edge_sum[i-2: i+2]
-            edge_scores_right = edge_sum[i+33: i+36]
+            edge_scores_right = edge_sum[i+33: i+37]
 
             if (max(edge_scores_left) >= threshold_left and
             max(edge_scores_right) >= threshold_right):
@@ -306,7 +313,7 @@ class KillfeedAnalyzer:
             else:
                 edge_validation.append(False)
         # print truecount
-        edge_validation.extend([False]*5)
+        edge_validation.extend([False]*6)
         return edge_validation
 
     class KillfeedIconMatch:
@@ -329,13 +336,47 @@ class KillfeedAnalyzer:
         def get_score(match):
             return match.score
 
-    def _generate_suicide_killfeed(self, matched_icons):
-        return overwatch.KillFeed("test", self.time, character2=matched_icons[0].object_name, event="suicide")
+    def _generate_killfeed(self, matched_icons):
+        if len(matched_icons) == 1:
+            team = self._get_icon_team(matched_icons[0], self.RIGHT)
+            return overwatch.KillFeed("test", self.time, character2=matched_icons[0].object_name, team2=team, event=overwatch.SUICIDE)
 
-    def _generate_non_suicide_killfeed(self, best_matches):
-        if best_matches[0].x > best_matches[1].x:
-            best_matches = [best_matches[1], best_matches[0]]
-        return overwatch.KillFeed("test", self.time, character1=best_matches[0].object_name, character2=best_matches[1].object_name)
+        if matched_icons[0].x > matched_icons[1].x:
+            matched_icons = [matched_icons[1], matched_icons[0]]
+
+        team1 = self._get_icon_team(matched_icons[0], self.LEFT)
+        team2 = self._get_icon_team(matched_icons[1], self.RIGHT)
+        event = None
+        if team1 == team2:
+            event = overwatch.RESURRECTION
+        else:
+            event = overwatch.ELIMINATION
+        return overwatch.KillFeed("test", self.time,
+                                  team1=team1, team2=team2,
+                                  character1=matched_icons[0].object_name, character2=matched_icons[1].object_name,
+                                  event=event)
+
+    def _get_icon_team(self, icon, position):
+        """
+        Get the team name of an icon in the killfeed.
+        @param icon: The KillfeedIconMatch object of this icon.
+        @param position: Either self.LEFT or self.RIGHT for the position of this icon in the killfeed.
+        @return: The team name of the icon.
+        """
+        if position == self.LEFT:
+            x = icon.x - 5
+        elif position == self.RIGHT:
+            x = icon.x + self.icons.ICON_CHARACTER_WIDTH + 5
+        else:
+            raise KeyError("position must be KillfeedAnalyzer.LEFT or KillfeedAnalyzer.RIGHT")
+        color = self.killfeed_image[0][x]
+        team1_distance = image.color_distance(color, self.frame_analyzer.game.color_team1)
+        team2_distance = image.color_distance(color, self.frame_analyzer.game.color_team2)
+
+        if team1_distance <= team2_distance:
+            return self.frame_analyzer.game.name_team1
+        else:
+            return self.frame_analyzer.game.name_team2
 
 
 class UltimateSkillAnalyzer:
@@ -436,9 +477,11 @@ class UltimateSkillAnalyzer:
 if __name__ == '__main__':
     # path = '../../videos/SDvsNYXL_Preseason.mp4'
     path = '../../videos/2.mp4'
+    game = overwatch.OverwatchGame(team1name="SHD", team2name="BU")
     video = video.VideoLoader(path)
     t = time.time()
-    analyze_video(video)
+
+    analyze_video(video, game)
     print "time:", time.time()-t
     video.close()
 

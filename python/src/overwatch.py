@@ -6,41 +6,6 @@ import cv2
 from abc import ABCMeta, abstractmethod, abstractproperty
 
 
-class KillFeed:
-    """
-    A killfeed entry.
-    """
-    def __init__(self, file_id, time=None, character1=None, character2=None, event=None):
-        self.file_id = file_id
-        self.time = time
-        self.character1 = character1
-        self.character2 = character2
-        self.event = event
-        #: the x coordinate of the icon in the killfeed item image
-        self.character1_x = None
-        self.character2_x = None
-
-    def __eq__(self, other):
-        """
-        Check if this killfeed describes the same event as another killfeed.
-        @param other: a KillFeed object to compare
-        @return: "True" for a same event and "False" for a different event
-        """
-        if type(other) != type(self):
-            return False
-
-        if self.character1 == other.character1 and self.character2 == other.character2 and self.event == other.event:
-            return True
-        else:
-            return False
-
-    def __str__(self):
-        # todo make this more user-friendly
-        if self.character1 is None:
-            return "time:" + str(self.time) + " character2:" + self.character2
-        return "time:" + str(self.time) + " character1:" + self.character1 + " character2:" + self.character2
-
-
 ANA = "ana"
 BASTION = "bastion"
 DOOMFIST = "doomfist"
@@ -89,6 +54,52 @@ KILLFEED_OBJECT_LIST = CHARACTER_LIST + NON_CHARACTER_OBJECT_LIST
 
 #: The max number of killfeeds in a screen in the same time.
 KILLFEED_ITEM_MAX_COUNT_IN_SCREEN = 6
+
+
+class KillFeed:
+    """
+    A killfeed entry.
+    """
+    def __init__(self, file_id, time=None, character1=None, character2=None, team1=None, team2=None, event=None):
+        self.file_id = file_id
+        self.time = time
+        self.team1 = team1
+        self.team2 = team2
+        self.character1 = character1
+        self.character2 = character2
+        self.event = event
+        #: the x coordinate of the icon in the killfeed item image
+        self.character1_x = None  # todo do we really need these????
+        self.character2_x = None
+
+    def __eq__(self, other):
+        """
+        Check if this killfeed describes the same event as another killfeed.
+        @param other: a KillFeed object to compare
+        @return: "True" for a same event and "False" for a different event
+        """
+        if type(other) != type(self):
+            return False
+
+        if self.character1 == other.character1 and self.character2 == other.character2 and self.event == other.event:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        result = self.event + "\t"
+        if self.event == SUICIDE:
+            result += self.team2 + "\t" + self.character2 + "\t"
+        else:
+            result += self.team1 + "\t" + self.character1 + "\t" + self.team2 + "\t" + self.character2 + "\t"
+        result += "time: "+str(self.time)
+        return result
+
+# Killfeed events in overwatch.
+ELIMINATION = "elimination"
+SUICIDE = "suicide"
+RESURRECTION = "resurrection"
+
 
 ULTIMATE_SKILL_DICT = {
     'LEFT': 'visitingUlt',

@@ -4,6 +4,7 @@
 import cv2
 from math import sqrt
 
+
 def read_img(path):
     return cv2.imread(path)
 
@@ -25,6 +26,8 @@ def color_distance(c1, c2):
     @param c2: Color 1. [b1, g1, r1]
     @return: The color distance between them. 0 for same colors.
     """
+    c1 = [int(n) for n in c1]
+    c2 = [int(n) for n in c2]
     r = 2
     g = 1
     b = 0
