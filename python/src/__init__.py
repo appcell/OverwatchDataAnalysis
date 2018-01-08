@@ -6,7 +6,9 @@ import time
 
 import cv2
 import numpy as np
-from skimage.measure import compare_ssim as ssim
+import skimage
+from skimage import measure 
+# import measure.compare_ssim as ssim
 
 import image
 import overwatch
@@ -268,7 +270,7 @@ class KillfeedAnalyzer:
         @param image2:
         @return: The SSIM score of the two input images.
         """
-        s = ssim(image1, image2, multichannel=True)
+        s = measure.compare_ssim(image1, image2, multichannel=True)
         return s
 
     def _validate_edge(self, killfeed_image, title="default"):
