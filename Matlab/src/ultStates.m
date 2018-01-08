@@ -29,7 +29,6 @@ for i = 1:6
     xmin=34+(i-1)*70;
     ymin=11;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
-%     imshow(IRect);figure;imshow(visitingUlt);
     C=normxcorr2(visitingUlt,IRect);
     B=max(C(:));
     %to avoid possible explosion effect
@@ -43,8 +42,6 @@ for i=7:12
     xmin=835+(i-7)*70;
     ymin=11;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
-%     IRect=imcrop(IGray,[xmin+2,ymin+4,17,18]);
-%     imshow(IRect);figure;imshow(homeUlt);
     C=normxcorr2(homeUlt,IRect);
     B=max(C(:));
     if mean(IRect)>230

@@ -27,7 +27,7 @@ def analyze_video(video_loader, owgame):
         analyzer = FrameAnalyzer(frame, index, owgame)
         if index == 0:
             analyzer.set_team_color()
-        # analyzer.get_ultmate_list()
+        analyzer.get_ultmate_list()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
@@ -448,15 +448,15 @@ class UltimateSkillAnalyzer:
     def _match_ultimate_skill(template, ultimate_image, flag):
         assert flag in ['LEFT', 'RIGHT']
         if flag == 'LEFT':
-            resize = 0.6
+            resize = 1
             max_flash = 230
             min_flash = 196
-            max_weight = 0.9615
+            max_weight = 1
         else:
-            resize = 0.75
+            resize = 1
             max_flash = 160
             min_flash = 90
-            max_weight = 0.934
+            max_weight = 1
 
         template, ultimate_image = image.to_gray(cv2.resize(template,
                                                             None,
@@ -470,13 +470,15 @@ class UltimateSkillAnalyzer:
             weight = 1
 
         if weight > max_weight and flash > min_flash:
+            print True
             return True
+        print False
         return False
 
 
 if __name__ == '__main__':
     # path = '../../videos/SDvsNYXL_Preseason.mp4'
-    path = '../../videos/2.mp4'
+    path = '../../videos/1.mp4'
     game = overwatch.OverwatchGame(team1name="SHD", team2name="BU")
     video = video.VideoLoader(path)
     t = time.time()
@@ -484,4 +486,5 @@ if __name__ == '__main__':
     analyze_video(video, game)
     print "time:", time.time()-t
     video.close()
+    raw_input("Press Enter")
 
