@@ -105,6 +105,9 @@ class Sheet1:
         format_spec = self.config['format']
         result = [''] * len(self.config['title'])
         for k, v in format_spec.items():
+            if k in ['object hero', 'subject hero']:
+                data[k] = capitalize(data[k])
+
             if k in data:
                 result[v-1] = data[k]
         return result
@@ -160,3 +163,10 @@ def time_format(seconds):
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     return "%02d:%02d:%02d" % (h, m, s)
+
+
+def capitalize(s):
+    if s == 'dva':
+        return 'D. Va'
+    else:
+        return None if s is None else s.capitalize()
