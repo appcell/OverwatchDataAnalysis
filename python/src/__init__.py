@@ -23,11 +23,17 @@ def analyze_video(video_loader, owgame):
     killfeed_list = []
     index = 0
     frame = video_loader.get_frame(index)
+    _game = None
     while frame is not None:
         analyzer = FrameAnalyzer(frame, index, owgame)
         if index == 0:
             analyzer.set_team_color()
+<<<<<<< HEAD
         analyzer.get_ultmate_list()
+=======
+            _game = analyzer.game
+        # analyzer.get_ultmate_list()
+>>>>>>> 4475f6b4170e8df83612b49ca6d90c546f14c009
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
@@ -35,6 +41,7 @@ def analyze_video(video_loader, owgame):
         index += step
         frame = video_loader.get_frame(index)
     video_loader.close()
+    return GameData(killfeed_list, _game)
 
 
 class FrameAnalyzer:
@@ -56,8 +63,8 @@ class FrameAnalyzer:
         self.game = game
 
     def get_ultmate_list(self):
-        f = UltimateSkillAnalyzer(self.frame, self.fstruc, self.ultimate_icons, self.time)
-        return f.ultimate_match()
+        obj = UltimateSkillAnalyzer(self.frame, self.fstruc, self.ultimate_icons, self.time)
+        return obj.ultimate_match()
 
     def get_killfeed(self, killfeed_last=None):
         """
@@ -422,13 +429,13 @@ class UltimateSkillAnalyzer:
     def _get_player_ultimate_skill(self, skill_image, flag):
         assert flag in ['LEFT', 'RIGHT']
         result = []
-
+        r = 1 if flag == 'RIGHT' else 0
         for i in range(6):
             img = image.crop_by_limit(
                 skill_image,
                 self.fstruc.ULTIMATE_TOP_Y,
                 self.fstruc.ULTIMATE_HEIGHT,
-                i * self.fstruc.ULTIMATE_ITEM_X,
+                i * self.fstruc.ULTIMATE_ITEM_X + r,
                 self.fstruc.ULTIMATE_WIDTH,
                 )
             icons = self.ultimate_icons.ICONS.get(flag)
@@ -488,3 +495,8 @@ if __name__ == '__main__':
     video.close()
     raw_input("Press Enter")
 
+
+class GameData:
+    def __init__(self, killfeed_list, game):
+        self.killfeed_list = killfeed_list
+        self.game = game

@@ -129,7 +129,6 @@ class KillfeedIcons:
         self._width_1080p = 49
         self._height_1080p = 34
         self._icon_dic_1080p = KillfeedIcons._read_1080p_icons()
-
         ratio = frame_height*1.0/1080
         self.ICON_CHARACTER_WIDTH = int(round(self._width_1080p * ratio))
         self.ICON_CHARACTER_HEIGHT = int(round(self._height_1080p * ratio))
@@ -138,7 +137,7 @@ class KillfeedIcons:
 
     @staticmethod
     def _read_1080p_icons():
-        return {obj: image.read_img("./../../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
+        return {obj: image.read_img("../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
 
     def _get_resized_icons(self):
         """
@@ -187,24 +186,25 @@ class AbstractGameFrameStructure(object):
         self.ULTIMATE_ITEM_X = 70
 
     def check_abstract_fields(self):
-        if (
-            self.KILLFEED_TOP_Y is None or
-            self.KILLFEED_RIGHT_X is None or
-            self.KILLFEED_MAX_WIDTH is None or
-            self.KILLFEED_CHARACTER2_MAX_WIDTH is None
-            or
-            self.PLAYERS_STATUS_ZONE_X is None or
-            self.PLAYERS_STATUS_ZONE_Y is None or
-            self.PLAYERS_STATUS_ZONE_WIDTH is None or
-            self.PLAYERS_STATUS_ZONE_HEIGHT is None or
+        abstract_fields = [
+            self.KILLFEED_TOP_Y,
+            self.KILLFEED_RIGHT_X,
+            self.KILLFEED_MAX_WIDTH,
+            self.KILLFEED_CHARACTER2_MAX_WIDTH,
 
-            self.ULTIMATE_TOP_X_LEFT is None or
-            self.ULTIMATE_TOP_X_RIGHT is None or
-            self.ULTIMATE_TOP_Y is None or
-            self.ULTIMATE_WIDTH is None or
-            self.ULTIMATE_HEIGHT is None or
-            self.ULTIMATE_MAX_WIDTH is None
-        ):
+            self.PLAYERS_STATUS_ZONE_X,
+            self.PLAYERS_STATUS_ZONE_Y,
+            self.PLAYERS_STATUS_ZONE_WIDTH,
+            self.PLAYERS_STATUS_ZONE_HEIGHT,
+
+            self.ULTIMATE_TOP_X_LEFT,
+            self.ULTIMATE_TOP_X_RIGHT,
+            self.ULTIMATE_TOP_Y,
+            self.ULTIMATE_WIDTH,
+            self.ULTIMATE_HEIGHT,
+            self.ULTIMATE_MAX_WIDTH,
+        ]
+        if None in abstract_fields:
             raise NotImplementedError('Subclasses must define all abstract attributes of killfeeds')
 
 
