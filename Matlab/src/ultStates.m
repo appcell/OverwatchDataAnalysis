@@ -10,9 +10,10 @@ function [ults,ultsVar]= ultStates(oneFrame)
 
 %set the 2 different ult icons from visiting side and home side, and scale
 %them to compare with 720p video.
-visitingUlt=imresize(rgb2gray(imread('./../../images/visitingUlt.png')),0.6);
-homeUlt=imresize(rgb2gray(imread('./../../images/homeUlt.png')),0.75);
-
+% visitingUlt=imresize(rgb2gray(imread('./../../images/visitingUlt.png')),0.6);
+visitingUlt=imresize(imread('./../../images/visitingUlt.png'), 1);
+% homeUlt=imresize(rgb2gray(imread('./../../images/homeUlt.png')),0.75);
+homeUlt=imresize(imread('./../../images/homeUlt.png'),1);
 %initialize ults and ultsVar
 ults=[1:1:12];
 ultsVar=[1:1:12];
@@ -28,6 +29,7 @@ for i = 1:6
     xmin=34+(i-1)*70;
     ymin=11;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
+%     imshow(IRect);figure;imshow(visitingUlt);
     C=normxcorr2(visitingUlt,IRect);
     B=max(C(:));
     %to avoid possible explosion effect
@@ -38,9 +40,11 @@ for i = 1:6
 end
 %compare the home ults with home team members
 for i=7:12
-    xmin=839+(i-7)*70;
+    xmin=835+(i-7)*70;
     ymin=11;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
+%     IRect=imcrop(IGray,[xmin+2,ymin+4,17,18]);
+%     imshow(IRect);figure;imshow(homeUlt);
     C=normxcorr2(homeUlt,IRect);
     B=max(C(:));
     if mean(IRect)>230
