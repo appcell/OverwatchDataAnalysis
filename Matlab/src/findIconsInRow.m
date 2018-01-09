@@ -28,7 +28,7 @@ else
     end
     if charaRight.name ~= "empty"
         pos = charaRight.pos(1:2);
-        pos = pos + [charaRight.pos(3), 0] + [5 0];
+        pos = pos + [charaRight.pos(3), 0] + [5 1];
         color = Iright(pos(2), pos(1), :);
         colorTemp1 = abs(double(color1) - double(color));
         colorTemp2 = abs(double(color2) - double(color));

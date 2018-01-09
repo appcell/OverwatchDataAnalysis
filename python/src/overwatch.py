@@ -129,7 +129,7 @@ ULTIMATE_SKILL_DICT = {
 
 class UltimateSkillIcons:
     def __init__(self, frame_height=None):
-        self.ICONS = self._read_1080p_icons()
+        self.ICONS = self._read_720p_icons()
 
 
     @staticmethod
