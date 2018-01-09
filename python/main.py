@@ -6,19 +6,12 @@ from src import analyze_video
 import time
 
 
-def write_excel(game_data):
-    e = Excel()
-    e.sheet1.append(game_data)
-    e.save(filename='test')
-
-
 def main():
     path = '../videos/1.mp4'
     game = OverwatchGame(team1name="SHD", team2name="BU")
     video = VideoLoader(path)
-    game_data = analyze_video(video, game)
+    analyze_video(video, game, excel=Excel())
     video.close()
-    write_excel(game_data)
 
 
 if __name__ == '__main__':
