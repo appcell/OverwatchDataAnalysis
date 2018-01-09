@@ -81,10 +81,12 @@ end
 % fprintf('Killfeed analysis outputed to /results/killfeed.csv.\n');
 %% Ult states analysis
 
-for time = 152:0.5:195
+for time = 107:0.5:195
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2));
     [ults,ultsVar]= ultStates(Itemp);
+    
+    heroes = detectHeroOnField(Itemp);
     imshow(Itemp);
 end

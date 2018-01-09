@@ -457,10 +457,7 @@ class UltimateSkillAnalyzer:
             min_flash = 90
             max_weight = 1
 
-        template, ultimate_image = image.to_gray(cv2.resize(template,
-                                                            None,
-                                                            fx=resize,
-                                                            fy=resize)),\
+        template, ultimate_image = image.to_gray(template),\
                                    image.to_gray(ultimate_image)
         weight = cv2.matchTemplate(ultimate_image, template, cv2.TM_CCORR_NORMED).max()
         # to avoid possible explosion effect

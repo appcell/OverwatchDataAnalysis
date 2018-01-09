@@ -2,5 +2,6 @@
 /results
 /python/.idea
 /python/src/test.py
+/temp
 *.pyc
 *.orig

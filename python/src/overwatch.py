@@ -109,10 +109,10 @@ ULTIMATE_SKILL_DICT = {
 
 class UltimateSkillIcons:
     def __init__(self, frame_height=None):
-        self.ICONS = self._read_1080p_icons()
+        self.ICONS = self._read_720p_icons()
 
     @staticmethod
-    def _read_1080p_icons():
+    def _read_720p_icons():
         return {key: image.read_img("./../../images/" + value + ".png")
                 for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
 
