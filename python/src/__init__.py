@@ -30,12 +30,8 @@ def analyze_video(video_loader, owgame):
         analyzer = FrameAnalyzer(frame, index, owgame)
         if index == 0:
             analyzer.set_team_color()
-<<<<<<< HEAD
-        analyzer.get_ultmate_list()
-=======
             _game = analyzer.game
-        # analyzer.get_ultmate_list()
->>>>>>> 4475f6b4170e8df83612b49ca6d90c546f14c009
+            analyzer.get_ultmate_list()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
@@ -466,6 +462,7 @@ class UltimateSkillAnalyzer:
             max_flash = 160
             min_flash = 90
             max_weight = 1
+        
 
         template, ultimate_image = image.to_gray(cv2.resize(template,
                                                             None,

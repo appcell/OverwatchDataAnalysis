@@ -113,6 +113,7 @@ class UltimateSkillIcons:
 
     @staticmethod
     def _read_1080p_icons():
+        
         return {key: image.read_img("./../../images/" + value + ".png")
                 for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
 

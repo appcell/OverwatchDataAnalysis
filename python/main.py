@@ -13,7 +13,7 @@ def write_excel(game_data):
 
 
 def main():
-    path = '../videos/2.mp4'
+    path = '../videos/1.mp4'
     game = OverwatchGame(team1name="SHD", team2name="BU")
     video = VideoLoader(path)
     game_data = analyze_video(video, game)
