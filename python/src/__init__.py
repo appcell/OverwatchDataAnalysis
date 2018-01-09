@@ -1,7 +1,3 @@
-"""
-@Author: Xiaochen (leavebody) Li
-Partially adapted from Matlab code.
-"""
 import time
 
 import cv2
@@ -31,7 +27,7 @@ def analyze_video(video_loader, owgame):
         if index == 0:
             analyzer.set_team_color()
             _game = analyzer.game
-            analyzer.get_ultmate_list()
+        analyzer.get_ultimate_list()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
@@ -60,7 +56,7 @@ class FrameAnalyzer:
         #: The OverwatchGame object for this frame.
         self.game = game
 
-    def get_ultmate_list(self):
+    def get_ultimate_list(self):
         obj = UltimateSkillAnalyzer(self.frame, self.fstruc, self.ultimate_icons, self.time)
         return obj.ultimate_match()
 
@@ -482,17 +478,17 @@ class UltimateSkillAnalyzer:
         return False
 
 
-if __name__ == '__main__':
-    # path = '../../videos/SDvsNYXL_Preseason.mp4'
-    path = '../../videos/1.mp4'
-    game = overwatch.OverwatchGame(team1name="SHD", team2name="BU")
-    video = video.VideoLoader(path)
-    t = time.time()
+# if __name__ == '__main__':
+#     # path = '../../videos/SDvsNYXL_Preseason.mp4'
+#     path = '../../videos/1.mp4'
+#     game = overwatch.OverwatchGame(team1name="SHD", team2name="BU")
+#     video = video.VideoLoader(path)
+#     t = time.time()
 
-    analyze_video(video, game)
-    print "time:", time.time()-t
-    video.close()
-    raw_input("Press Enter")
+#     analyze_video(video, game)
+#     print "time:", time.time()-t
+#     video.close()
+#     raw_input("Press Enter")
 
 
 class GameData:
