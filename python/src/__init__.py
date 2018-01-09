@@ -472,9 +472,7 @@ class UltimateSkillAnalyzer:
             weight = 1
 
         if weight > max_weight:
-            print True
             return True
-        print False
         return False
 
 
