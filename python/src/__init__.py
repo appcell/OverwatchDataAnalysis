@@ -19,6 +19,7 @@ def analyze_video(video_loader, owgame):
     """
     step = int(round(video_loader.fps/2))
     killfeed_list = []
+    # index = int(video_loader.fps)*107
     index = 0
     frame = video_loader.get_frame(index)
     _game = None
@@ -34,9 +35,9 @@ def analyze_video(video_loader, owgame):
             print index/video_loader.fps, k
         index += step
         frame = video_loader.get_frame(index)
+
     video_loader.close()
     return GameData(killfeed_list, _game)
-
 
 class FrameAnalyzer:
     """
@@ -49,6 +50,8 @@ class FrameAnalyzer:
         """
         #: the frame to analyze
         self.frame = cv2.resize(frame, (1280, 720))  # Resize the image to 720p.
+        cv2.imshow('vid', self.frame)
+        cv2.waitKey(0)
         self.time = frame_time
         self.icons = overwatch.KillfeedIcons(720)
         self.ultimate_icons = overwatch.UltimateSkillIcons(720)
@@ -386,6 +389,7 @@ class UltimateSkillAnalyzer:
         self.fstruc = fstruc
         self.ultimate_icons = ultimate_icons
         self.time = int(round(frame_time / 30))
+        # print ultimate_icons
 
     def _player_status_image(self):
         return image.crop_by_limit(
@@ -418,12 +422,12 @@ class UltimateSkillAnalyzer:
     def ultimate_match(self):
         m = self._player_status_image()
         left, right = self._ultimate_image(m, 'LEFT'), self._ultimate_image(m, 'RIGHT')
-        return self._get_left_player_ultimate_skill(left) + self._get_right_player_ultimate_skill(right)
+        return self._get_left_player_ultimate_skill(m) + self._get_right_player_ultimate_skill(m)
 
     def _get_player_ultimate_skill(self, skill_image, flag):
         assert flag in ['LEFT', 'RIGHT']
         result = []
-        r = 1 if flag == 'RIGHT' else 0
+        r = self.fstruc.ULTIMATE_TOP_X_LEFT if flag == 'LEFT' else self.fstruc.ULTIMATE_TOP_X_RIGHT
         for i in range(6):
             img = image.crop_by_limit(
                 skill_image,
@@ -433,6 +437,7 @@ class UltimateSkillAnalyzer:
                 self.fstruc.ULTIMATE_WIDTH,
                 )
             icons = self.ultimate_icons.ICONS.get(flag)
+
             if self._match_ultimate_skill(icons, img, flag):
                 result.append(True)
             else:
@@ -449,29 +454,24 @@ class UltimateSkillAnalyzer:
     def _match_ultimate_skill(template, ultimate_image, flag):
         assert flag in ['LEFT', 'RIGHT']
         if flag == 'LEFT':
-            resize = 1
             max_flash = 230
             min_flash = 196
-            max_weight = 1
+            max_weight = 0.5
         else:
-            resize = 1
-            max_flash = 160
+            max_flash = 230
             min_flash = 90
-            max_weight = 1
+            max_weight = 0.5
         
-
-        template, ultimate_image = image.to_gray(cv2.resize(template,
-                                                            None,
-                                                            fx=resize,
-                                                            fy=resize)),\
+        template, ultimate_image = image.to_gray(template),\
                                    image.to_gray(ultimate_image)
-        weight = cv2.matchTemplate(ultimate_image, template, cv2.TM_CCORR_NORMED).max()
+        weight = cv2.matchTemplate(ultimate_image, template, cv2.TM_CCOEFF_NORMED).max()
+
         # to avoid possible explosion effect
         flash = np.mean(ultimate_image)
         if flash > max_flash:
             weight = 1
 
-        if weight > max_weight and flash > min_flash:
+        if weight > max_weight:
             print True
             return True
         print False
