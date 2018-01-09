@@ -111,9 +111,10 @@ class UltimateSkillIcons:
     def __init__(self, frame_height=None):
         self.ICONS = self._read_720p_icons()
 
+
     @staticmethod
-    def _read_720p_icons():
-        return {key: image.read_img("./../../images/" + value + ".png")
+    def _read_1080p_icons():
+        return {key: image.read_img("./../images/" + value + ".png")
                 for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
 
     def _get_resized_icons(self):
@@ -221,11 +222,11 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.PLAYERS_STATUS_ZONE_HEIGHT = 60
         self.PLAYERS_STATUS_ZONE_WIDTH = 1280
 
-        self.ULTIMATE_TOP_X_LEFT = 37
-        self.ULTIMATE_TOP_X_RIGHT = 833
-        self.ULTIMATE_TOP_Y = 6
+        self.ULTIMATE_TOP_X_LEFT = 34
+        self.ULTIMATE_TOP_X_RIGHT = 835
+        self.ULTIMATE_TOP_Y = 11
         self.ULTIMATE_HEIGHT = 26
-        self.ULTIMATE_WIDTH = 26
+        self.ULTIMATE_WIDTH = 30
         self.ULTIMATE_MAX_WIDTH = self.ULTIMATE_ITEM_X * 6
 
 
