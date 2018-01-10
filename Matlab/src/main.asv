@@ -100,14 +100,10 @@ for time = 48.5:0.5:310
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2));
+    [ults,ultsVar]= ultStates(Itemp);
+    imshow(Itemp);
     charas = detectCharasOnField(Itemp, charaNamesArr, charaIconsArr);
 
-    if isGameRunning(Itemp, charas) && isReplay(Itemp)
-        [ults,ultsVar]= ultStates(Itemp);
-        % bla bla...
-    end
-    
-    imshow(Itemp);
-
+    if 
 end
 
