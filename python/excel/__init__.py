@@ -25,12 +25,16 @@ class Excel(object):
         self.sheet1.save()
         self._wb.save('{}.{}'.format(filename, postfix))
 
+    def append(self, data, sheet_name):
+        self.__dict__[sheet_name].append(data)
+
 
 class Sheet1:
     def __init__(self, wb):
         self._wb = wb
         self.config = {}
         self.sheet = self._init_sheet()
+        self.ultimate_status = {i: False for i in range(1, 13)}
 
     def _init_sheet(self):
         sheet = self._wb['sheet1']
@@ -51,6 +55,8 @@ class Sheet1:
             # 将 KillFeed 类的属性转换成输出格式
             # 比如说 character1 ——> subject player
             {'change': sheet1_config.API_CHANGE_CONFIG},
+            # 存放队伍的颜色
+            {'color': {'team1': None, 'team2': None, 'status': False}},
         ]
         for d in lt:
             self.config.update(d)
@@ -104,8 +110,9 @@ class Sheet1:
         data['time'] = time_format(data['time'] / 30)
         format_spec = self.config['format']
         result = [''] * len(self.config['title'])
+
         for k, v in format_spec.items():
-            if k in ['object hero', 'subject hero']:
+            if k in ['object hero', 'subject hero'] and k in data:
                 data[k] = capitalize(data[k])
 
             if k in data:
@@ -137,7 +144,6 @@ class Sheet1:
                     value 必须为 aRGB hex
         :return: None
         """
-        # 这里假设 OverwatchGame
         kwargs = self._cell_color_config(kwargs)
         result = self._format(kwargs)
         self.sheet.append(result)
@@ -145,17 +151,45 @@ class Sheet1:
     def append(self, game_data):
         """
         解析 GameData, 并添加到 sheet 中
-        考虑到表格的模板，东西都会在 killfeed 中。
-        因此我这么写
-        由于英雄识别还没出，所以我暂时先不处理颜色。
-        :param gama_data: 一个 GameData 类，聚合了各种数据
-        :return: None
+        """
+        self._killfeed_append(game_data)
+        self._ultimate_append(game_data)
+
+    def _killfeed_append(self, game_data):
+        """
+        将 killfeed 中的属性替换成 change 中的，并添加到表中
         """
         change = self.config['change']
-        for obj in game_data.killfeed_list:
-            d = {}
+        d = {}
+        for obj in game_data.killfeed:
             for r in change.keys():
                 d[change[r]] = obj.__dict__[r]
+            self._append(**d)
+
+    def _ultimate_append(self, game_data):
+        """
+        判断此时的大招是否为刚充满，并将刚充满大招的选手名输出
+        """
+        ultimate = game_data.ultimate.ultimate
+        status = self.ultimate_status
+        true_list, false_list = ultimate['True'], ultimate['False']
+        result = []
+        for i in true_list:
+            if status[i] is False:
+                result.append(i)
+                status[i] = True
+
+        for i in false_list:
+            # 以后可能要扩展成判断大招是否释放，不过这里先写死
+            status[i] = False
+
+        for i in result:
+            d = {
+                'action': 'ult ready',
+                'time': game_data.ultimate.time,
+                'subject player': i,
+            }
+            d.update(utlis_color(game_data, self.config['color'], 'subject player', i))
             self._append(**d)
 
 
@@ -170,3 +204,19 @@ def capitalize(s):
         return 'D. Va'
     else:
         return None if s is None else s.capitalize()
+
+
+def utlis_color(game_data, config, name, value):
+    game = game_data.game
+    if config['status'] is False:
+        config['team1'], config['team2'] = to_hex(*game.color_team1), to_hex(*game.color_team2)
+        config['status'] = True
+    color = config['team1'] if value <= 6 else config['team2']
+    return {'_$color': {name: color}}
+
+
+def to_hex(r, g, b):
+    if (int(r) + int(g) + int(b))/3 < 90:
+        return 'FFFFFF'
+    else:
+        return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:]

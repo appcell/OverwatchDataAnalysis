@@ -95,6 +95,26 @@ class KillFeed:
         result += "time: "+str(self.time)
         return result
 
+
+class UltimateSkill:
+    def __init__(self, time, ultimate_list):
+        self.time = time
+        self.ultimate = self.new_ultimate(ultimate_list)
+
+    @staticmethod
+    def new_ultimate(ultimate):
+        d = {
+            'True': [],
+            'False': [],
+        }
+        for i, s in enumerate(ultimate):
+            if s is True:
+                d['True'].append(i + 1)
+            else:
+                d['False'].append(i + 1)
+        return d
+
+
 # Killfeed events in overwatch.
 ELIMINATION = "elimination"
 SUICIDE = "suicide"

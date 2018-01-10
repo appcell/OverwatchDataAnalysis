@@ -11,7 +11,7 @@ import overwatch
 import video
 
 
-def analyze_video(video_loader, owgame):
+def analyze_video(video_loader, owgame, excel):
     """
     Analyze the killfeed of an video.
     @param video_loader: a video.VideoLoader object
@@ -28,16 +28,20 @@ def analyze_video(video_loader, owgame):
         if index == 0:
             analyzer.set_team_color()
             _game = analyzer.game
-        analyzer.get_ultimate_list()
+        ultimate = analyzer.get_ultimate()
         new_killfeeds = analyzer.get_killfeed(killfeed_list[-1] if len(killfeed_list) > 0 else None)
+
+        g = GameData(new_killfeeds, _game, ultimate)
+        excel.append(g, 'sheet1')
+
         killfeed_list.extend(new_killfeeds)
         for k in new_killfeeds:
             print index/video_loader.fps, k
         index += step
         frame = video_loader.get_frame(index)
-
+    excel.save()
     video_loader.close()
-    return GameData(killfeed_list, _game)
+
 
 class FrameAnalyzer:
     """
@@ -50,8 +54,6 @@ class FrameAnalyzer:
         """
         #: the frame to analyze
         self.frame = cv2.resize(frame, (1280, 720))  # Resize the image to 720p.
-        cv2.imshow('vid', self.frame)
-        cv2.waitKey(0)
         self.time = frame_time
         self.icons = overwatch.KillfeedIcons(720)
         self.ultimate_icons = overwatch.UltimateSkillIcons(720)
@@ -59,9 +61,9 @@ class FrameAnalyzer:
         #: The OverwatchGame object for this frame.
         self.game = game
 
-    def get_ultimate_list(self):
+    def get_ultimate(self):
         obj = UltimateSkillAnalyzer(self.frame, self.fstruc, self.ultimate_icons, self.time)
-        return obj.ultimate_match()
+        return overwatch.UltimateSkill(self.time, obj.ultimate_match())
 
     def get_killfeed(self, killfeed_last=None):
         """
@@ -400,29 +402,10 @@ class UltimateSkillAnalyzer:
             self.fstruc.PLAYERS_STATUS_ZONE_WIDTH,
         )
 
-    def _ultimate_image(self, player_status_image, flag):
-        assert flag in ['LEFT', 'RIGHT']
-        if flag == 'LEFT':
-            return image.crop_by_limit(
-                player_status_image,
-                self.fstruc.ULTIMATE_TOP_Y,
-                self.fstruc.ULTIMATE_HEIGHT,
-                self.fstruc.ULTIMATE_TOP_X_LEFT,
-                self.fstruc.ULTIMATE_MAX_WIDTH,
-            )
-        else:
-            return image.crop_by_limit(
-                player_status_image,
-                self.fstruc.ULTIMATE_TOP_Y,
-                self.fstruc.ULTIMATE_HEIGHT,
-                self.fstruc.ULTIMATE_TOP_X_RIGHT,
-                self.fstruc.ULTIMATE_MAX_WIDTH,
-            )
-
     def ultimate_match(self):
         m = self._player_status_image()
-        left, right = self._ultimate_image(m, 'LEFT'), self._ultimate_image(m, 'RIGHT')
-        return self._get_left_player_ultimate_skill(m) + self._get_right_player_ultimate_skill(m)
+        result = self._get_player_ultimate_skill(m, 'LEFT') + self._get_player_ultimate_skill(m, 'RIGHT')
+        return result
 
     def _get_player_ultimate_skill(self, skill_image, flag):
         assert flag in ['LEFT', 'RIGHT']
@@ -437,30 +420,13 @@ class UltimateSkillAnalyzer:
                 self.fstruc.ULTIMATE_WIDTH,
                 )
             icons = self.ultimate_icons.ICONS.get(flag)
-
-            if self._match_ultimate_skill(icons, img, flag):
-                result.append(True)
-            else:
-                result.append(False)
+            result.append(self._match_ultimate_skill(icons, img))
         return result
 
-    def _get_left_player_ultimate_skill(self, skill_image):
-        return self._get_player_ultimate_skill(skill_image, 'LEFT')
-
-    def _get_right_player_ultimate_skill(self, skill_image):
-        return self._get_player_ultimate_skill(skill_image, 'RIGHT')
-
     @staticmethod
-    def _match_ultimate_skill(template, ultimate_image, flag):
-        assert flag in ['LEFT', 'RIGHT']
-        if flag == 'LEFT':
-            max_flash = 230
-            min_flash = 196
-            max_weight = 0.5
-        else:
-            max_flash = 230
-            min_flash = 90
-            max_weight = 0.5
+    def _match_ultimate_skill(template, ultimate_image):
+        max_flash = 230
+        max_weight = 0.5
         
         template, ultimate_image = image.to_gray(template),\
                                    image.to_gray(ultimate_image)
@@ -490,6 +456,7 @@ class UltimateSkillAnalyzer:
 
 
 class GameData:
-    def __init__(self, killfeed_list, game):
-        self.killfeed_list = killfeed_list
+    def __init__(self, killfeed, game, ultimate):
+        self.killfeed = killfeed
         self.game = game
+        self.ultimate = ultimate
