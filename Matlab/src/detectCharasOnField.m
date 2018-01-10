@@ -1,7 +1,4 @@
 function charaOnField = detectCharasOnField(oneFrame, charaNamesArr, charaIconsArr)
-
-
-
 charaOnField = {};
 width = 38;
 height = 30;
@@ -29,7 +26,12 @@ for i = 1:6
         judgeGray(j) = corr;
     end
     [r2,c2] = find(judgeGray == max(judgeGray));
-    charaOnField{i} = charaNamesArr{c2};
+    if isCharaDead(charaIcon, bgimage, c2, charaIconsArr);
+        charaOnField{i} = "dead";
+    else
+        charaOnField{i} = charaNamesArr{c2};
+    end
+    
 end
 
 %% right
@@ -55,7 +57,35 @@ for i = 1:6
         judgeGray(j) = corr;        
     end
     [r2,c2] = find(judgeGray == max(judgeGray));
-    charaOnField{i+6} = charaNamesArr{c2};
+    if isCharaDead(charaIcon, bgimage, c2, charaIconsArr);
+        charaOnField{i+6} = "dead";
+    else
+        charaOnField{i+6} = charaNamesArr{c2};
+    end
 end
 
+end
+
+
+function res = isCharaDead(charaIcon, bgimage, c2, charaIconsArr)
+    tmpImg = imcrop(charaIcon, [0,4,size(charaIcon,2)-4, size(charaIcon,1)-7]);
+    currentStd = max(max(std(double(tmpImg))));
+
+    if currentStd < 100
+        icon = charaIconsArr{c2, 1};
+        alpha = charaIconsArr{c2, 2};
+        fusedIcon = uint8(icon.*(alpha/255) + bgimage.*((255-alpha)/255)); 
+        current = mean(tmpImg, 3);
+        currentD = max(current(:)) - min(current(:));
+        original = mean(fusedIcon, 3);
+        originalD = max(original(:)) - min(original(:));
+
+        if abs(originalD - currentD) > 45
+            res = 1;
+        else
+            res = 0;
+        end
+    else
+         res = 0;
+    end
 end

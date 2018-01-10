@@ -1,9 +1,9 @@
-
+clc;
 close all;
 clear;
 
 %% File read-in
-v = VideoReader('./../../videos/lav_vs_gla_game4_1_point_a.mp4');
+v = VideoReader('./../../videos/lav_vs_gla_game4_1_point_c.mp4');
 % Killfeed icons read-in
 killfeedCharaNamesArr = ["ana", "bastion", "doomfist", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "riptire", "roadhog", "soldier76", "sombra", "symmetra", "torbjon", "tracer", "widowmaker", "winston", "zarya", "zenyatta", "meka", "shield", "supercharger", "teleporter", "turret"];
 killfeedCharaIconsArr = {};
@@ -96,11 +96,12 @@ fprintf('Killfeed analysis outputed to /results/killfeed.csv.\n');
 
 %% Ult states analysis
 
-for time = 107:0.5:195
+for time = 92.8:0.5:310
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2));
     [ults,ultsVar]= ultStates(Itemp);
-    charas = detectCharasOnField(Itemp, charaNamesArr, charaIconsArr);
-%     imshow(Itemp);
+    imshow(Itemp);
+    charas = detectCharasOnField(Itemp, charaNamesArr, charaIconsArr)
 end
+
