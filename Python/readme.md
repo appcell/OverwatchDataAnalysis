@@ -6,21 +6,13 @@ If you desire to contribute to ORA or modify ORA code for your own usage, you mi
 
 ```
 .
-
 |-- src                  # directory of all source codes
-
 |---- __init__.py        # entry point, with version info etc.
-
-|---- core.py            # main process of video analysis, retrieving each frame and analyze with a loop
-
+|---- core.py            # main process of video analysis, retrieves each frame then analyzes with a loop
 |---- chara.py           # class Chara
-
 |---- frame.py           # class Frame
-
 |---- gamedata.py        # class GameData
-
 |---- killfeed.py        # class KillFeed
-
 |---- overwatchui.py     # class OverwatchUI
 ```
 
