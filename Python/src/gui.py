@@ -1,4 +1,9 @@
+# coding: utf-8
+import threading
+import time
+import tkMessageBox
 import tkFileDialog as filedialog
+from request import json_request
 from Tkinter import (Tk,
                      Frame, Message, Button, Entry,
                      X, LEFT, RIGHT)
@@ -42,6 +47,9 @@ class Top(object):
         # left
         self.left_frame = Frame(self.player)
         self.left_frame.pack(side=LEFT)
+        self.left_team_name = Entry(self.left_frame, bg='pink', fg='black')
+        self.left_team_name.insert(0, 'A队')
+        self.left_team_name.pack()
         for i in range(1, 7):
             e = Entry(self.left_frame, bg='red', fg='white')
             name = 'Player' + str(i)
@@ -50,6 +58,9 @@ class Top(object):
         # right
         self.right_frame = Frame(self.player)
         self.right_frame.pack(side=RIGHT)
+        self.right_team_name = Entry(self.right_frame, bg='lightBlue', fg='black')
+        self.right_team_name.insert(0, 'B队')
+        self.right_team_name.pack()
         for i in range(7, 13):
             e = Entry(self.right_frame, bg='blue', fg='white')
             name = 'Player' + str(i)
@@ -59,6 +70,10 @@ class Top(object):
         # run
         self.run_btn = Button(self.root, text="Analyze", command=self.run)
         self.run_btn.pack()
+
+        # check for update
+        self.t = threading.Thread(target=self.check_update)
+        self.t.start()
 
     def click_btn(self, method):
         filename = filedialog.askopenfilename(initialdir='/')
@@ -73,11 +88,20 @@ class Top(object):
     def click_read(self):
         self.click_btn('read')
 
+    def check_update(self):
+        time.sleep(5)
+        version = {'name': 'ORA OWL', 'current_version': '0.1'}
+        json_data =  json_request()
+        if version['current_version'] == json_data['current_version']:
+            pass
+        else:
+            tkMessageBox.showinfo('版本更新', '有新版本，请更新')
+
     def show(self):
         self.root.mainloop()
 
     def run(self):
-        pass
+        tkMessageBox.showinfo('一个微小的弹窗', '保存成功！')
 
 
 def main():
