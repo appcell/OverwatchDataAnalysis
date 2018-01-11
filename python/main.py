@@ -7,7 +7,7 @@ import time
 
 
 def main():
-    path = '../videos/1.mp4'
+    path = '../videos/2.mp4'
     game = OverwatchGame(team1name="SHD", team2name="BU")
     video = VideoLoader(path)
     analyze_video(video, game, excel=Excel())

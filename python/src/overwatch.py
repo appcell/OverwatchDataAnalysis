@@ -131,9 +131,8 @@ class UltimateSkillIcons:
     def __init__(self, frame_height=None):
         self.ICONS = self._read_720p_icons()
 
-
     @staticmethod
-    def _read_1080p_icons():
+    def _read_720p_icons():
         return {key: image.read_img("./../images/" + value + ".png")
                 for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
 
@@ -234,7 +233,7 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         AbstractGameFrameStructure.__init__(self, frame_height)
         self.KILLFEED_TOP_Y = 116
         self.KILLFEED_RIGHT_X = 1270
-        self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure at this number.
+        self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure about this number.
         self.KILLFEED_CHARACTER2_MAX_WIDTH = 140
 
         self.PLAYERS_STATUS_ZONE_X = 0
