@@ -96,13 +96,13 @@ end
 
 %% Topbar analysis
 
-for time = 48.5:0.5:310
+for time = 40.5:0.5:310
     v.CurrentTime = time;
     Itemp = readFrame(v);
     Itemp = imresize(Itemp, 1280/size(Itemp, 2));
     charas = detectCharasOnField(Itemp, charaNamesArr, charaIconsArr);
 
-    if isGameRunning(Itemp, charas) && isReplay(Itemp)
+    if isGameRunning(Itemp, charas) && (~isReplay(Itemp))
         [ults,ultsVar]= ultStates(Itemp);
         % bla bla...
     end
