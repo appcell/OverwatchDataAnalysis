@@ -22,12 +22,11 @@ width=30;
 height=26;
 
 %crop the top lines for detection
-I=imcrop(oneFrame,[0,40,1280,60]);
-IGray=rgb2gray(I);
+IGray=rgb2gray(oneFrame);
 %compare the visiting ults with visiting team members
 for i = 1:6
     xmin=34+(i-1)*70;
-    ymin=11;
+    ymin=51;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
     C=normxcorr2(visitingUlt,IRect);
     B=max(C(:));
@@ -40,7 +39,7 @@ end
 %compare the home ults with home team members
 for i=7:12
     xmin=835+(i-7)*70;
-    ymin=11;
+    ymin=51;
     IRect=imcrop(IGray,[xmin,ymin,width,height]);
     C=normxcorr2(homeUlt,IRect);
     B=max(C(:));

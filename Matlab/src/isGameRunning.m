@@ -6,12 +6,12 @@ function flag = isGameRunning(oneFrame, charas)
         end
     end
     
-    topLeftCorner = imcrop(Itemp,[1,1,70,15]);
+    topLeftCorner = imcrop(oneFrame,[1,1,70,15]);
     currentStd = max(max(std(double(topLeftCorner))));
     currentMean = mean(double(topLeftCorner(:)));
     if currentStd < 3 && currentMean > 230
-        flag = 0;
-    else
         flag = 1;
+    else
+        flag = 0;
     end
 end
