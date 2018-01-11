@@ -1,6 +1,6 @@
 # ORA (Python) Structure Conventions
 
-If you desire to contribute to ORA or modify ORA code for your own usage, you might need to know about our code.
+__If you desire to contribute to ORA or modify ORA code for your own usage, you might need to know about our code.__
 
 ## Directory & file structure
 
@@ -22,6 +22,8 @@ Core of ORA(Python) consists of 5 classes:
 
 `Chara`, `Frame`, `Killfeed`, `OverwatchUI`, `GameData`
 
+---
+
 ### class Chara
 
 Location: `src/chara.py`
@@ -36,6 +38,8 @@ Class `Chara` is for storing and retrieving data from topbar. It contains info o
 * Other info which can be extracted from topbar
 
 And corresponding `get`/`set` methods.
+
+---
 
 ### class Killfeed
 
@@ -54,6 +58,8 @@ And corresponding `get`/`set` methods.
 
 A `Killfeed` object contains 0-6 `KillfeedRow` objects, with methods cutting off the loop of killfeed analysis when required (e.g. when current killfeed row was repeated in previous frame).
 
+---
+
 ### class `Frame`
 
 Location: `src/frame.py`
@@ -66,6 +72,8 @@ Class `Frame` is for storing and outputting info in ONE FRAME. A `Frame` object 
 
 With get/set methods and another method for writing all info into a GameData object.
 
+---
+
 ### class `GameData`
 
 Location: `src/gamedata.py`
@@ -77,6 +85,8 @@ Class `GameData` contains all info retrieved from the video and user input, incl
 * Output of all `Frame` objects generated during analysis
 
 And a method for outputting all info to JSON/Excel in file system.
+
+---
 
 ### class `OverwatchUI`
 
