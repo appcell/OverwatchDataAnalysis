@@ -1,9 +1,9 @@
 """
 @Author: Xiaochen (leavebody) Li 
 """
-import image
+import util
 import cv2
-from abc import ABCMeta, abstractmethod, abstractproperty
+from util import singleton
 
 
 ANA = "ana"
@@ -55,12 +55,21 @@ KILLFEED_OBJECT_LIST = CHARACTER_LIST + NON_CHARACTER_OBJECT_LIST
 #: The max number of killfeeds in a screen in the same time.
 KILLFEED_ITEM_MAX_COUNT_IN_SCREEN = 6
 
+class Frame:
+    """
+    Data retrieved from a frame.
+    """
+    def __init__(self):
+        self.is_valid = False
+        self.charas = None
+        self.killfeeds = None
 
-class KillFeed:
+
+class Killfeed:
     """
     A killfeed entry.
     """
-    def __init__(self, file_id, time=None, character1=None, character2=None, team1=None, team2=None, event=None):
+    def __init__(self, file_id, time=0, character1="", character2="", team1="", team2="", event=""):
         self.file_id = file_id
         self.time = time
         self.team1 = team1
@@ -96,6 +105,26 @@ class KillFeed:
         return result
 
 
+class Chara:
+    """
+    Info of ONE player in the player zone in ONE frame
+    """
+    def __init__(self, player=None):
+        self.time = None
+        #: the player name
+        self.player = player
+        #: the character that this player is playing
+        self.character = None
+        #: whether this player has ultimate ability now
+        self.ultimate_status = None
+
+        # todo: future work
+        self.is_observed = None  # is the daddy camera watching this guy?
+        self.health = None
+        self.ultimate_charge = None
+        self.is_onfire = None
+
+
 class UltimateSkill:
     def __init__(self, time, ultimate_list):
         self.time = time
@@ -127,19 +156,21 @@ ULTIMATE_SKILL_DICT = {
 }
 
 
+@singleton
 class UltimateSkillIcons:
     def __init__(self, frame_height=None):
         self.ICONS = self._read_720p_icons()
 
     @staticmethod
     def _read_720p_icons():
-        return {key: image.read_img("./../images/" + value + ".png")
+        return {key: util.read_img("./../images/" + value + ".png")
                 for (key, value) in ULTIMATE_SKILL_DICT.iteritems()}
 
     def _get_resized_icons(self):
         pass
 
 
+@singleton
 class KillfeedIcons:
     def __init__(self, frame_height=1080):
         """
@@ -148,16 +179,15 @@ class KillfeedIcons:
         """
         self._width_1080p = 49
         self._height_1080p = 34
-        self._icon_dic_1080p = KillfeedIcons._read_1080p_icons()
+        self._icon_dic_1080p = self._read_1080p_icons()
         ratio = frame_height*1.0/1080
         self.ICON_CHARACTER_WIDTH = int(round(self._width_1080p * ratio))
         self.ICON_CHARACTER_HEIGHT = int(round(self._height_1080p * ratio))
 
         self.ICONS_CHARACTER = self._get_resized_icons()
 
-    @staticmethod
-    def _read_1080p_icons():
-        return {obj: image.read_img("../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
+    def _read_1080p_icons(self):
+        return {obj: util.read_img("../../images/icons/" + obj + ".png") for obj in KILLFEED_OBJECT_LIST}
 
     def _get_resized_icons(self):
         """
@@ -188,11 +218,14 @@ class AbstractGameFrameStructure(object):
     #: The max width of the second character's icon and name in the killfeed.
     KILLFEED_CHARACTER2_MAX_WIDTH = None
 
-    PLAYERS_STATUS_ZONE_X = None
-    PLAYERS_STATUS_ZONE_Y = None
-    PLAYERS_STATUS_ZONE_WIDTH = None
-    PLAYERS_STATUS_ZONE_HEIGHT = None
+    PLAYER_ZONE_TEAM1_LEFT_X = None
+    PLAYER_ZONE_TEAM2_LEFT_X = None
+    PLAYER_ZONE_WIDTH = None
+    PLAYER_ZONE_HORIZONTAL_STEP = None
+    PLAYER_ZONE_TOP_Y = None
+    PLAYER_ZONE_HEIGHT = None
 
+    # todo need to delete/switch these constants after this refactor
     ULTIMATE_TOP_X_LEFT = None
     ULTIMATE_TOP_X_RIGHT = None
     ULTIMATE_TOP_Y = None
@@ -212,10 +245,12 @@ class AbstractGameFrameStructure(object):
             self.KILLFEED_MAX_WIDTH,
             self.KILLFEED_CHARACTER2_MAX_WIDTH,
 
-            self.PLAYERS_STATUS_ZONE_X,
-            self.PLAYERS_STATUS_ZONE_Y,
-            self.PLAYERS_STATUS_ZONE_WIDTH,
-            self.PLAYERS_STATUS_ZONE_HEIGHT,
+            self.PLAYER_ZONE_TEAM1_LEFT_X,
+            self.PLAYER_ZONE_TEAM2_LEFT_X,
+            self.PLAYER_ZONE_WIDTH,
+            self.PLAYER_ZONE_HORIZONTAL_STEP,
+            self.PLAYER_ZONE_TOP_Y,
+            self.PLAYER_ZONE_HEIGHT,
 
             self.ULTIMATE_TOP_X_LEFT,
             self.ULTIMATE_TOP_X_RIGHT,
@@ -228,6 +263,7 @@ class AbstractGameFrameStructure(object):
             raise NotImplementedError('Subclasses must define all abstract attributes of killfeeds')
 
 
+@singleton
 class OWLFrameStructure(AbstractGameFrameStructure):
     def __init__(self, frame_height=720):
         AbstractGameFrameStructure.__init__(self, frame_height)
@@ -236,10 +272,12 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.KILLFEED_MAX_WIDTH = 350  # TODO Not very sure about this number.
         self.KILLFEED_CHARACTER2_MAX_WIDTH = 140
 
-        self.PLAYERS_STATUS_ZONE_X = 0
-        self.PLAYERS_STATUS_ZONE_Y = 40
-        self.PLAYERS_STATUS_ZONE_HEIGHT = 60
-        self.PLAYERS_STATUS_ZONE_WIDTH = 1280
+        self.PLAYER_ZONE_TEAM1_LEFT_X = 20
+        self.PLAYER_ZONE_TEAM2_LEFT_X = 827
+        self.PLAYER_ZONE_WIDTH = 81
+        self.PLAYER_ZONE_HORIZONTAL_STEP = 71.4
+        self.PLAYER_ZONE_TOP_Y = 47
+        self.PLAYER_ZONE_HEIGHT = 51
 
         self.ULTIMATE_TOP_X_LEFT = 34
         self.ULTIMATE_TOP_X_RIGHT = 835
@@ -248,15 +286,3 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.ULTIMATE_WIDTH = 30
         self.ULTIMATE_MAX_WIDTH = self.ULTIMATE_ITEM_X * 6
 
-
-class OverwatchGame:
-    """
-    Holds the basic information of a game.
-    """
-    def __init__(self, team1name, team2name):
-        #: The name of both team.
-        self.name_team1 = team1name
-        self.name_team2 = team2name
-        #: The theme color of both team. In format [b,g,r] and each color is in [0,256).
-        self.color_team1 = None
-        self.color_team2 = None
