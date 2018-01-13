@@ -20,9 +20,11 @@ if size(eventList, 1) > 1
     end
 else
     for i = 1:6
-        charasRow = findIconsInRow(i, Itemp, charaNamesArr, iconsArr);
+        [charasRow, ability, assist] = findIconsInRow(i, Itemp, charaNamesArr, iconsArr);
         charas{end+1, 1} = charasRow{1};
         charas{end, 2} = charasRow{2};
+        charas{end, 3} = ability;
+        charas{end, 4} = assist;
         if charasRow{1}.name == "empty" && charasRow{2}.name == "empty" && i>1
             break;
         end

@@ -1,4 +1,4 @@
-function charas = findIconsInRow(rowNum, Itemp, charaNamesArr, iconsArr)
+function [charas, ability, assist] = findIconsInRow(rowNum, Itemp, charaNamesArr, iconsArr)
 
 Ileft = imcrop(Itemp, [963, 110 + (rowNum-1)*35 - 1, 205, 37]);
 Iright = imcrop(Itemp, [1130, 110 + (rowNum-1)*35 - 1, 115, 37]);
@@ -60,8 +60,19 @@ else
     end
     charas = {charaLeft, charaRight};
     
+%%  To find the assist and ability  
+    if (charaRight.pos(1)+1130-(charaLeft.pos(1)+charaLeft.pos(3)+963)>45)
+        [ability,assist,assistNum]=assistAndAbility(charaLeft, charaRight,rowNum, Itemp);
+    else
+        ability ={"empty",0}; %the first item is hero's Name, second is ability id
+        assistNum = 0;
+        assist = {"empty","empty","empty","empty","empty"};
+    end
+    
     
 end
+
+
 
 end
 
