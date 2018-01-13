@@ -2,6 +2,7 @@
 @Author: Xiaochen (leavebody) Li 
 """
 import cv2
+import numpy as np
 from math import sqrt
 
 
@@ -52,6 +53,31 @@ def to_gray(img):
 
 def crop_by_limit(img, y, h, x, w):
     return img[y: y + h, x: x + w]
+
+
+def read_unchanged_img(img):
+    """
+    :param img: img path
+    :return: (img, alpha)
+    """
+    img = cv2.imread(img, cv2.IMREAD_UNCHANGED)
+    b, g, r, alpha = cv2.split(img)
+    return cv2.merge((b, g, r)), alpha
+
+
+def mean_rgb(img):
+    """
+    tmp = np.array([1, 2, 3])
+    mean_rgb == np.mean(tmp)
+    :param img: image
+    :return: array
+    """
+    height, width, _ = img.shape
+    result = np.zeros((height, width))
+    for i in range(height):
+        for j in range(width):
+            result[i, j] = np.mean(img[i, j])
+    return result
 
 
 def color_distance(c1, c2):

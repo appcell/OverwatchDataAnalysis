@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 @Author: Xiaochen (leavebody) Li 
 """
@@ -200,6 +201,31 @@ class KillfeedIcons:
                 for (obj, img) in self._icon_dic_1080p.iteritems()}
 
 
+@singleton
+class CharacterIcons:
+    def __init__(self):
+        self.icons_and_alpha = self._read_720p_icons_and_alpha()
+        # cv2.resize 处理不了无穷小数 (如1280/1920) 因此这里的 width height 先写死
+        self._width = 38
+        self._height = 30
+        self.icon_and_alpha_to_resize = self._get_resized_icons_and_alpha()
+
+    @staticmethod
+    def _read_720p_icons_and_alpha():
+        """
+        获取图片以及图片的alpha
+        :return: {character: [img, alpha], ...}
+        """
+        return {obj: util.read_unchanged_img("../../images/charas/" + obj + ".png") for obj in CHARACTER_LIST}
+
+    def _get_resized_icons_and_alpha(self):
+        # 缩放 img 以及 alpha
+        resize = lambda img_alpha: \
+            (cv2.resize(img_alpha[0], (self._width, self._height)),
+             cv2.resize(img_alpha[1], (self._width, self._height)))
+        return {obj: resize(img_alpha) for (obj, img_alpha) in self.icons_and_alpha.iteritems()}
+
+
 class AbstractGameFrameStructureMeta(type):
     def __call__(cls, *args, **kwargs):
         obj = type.__call__(cls, *args, **kwargs)
@@ -233,6 +259,11 @@ class AbstractGameFrameStructure(object):
     ULTIMATE_HEIGHT = None
     ULTIMATE_MAX_WIDTH = None
 
+    CHARA_TOP_X = None
+    CHARA_TOP_Y = None
+    CHARA_HEIGHT = None
+    CHARA_WIDTH = None
+
     def __init__(self, frame_height=720):
         #: The height of a killfeed item.
         self.KILLFEED_ITEM_HEIGHT = 35
@@ -258,6 +289,11 @@ class AbstractGameFrameStructure(object):
             self.ULTIMATE_WIDTH,
             self.ULTIMATE_HEIGHT,
             self.ULTIMATE_MAX_WIDTH,
+
+            self.CHARA_TOP_X,
+            self.CHARA_TOP_Y,
+            self.CHARA_HEIGHT,
+            self.CHARA_WIDTH,
         ]
         if None in abstract_fields:
             raise NotImplementedError('Subclasses must define all abstract attributes of killfeeds')
@@ -286,3 +322,7 @@ class OWLFrameStructure(AbstractGameFrameStructure):
         self.ULTIMATE_WIDTH = 30
         self.ULTIMATE_MAX_WIDTH = self.ULTIMATE_ITEM_X * 6
 
+        self.CHARA_TOP_X = 42
+        self.CHARA_TOP_Y = 0
+        self.CHARA_HEIGHT = 30
+        self.CHARA_WIDTH = 38

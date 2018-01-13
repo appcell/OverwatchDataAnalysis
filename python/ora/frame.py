@@ -39,6 +39,7 @@ class FrameAnalyzer:
         # killfeed
         killfeed_last = self.game.get_last_killfeed()
         self.frame.killfeeds = self.get_killfeed(killfeed_last)
+        self.get_charas()
 
     def validate_frame(self):
         # todo: check whether this frame is valid
@@ -85,7 +86,7 @@ class FrameAnalyzer:
         charas = {}
         for i in range(1,13):
             chara_image = self.get_chara_zone_image(i)
-            chara_analyzer = CharacterAnalyzer(i, chara_image, self, self.game)
+            chara_analyzer = CharacterAnalyzer(i, chara_image, self, self.game, self.time)
             chara_analyzer.analyze()
             charas[i] = chara_analyzer.chara
         return charas
