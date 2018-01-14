@@ -33,7 +33,7 @@ class CharacterAnalyzer:
         Get the ultimate status in this character zone.
         @return: A boolean for whether this character has ult.
         """
-
+        
         ult_image = util.crop_by_limit(self.image, 0, 0, 0, 0) # todo crop to get the ulti zone
         ult_analyzer = UltimateSkillAnalyzer(ult_image, self.time)
         ult_analyzer.analyze()

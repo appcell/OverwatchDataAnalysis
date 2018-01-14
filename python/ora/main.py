@@ -7,8 +7,10 @@ import time
 
 
 def main():
-    path = '../../videos/1.mp4'
+    path = '../../../videos/1.mp4'
     game = GameData()
+    game.team_left_name = "SHD"
+    game.team_right_name = "SHD"
     game.set_team_name("SHD", "BU")
     video = VideoLoader(path)
     analyze_video(video, game)

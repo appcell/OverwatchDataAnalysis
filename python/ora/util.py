@@ -30,6 +30,7 @@ class VideoLoader:
         """
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
         ret, frame = self.cap.read()
+        print ret
         if ret:
             return frame
         else:

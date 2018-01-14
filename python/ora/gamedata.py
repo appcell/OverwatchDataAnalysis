@@ -9,11 +9,11 @@ class GameData:
     """
     def __init__(self):
         #: The name of both team.
-        self.name_team1 = None
-        self.name_team2 = None
+        self.name_team_left = None
+        self.name_team_right = None
         #: The theme color of both team. In format [b,g,r] and each color is in [0,256).
-        self.color_team1 = None
-        self.color_team2 = None
+        self.color_team_left = None
+        self.color_team_right = None
         #: A list of all killfeed retrieved, in chronic sequence.
         self.killfeeds = []
         #: A list of all analyzed frames of the game. Frame step is 0.5 seconds.
