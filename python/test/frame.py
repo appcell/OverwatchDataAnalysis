@@ -1,6 +1,3 @@
-"""
-@Author: Xiaochen (leavebody) Li 
-"""
 import cv2
 import overwatch as OW
 from utils import image as ImageUtils
