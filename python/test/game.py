@@ -93,7 +93,9 @@ class Game:
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None and frame_image_index < end_time * video.fps:
-            frame = Frame(frame_image, frame_image_index, self)
+            frame = Frame(frame_image, 
+                          start_time + (1 / self.analyzer_fps) * frame_image_index, 
+                          self)
 
             if frame.is_valid is True and self.color_team_left is None:
                 self.set_team_colors(frame)
