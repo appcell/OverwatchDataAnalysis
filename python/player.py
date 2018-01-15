@@ -107,5 +107,3 @@ class Player:
 
         if abs(variation_ref - variation) > 45:
             self.is_dead = True
-
-    
