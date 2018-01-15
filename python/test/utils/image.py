@@ -79,6 +79,9 @@ def overlay(bg, fg):
     res = (np.multiply(bg, (1 - alpha / 255)) + np.multiply(overlay_color, (alpha / 255))).astype('uint8')
     return res
 
-def color_distance(color1, color2):
+def color_distance_normalized(color1, color2):
     color_temp = np.abs(color1 - (color2 + np.mean(color1) - np.mean(color2)));
     return np.max(color_temp)
+
+def color_distance(color1, color2):
+    return np.linalg.norm(color1.astype('double') - color2.astype('double'))

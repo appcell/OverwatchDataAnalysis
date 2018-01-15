@@ -11,7 +11,8 @@ from utils import image as ImageUtils
 GAMETYPE_OWL = 0
 GAMETYPE_CUSTOM = 1
 ANALYZER_FPS = 2
-
+DEFAULT_SCREEN_WIDTH = 1280
+DEFAULT_SCREEN_HEIGHT = 720
 
 # **********************************************************
 # ==========================================================
@@ -59,6 +60,9 @@ CHARACTER_LIST = [ANA, BASTION, DOOMFIST, DVA, GENJI, HANZO, JUNKRAT,
                   REAPER, REINHARDT, ROADHOG, SOLDIER76, SOMBRA,
                   SYMMETRA, TORBJON, TRACER, WIDOWMAKER, WINSTON, ZARYA,
                   ZENYATTA]
+
+ASSIST_CHARACTER_LIST = [ANA, GENJI, JUNKRAT, MCCREE, MEI, MERCY, ORISA, REINHARDT, ROADHOG, SOMBRA, ZARYA, ZENYATTA]
+
 #: A list of all non-character objects in the killfeed.
 NON_CHARACTER_OBJECT_LIST = [MEKA, RIPTIRE, SHIELD, SUPERCHARGER, TELEPORTER, TURRET]
 
@@ -328,8 +332,19 @@ def get_killfeed_icons_ref():
             KILLFEED_ICON_WIDTH[GAMETYPE_OWL], KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) for chara in KILLFEED_OBJECT_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../../images/icons/" + chara + ".png"), 
             KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) for chara in KILLFEED_OBJECT_LIST},
-
     } 
+def get_assist_icons_ref():
+    """
+    Get a dict of all reference killfeed icons
+    @Author: Appcell
+    @return: a dict of all reference killfeed icons
+    """
+    return {
+        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../../images/assists/" + chara + ".png"), 
+            ASSIST_ICON_WIDTH[GAMETYPE_OWL], ASSIST_ICON_HEIGHT[GAMETYPE_OWL]) for chara in ASSIST_CHARACTER_LIST},
+        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../../images/assists/" + chara + ".png"), 
+            ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM], ASSIST_ICON_HEIGHT[GAMETYPE_CUSTOM]) for chara in ASSIST_CHARACTER_LIST},
+    }
 
 def get_killfeed_team_color_pos(pos_x, position):
     """
@@ -370,15 +385,136 @@ def get_killfeed_pos(index):
             ]
         }
 
+def get_killfeed_with_gap_pos(index):
+    """
+    Get position of one killfeed row in one frame, given row index.
+    @Author: Appcell
+    @param index: index of killfeed row
+    @return: pos array of this killfeed row
+    """
+    return {
+        GAMETYPE_OWL:  [KILLFEED_Y_MIN_OWL + index * KILLFEED_GAP_OWL, 
+            KILLFEED_GAP_OWL, 
+            KILLFEED_X_MIN_OWL, 
+            KILLFEED_WIDTH_OWL
+            ],
+        GAMETYPE_CUSTOM:  [KILLFEED_Y_MIN_CUSTOM + index * KILLFEED_GAP_CUSTOM, 
+            KILLFEED_GAP_CUSTOM, 
+            KILLFEED_X_MIN_CUSTOM , 
+            KILLFEED_WIDTH_CUSTOM
+            ]
+        }
+
 # **********************************************************
 # ==========================================================
 #                     Ability Code
 # ==========================================================
 # **********************************************************
+ABILITY_NONE = 0
 ABILITY_SHIFT = 1
 ABILITY_E = 2
 ABILITY_Q_1 = 3
 ABILITY_Q_2 = 4
+ABILITY_RIGHT_CLICK = 5
+ABILITY_PASSIVE = 6
+
+ABILITY_ICON_WIDTH = {GAMETYPE_OWL: 26, GAMETYPE_CUSTOM: 26}
+ABILITY_ICON_HEIGHT = {GAMETYPE_OWL: 26, GAMETYPE_CUSTOM: 26}
+
+ABILITY_ICON_REF_WIDTH = {GAMETYPE_OWL: 22, GAMETYPE_CUSTOM: 22}
+ABILITY_ICON_REF_HEIGHT = {GAMETYPE_OWL: 22, GAMETYPE_CUSTOM: 22}
+
+ABILITY_ICON_COLOR_FILTER_THRESHOLD = {GAMETYPE_OWL: 50, GAMETYPE_CUSTOM: 50}
+
+ABILITY_GAP_ICON = {GAMETYPE_OWL: 26, GAMETYPE_CUSTOM: 26}
+ABILITY_GAP_NORMAL = {GAMETYPE_OWL: 30, GAMETYPE_CUSTOM: 32}
+
+ABILITY_LIST = {
+    ANA: [1,2],
+    BASTION: [3],
+    DOOMFIST: [1,2,3,5],
+    DVA: [1,2,3,4],
+    GENJI: [1,3],
+    HANZO: [1,2,3],
+    JUNKRAT: [1,2,3,6],
+    LUCIO: [5],
+    MCCREE: [2,3],
+    MEI: [3],
+    MERCY: [2],
+    MOIRA: [2,3],
+    ORISA: [5],
+    PHARAH: [2,3],
+    REAPER: [3],
+    REINHARDT: [1,2,3],
+    ROADHOG: [1,3],
+    SOLDIER76: [3,5],
+    SOMBRA: [],
+    SYMMETRA: [1],
+    TORBJON: [1],
+    TRACER: [3],
+    WIDOWMAKER: [2],
+    WINSTON: [1,3],
+    ZARYA: [3],
+    ZENYATTA: []
+}
+
+def get_ability_icons_ref():
+    """
+    Get a dict of all reference killfeed icons
+    @Author: Appcell
+    @return: a dict of all reference killfeed icons
+    """
+    res_OWL = {}
+    res_Custom = {}
+    for (chara, ability_list) in ABILITY_LIST.iteritems():
+        icons_list_OWL = []
+        icons_list_Custom = []
+        for i in ability_list:
+            icon = ImageUtils.rgb_to_gray(ImageUtils.read("../../images/abilities/" + chara + "/" + str(i) + ".png"))
+            icons_list_OWL.append(ImageUtils.resize(
+                icon,
+                ABILITY_ICON_WIDTH[GAMETYPE_OWL],
+                ABILITY_ICON_HEIGHT[GAMETYPE_OWL]
+                ))
+            icons_list_Custom.append(ImageUtils.resize(
+                icon,
+                ABILITY_ICON_WIDTH[GAMETYPE_CUSTOM],
+                ABILITY_ICON_HEIGHT[GAMETYPE_CUSTOM]
+                ))
+        res_OWL[chara] = icons_list_OWL
+        res_Custom[chara] = icons_list_Custom
+
+    return {
+    GAMETYPE_OWL: res_OWL,
+    GAMETYPE_CUSTOM: res_Custom
+    }
+
+
+def get_ability_icon_pos(pos_left, pos_right):
+    return {
+    GAMETYPE_OWL: [
+        4, 
+        ABILITY_ICON_HEIGHT[GAMETYPE_OWL], 
+        pos_right - ABILITY_ICON_WIDTH[GAMETYPE_OWL] - 23, 
+        ABILITY_ICON_WIDTH[GAMETYPE_OWL]
+        ],
+    GAMETYPE_CUSTOM: [
+        0, 
+        ABILITY_ICON_HEIGHT[GAMETYPE_CUSTOM], 
+        pos_right - ABILITY_ICON_WIDTH[GAMETYPE_CUSTOM] - 23, 
+        ABILITY_ICON_WIDTH[GAMETYPE_CUSTOM]
+        ],
+    }
+
+
+ASSIST_GAP =  {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 20}
+
+
+ASSIST_ICON_HEIGHT = {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 18}
+ASSIST_ICON_WIDTH = {GAMETYPE_OWL: 13, GAMETYPE_CUSTOM: 13}
+
+
+
 
 # **********************************************************
 # ==========================================================
@@ -388,3 +524,5 @@ ABILITY_Q_2 = 4
 FRAME_VALIDATION_POS = {GAMETYPE_OWL: [0, 15, 0, 70], GAMETYPE_CUSTOM: [0, 15, 0, 70]}
 FRAME_VALIDATION_COLOR_MEAN = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
 FRAME_VALIDATION_COLOR_STD = {GAMETYPE_OWL: 3, GAMETYPE_CUSTOM: 3}
+
+

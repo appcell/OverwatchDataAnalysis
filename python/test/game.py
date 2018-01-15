@@ -28,9 +28,12 @@ class Game:
         self.name_players_team_left = []
         self.name_players_team_right = []
 
-        #: Theme color of both teams. In format [b,g,r] and each color is in [0,256).
-        self.color_team_left = None
-        self.color_team_right = None
+        #: Theme color of both teams. In form of:
+        # {
+        #     "left": None,
+        #     "right": None
+        # }
+        self.team_colors = None
 
         #: Video path & output path
         self.video_path = ""
@@ -40,8 +43,10 @@ class Game:
         self.frames = []
         self.avatars_ref = {}
 
-        # Read in killfeed icons
+        # Read in killfeed & assist & ability icons
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
+        self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
+        self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
 
     def set_team_colors(self, frame):
         """
@@ -51,8 +56,7 @@ class Game:
         @return: None
         """
         colors = frame.get_team_colors()
-        self.color_team_left = colors["color_team_left"]
-        self.color_team_right = colors["color_team_right"]
+        self.team_colors = colors
 
     def set_game_info(self, gui_info):
         """
@@ -100,7 +104,7 @@ class Game:
                           start_time + (1 / self.analyzer_fps) * frame_image_index, 
                           self)
 
-            if frame.is_valid is True and self.color_team_left is None:
+            if frame.is_valid is True and self.team_colors is None:
                 self.set_team_colors(frame)
                 self.avatars_ref = frame.get_avatars_before_validation()
 

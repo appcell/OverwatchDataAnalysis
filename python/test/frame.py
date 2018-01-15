@@ -11,15 +11,14 @@ class Frame:
     """
     def __init__(self, frame_image, frame_time, game):
         #: If the frame itself is valid, i.e. during a match
-        self.is_valid = True
-        
+        self.is_valid = True        
         self.players = []
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, 1280, 720)  # Resize image to 720p.
         self.time = frame_time
         self.game = game
-        # cv2.imshow("title", self.image)
-        # cv2.waitKey(0)
+
+
         self.get_players()
         self.get_killfeeds()
         self.validate()
@@ -36,8 +35,8 @@ class Frame:
     def get_team_colors(self):
         pos = OW.get_team_color_pick_pos()[self.game.game_type]
         return {
-        "color_team_left": self.image[pos[0][0], pos[0][1]],
-        "color_team_right": self.image[pos[1][0], pos[1][1]]
+        "left": self.image[pos[0][0], pos[0][1]],
+        "right": self.image[pos[1][0], pos[1][1]]
         }
 
     def get_killfeeds(self):
@@ -73,8 +72,8 @@ class Frame:
         avatars_small_right_ref = {}
 
         # Create background image with team color
-        bg_image_left = ImageUtils.create_bg_image(team_colors["color_team_left"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
-        bg_image_right = ImageUtils.create_bg_image(team_colors["color_team_right"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
+        bg_image_left = ImageUtils.create_bg_image(team_colors["left"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
+        bg_image_right = ImageUtils.create_bg_image(team_colors["right"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
         avatars_ref = OW.get_avatars_ref()
    
         # Overlay transparent reference avatar on background
@@ -95,14 +94,14 @@ class Frame:
     def get_avatars(self, index):
         all_avatars = {}
 
-        if self.game.color_team_left is not None:
-            bg_color = self.game.color_team_left \
-                       if index < 6 else self.game.color_team_right
+        if self.game.team_colors is not None:
+            bg_color = self.game.team_colors['left'] \
+                       if index < 6 else self.game.team_colors['right']
             all_avatars = self.game.avatars_ref
         else:
             team_colors = self.get_team_colors()
-            bg_color = team_colors["color_team_left"] \
-                       if index < 6 else team_colors["color_team_right"]
+            bg_color = team_colors["left"] \
+                       if index < 6 else team_colors["right"]
             all_avatars = self.get_avatars_before_validation()
 
         if index < 6:
