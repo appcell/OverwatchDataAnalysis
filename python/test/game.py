@@ -40,6 +40,9 @@ class Game:
         self.frames = []
         self.avatars_ref = {}
 
+        # Read in killfeed icons
+        self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
+
     def set_team_colors(self, frame):
         """
         Set theme colors of both team in this game, using one frame.
@@ -88,8 +91,8 @@ class Game:
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        start_time = 30
-        end_time = 31
+        start_time = 107
+        end_time = 108
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None and frame_image_index < end_time * video.fps:

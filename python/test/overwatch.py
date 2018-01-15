@@ -68,6 +68,21 @@ KILLFEED_OBJECT_LIST = CHARACTER_LIST + NON_CHARACTER_OBJECT_LIST
 #: Max number of killfeeds in a screen in the same time.
 KILLFEED_ITEM_MAX_COUNT_IN_SCREEN = 6
 
+def get_chara_name(name):
+    if name == MEKA:
+        return DVA
+    elif name == RIPTIRE:
+        return JUNKRAT
+    elif name == SHIELD:
+        return SYMMETRA
+    elif name == SUPERCHARGER:
+        return ORISA
+    elif name == TELEPORTER:
+        return SYMMETRA
+    elif name == TURRET:
+        return TORBJON
+    else:
+        return name
 
 # **********************************************************
 # ==========================================================
@@ -276,6 +291,87 @@ def get_avatar_pos(index):
 
 # **********************************************************
 # ==========================================================
+#                    Killfeed Row
+# ==========================================================
+# **********************************************************
+KILLFEED_ICON_HEIGHT = {GAMETYPE_OWL: 21, GAMETYPE_CUSTOM: 21}
+KILLFEED_ICON_WIDTH = {GAMETYPE_OWL: 31, GAMETYPE_CUSTOM: 31}
+
+KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT = {GAMETYPE_OWL: 0.7, GAMETYPE_CUSTOM: 0.7}
+KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT = {GAMETYPE_OWL: 0.7, GAMETYPE_CUSTOM: 0.7}
+
+KILLFEED_WIDTH = {GAMETYPE_OWL: 320, GAMETYPE_CUSTOM: 320}
+KILLFEED_RIGHT_WIDTH = {GAMETYPE_OWL: 140, GAMETYPE_CUSTOM: 140}
+
+KILLFEED_X_MIN_OWL = 963
+KILLFEED_Y_MIN_OWL = 109
+KILLFEED_WIDTH_OWL = 320
+KILLFEED_HEIGHT_OWL = 35
+KILLFEED_GAP_OWL = 37
+
+KILLFEED_X_MIN_CUSTOM = 963
+KILLFEED_Y_MIN_CUSTOM = 109
+KILLFEED_WIDTH_CUSTOM = 320
+KILLFEED_HEIGHT_CUSTOM = 35
+KILLFEED_GAP_CUSTOM = 37
+
+KILLFEED_MAX_PROB = {GAMETYPE_OWL: 0.6, GAMETYPE_CUSTOM: 0.6}
+
+def get_killfeed_icons_ref():
+    """
+    Get a dict of all reference killfeed icons
+    @Author: Appcell
+    @return: a dict of all reference killfeed icons
+    """
+    return {
+        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../../images/icons/" + chara + ".png"), 
+            KILLFEED_ICON_WIDTH[GAMETYPE_OWL], KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) for chara in KILLFEED_OBJECT_LIST},
+        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../../images/icons/" + chara + ".png"), 
+            KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) for chara in KILLFEED_OBJECT_LIST},
+
+    } 
+
+def get_killfeed_team_color_pos(pos_x, position):
+    """
+    Get position of one killfeed row in one frame, given row index.
+    @Author: Appcell
+    @param index: index of killfeed row
+    @return: pos array of this killfeed row
+    """
+    if position == 'left':
+        return {
+            GAMETYPE_OWL:  [0, pos_x - 5],
+            GAMETYPE_CUSTOM:  [0, pos_x - 5]
+            }
+    else:
+        return {
+            GAMETYPE_OWL:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 5],
+            GAMETYPE_CUSTOM:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 5]
+            }
+
+
+def get_killfeed_pos(index):
+    """
+    Get position of one killfeed row in one frame, given row index.
+    @Author: Appcell
+    @param index: index of killfeed row
+    @return: pos array of this killfeed row
+    """
+    return {
+        GAMETYPE_OWL:  [KILLFEED_Y_MIN_OWL + index * KILLFEED_GAP_OWL, 
+            KILLFEED_HEIGHT_OWL, 
+            KILLFEED_X_MIN_OWL, 
+            KILLFEED_WIDTH_OWL
+            ],
+        GAMETYPE_CUSTOM:  [KILLFEED_Y_MIN_CUSTOM + index * KILLFEED_GAP_CUSTOM, 
+            KILLFEED_HEIGHT_CUSTOM, 
+            KILLFEED_X_MIN_CUSTOM , 
+            KILLFEED_WIDTH_CUSTOM
+            ]
+        }
+
+# **********************************************************
+# ==========================================================
 #                     Ability Code
 # ==========================================================
 # **********************************************************
@@ -283,3 +379,12 @@ ABILITY_SHIFT = 1
 ABILITY_E = 2
 ABILITY_Q_1 = 3
 ABILITY_Q_2 = 4
+
+# **********************************************************
+# ==========================================================
+#                   Frame Validation
+# ==========================================================
+# **********************************************************
+FRAME_VALIDATION_POS = {GAMETYPE_OWL: [0, 15, 0, 70], GAMETYPE_CUSTOM: [0, 15, 0, 70]}
+FRAME_VALIDATION_COLOR_MEAN = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
+FRAME_VALIDATION_COLOR_STD = {GAMETYPE_OWL: 3, GAMETYPE_CUSTOM: 3}

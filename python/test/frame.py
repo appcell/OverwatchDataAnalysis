@@ -1,7 +1,9 @@
 import cv2
+import numpy as np
 import overwatch as OW
 from utils import image as ImageUtils
 from player import Player
+from killfeed import Killfeed
 
 class Frame:
     """
@@ -9,7 +11,7 @@ class Frame:
     """
     def __init__(self, frame_image, frame_time, game):
         #: If the frame itself is valid, i.e. during a match
-        self.is_valid = False
+        self.is_valid = True
         
         self.players = []
         self.killfeeds = []
@@ -19,6 +21,7 @@ class Frame:
         # cv2.imshow("title", self.image)
         # cv2.waitKey(0)
         self.get_players()
+        self.get_killfeeds()
         self.validate()
 
     def free(self):
@@ -37,11 +40,30 @@ class Frame:
         "color_team_right": self.image[pos[1][0], pos[1][1]]
         }
 
-    def get_killfeed(self):
-        pass
+    def get_killfeeds(self):
+        for i in range(6):
+            killfeed = Killfeed(self, i)
+            if killfeed.is_valid == True:
+                self.killfeeds.append(killfeed)
+            else:
+                break
+
+        self.killfeeds.reverse()
 
     def validate(self):
-        self.is_valid = True
+        flag = False
+        for player in self.players:
+            if player.is_dead == False:
+                flag = True
+
+        validation_roi = ImageUtils.crop(self.image, OW.FRAME_VALIDATION_POS[self.game.game_type])
+        std = np.max([np.std(validation_roi[:, :, 0]), np.std(validation_roi[:, :, 1]), np.std(validation_roi[:, :, 2])])
+        mean = [np.mean(validation_roi[:, :, 0]), np.mean(validation_roi[:, :, 1]), np.mean(validation_roi[:, :, 2])]
+
+        if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
+            and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type]\
+            and flag == True:
+            self.is_valid = True
 
     def get_avatars_before_validation(self):
         team_colors = self.get_team_colors()
@@ -93,3 +115,5 @@ class Frame:
             "normal": all_avatars['right'],
             "small": all_avatars['right_small']
             }
+
+
