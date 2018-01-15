@@ -2,6 +2,8 @@
 
 __If you desire to contribute to ORA or modify ORA code for your own usage, you might need to know about our code.__
 
+__CURRENTLY UNDER CONSTRUCTION!!!___
+
 ## Directory & file structure
 
 ```
