@@ -143,18 +143,35 @@ class Killfeed:
         dist_left = ImageUtils.color_distance_normalized(color, colors_ref['left'])
         dist_right = ImageUtils.color_distance_normalized(color, colors_ref['right'])
 
-        res['team'] = self.frame.game.name_team_left \
-                             if dist_left < dist_right else self.frame.game.name_team_right
+        res['team'] = self.frame.game.team_names['left'] \
+                             if dist_left < dist_right else self.frame.game.team_names['right']
 
         chara = OW.get_chara_name(player['chara'])
 
-        if res['team'] == self.frame.game.name_team_left:
+        if res['team'] == self.frame.game.team_names['left']:
             res['player'] = next((item.name for item in self.frame.players[0:6] if item.chara == chara), "empty")
         else:
             res['player'] = next((item.name for item in self.frame.players[6:12] if item.chara == chara), "empty")
 
         return res
-       
+    
+    def _set_assist_info(self, assist):
+        res = {
+        'chara': assist['chara'],
+        'player': 'empty',
+        'team': assist['team']
+        }
+
+        if assist['team'] == self.frame.game.team_names['left']:
+            for player in self.frame.players[0:6]:
+                if player.chara == assist['chara']:
+                    res['player'] = player.name
+        else:
+            for player in self.frame.players[6:12]:
+                if player.chara == assist['chara']:
+                    res['player'] = player.name
+        return res
+
     def _get_icons_weights(self, edge_validation):
         """
         Get possible icon and their weights in the killfeed image.
@@ -256,7 +273,7 @@ class Killfeed:
 
         if self.player1['pos'] == -1 or self.player2['pos'] == -1:
             return
-        distance = self.player2['pos'] - self.player1['pos']
+        distance = self.player2['pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type]
         gap = ImageUtils.crop(self.image_with_gap, 
               [0, self.image_with_gap.shape[0], self.player1['pos'], distance])
 
@@ -265,6 +282,10 @@ class Killfeed:
 
         
         assist_num = int((distance - OW.ABILITY_GAP_NORMAL[self.game_type]) / OW.ASSIST_GAP[self.game_type]) - 1
+
+        print distance
+        print assist_num
+        print "============"
         
         ability_list = OW.ABILITY_LIST[self.player1['chara']]
         ability_icons_ref = self.frame.game.ability_icons_ref[self.player1['chara']]
@@ -280,13 +301,36 @@ class Killfeed:
                     max_prob = s
                     self.ability = ability_index
                     max_ind = ind
-            cv2.imshow('t',ability_icon)
-            cv2.waitKey(0)
+
             if max_prob < 0.1 and self.player1['chara'] == OW.GENJI:
                 self.ability = OW.ABILITY_E
 
-        # for i in range(assist_num):
-        #     assist_icon = ImageUtils.crop(self.image, [0, ])
+
+        for i in range(assist_num):
+            # TODO: write this into ow.py!
+            assist_icon = ImageUtils.crop(self.image, 
+                [11, 
+                 OW.ASSIST_ICON_HEIGHT[self.game_type], 
+                 8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type], 
+                 OW.ASSIST_ICON_WIDTH[self.game_type]])
+
+            assist = {
+                "chara": "empty",
+                "player": "empty",
+                "team": self.player1['team']
+            }
+            max_score = -10
+            for (chara, icon) in self.frame.game.assist_icons_ref.iteritems():
+                s = measure.compare_ssim(assist_icon, icon, multichannel=True)
+                if s > max_score:
+                    max_score = s
+                    assist['chara'] = chara
+
+            self.assists.append(self._set_assist_info(assist))
+
+
+            # cv2.imshow('t',assist_icon)
+            # cv2.waitKey(0)            
 
 
     def _preprocess_ability_icon(self, icon):

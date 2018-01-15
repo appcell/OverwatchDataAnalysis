@@ -44,6 +44,7 @@ class Frame:
             killfeed = Killfeed(self, i)
             if killfeed.is_valid == True:
                 self.killfeeds.append(killfeed)
+                print killfeed.assists
             else:
                 break
 

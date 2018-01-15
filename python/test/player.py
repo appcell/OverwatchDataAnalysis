@@ -17,8 +17,8 @@ class Player:
         self.name = self.frame.game.name_players_team_left[index] if index < 6 \
                     else self.frame.game.name_players_team_right[index - 6]
         #: team name
-        self.team = self.frame.game.name_team_left if index < 6 \
-                    else self.frame.game.name_team_right
+        self.team = self.frame.game.team_names['left'] if index < 6 \
+                    else self.frame.game.team_names['right']
         #: the character current player uses
         self.chara = None
         #: whether this player has ultimate ability now
