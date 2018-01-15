@@ -18,7 +18,8 @@ class Frame:
         self.time = frame_time
         self.game = game
 
-
+        cv2.imshow('t',self.image)
+        cv2.waitKey(0)
         self.get_players()
         self.get_killfeeds()
         self.validate()
@@ -44,6 +45,9 @@ class Frame:
             killfeed = Killfeed(self, i)
             if killfeed.is_valid == True:
                 self.killfeeds.append(killfeed)
+                print killfeed.player1
+                print killfeed.player2
+                print killfeed.ability
                 print killfeed.assists
             else:
                 break

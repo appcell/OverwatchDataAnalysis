@@ -67,7 +67,6 @@ class Killfeed:
         # TODO Only need two best matches in the end. Kept three while debugging.
         icons_weights = sorted(icons_weights, key = itemgetter('prob'), reverse = True)
         best_matches = icons_weights[0:3]
-        # print best_matches
 
         # There should be a vertical edge
         # between left 3 pixels to the icon
@@ -133,6 +132,8 @@ class Killfeed:
     def _set_player_info(self, player, position):
         res = {'chara': player['chara'], 'pos': player['pos']}
         color_pos = OW.get_killfeed_team_color_pos(player['pos'], position)[self.game_type]
+        cv2.imshow('t',self.image)
+        cv2.waitKey(0)
 
         color = self.image[color_pos[0], color_pos[1]]
         colors_ref = {}
@@ -142,7 +143,11 @@ class Killfeed:
             colors_ref = self.frame.get_team_colors()
         dist_left = ImageUtils.color_distance_normalized(color, colors_ref['left'])
         dist_right = ImageUtils.color_distance_normalized(color, colors_ref['right'])
-
+        print [color_pos[0], color_pos[1]]
+        print colors_ref
+        print color
+        print [dist_left, dist_right]
+        print "==========="
         res['team'] = self.frame.game.team_names['left'] \
                              if dist_left < dist_right else self.frame.game.team_names['right']
 
@@ -193,7 +198,6 @@ class Killfeed:
         @param edge_validation: A list of booleans. Should be the result of _validate_edge()
         @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
         """
-        # print len(self.frame.game.killfeed_icons_ref)
         result = []
         for (chara, icon) in self.frame.game.killfeed_icons_ref.iteritems():
             match_result = cv2.matchTemplate(self.image, icon, cv2.TM_CCOEFF_NORMED)
@@ -267,10 +271,6 @@ class Killfeed:
         return result
 
     def get_assists(self):
-        cv2.imshow('t',self.image)
-        cv2.waitKey(0)
-
-
         if self.player1['pos'] == -1 or self.player2['pos'] == -1:
             return
         distance = self.player2['pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type]
@@ -282,10 +282,6 @@ class Killfeed:
 
         
         assist_num = int((distance - OW.ABILITY_GAP_NORMAL[self.game_type]) / OW.ASSIST_GAP[self.game_type]) - 1
-
-        print distance
-        print assist_num
-        print "============"
         
         ability_list = OW.ABILITY_LIST[self.player1['chara']]
         ability_icons_ref = self.frame.game.ability_icons_ref[self.player1['chara']]
@@ -309,7 +305,7 @@ class Killfeed:
         for i in range(assist_num):
             # TODO: write this into ow.py!
             assist_icon = ImageUtils.crop(self.image, 
-                [11, 
+                [OW.ABILITY_ICON_Y_MIN[self.game_type], 
                  OW.ASSIST_ICON_HEIGHT[self.game_type], 
                  8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type], 
                  OW.ASSIST_ICON_WIDTH[self.game_type]])
@@ -327,11 +323,6 @@ class Killfeed:
                     assist['chara'] = chara
 
             self.assists.append(self._set_assist_info(assist))
-
-
-            # cv2.imshow('t',assist_icon)
-            # cv2.waitKey(0)            
-
 
     def _preprocess_ability_icon(self, icon):
 

@@ -100,8 +100,8 @@ class Game:
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        start_time = 107
-        end_time = 108
+        start_time = 111
+        end_time = 120
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None and frame_image_index < end_time * video.fps:
@@ -118,6 +118,7 @@ class Game:
 
             frame_image_index += step
             frame_image = video.get_frame_image(frame_image_index)
+            break
         video.close()
 
     def output_to_excel(self):
