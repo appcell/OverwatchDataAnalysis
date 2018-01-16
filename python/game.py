@@ -134,8 +134,8 @@ class Game(object):
 
         while frame_image is not None and frame_image_index < end_time * video.fps:
             frame = Frame(frame_image,
-                          start_time + (1 / self.analyzer_fps) *
-                          frame_image_index,
+                          start_time + (1 / self.analyzer_fps) * \
+                          (frame_image_index - start_time * video.fps),
                           self)
             self.frames.append(frame)
 
