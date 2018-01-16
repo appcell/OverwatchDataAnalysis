@@ -1,21 +1,38 @@
-import overwatch as OW
 import cv2
 import numpy as np
-from utils import image as ImageUtils
-import skimage
-import heapq
 from operator import itemgetter
 from skimage import measure
 
+import overwatch as OW
+from utils import image as ImageUtils
+
+
 class Killfeed:
+    """Class of a Killfeed object.
+
+    Contains info in one killfeed row.
+    """
+
     def __init__(self, frame, index):
+        """Initialize a Killfeed object.
+
+        Author:
+            Appcell
+
+        Args:
+            frame: the Frame obj current killfeed is in
+            index: row number of current killfeed, ranges from 0 to 5.
+
+        Returns:
+            None 
+        """
         # player and chara might be different from analysis of current frame!
         # Thus extra variables needed.
 
         # Killer/Resurrector (On left side)
         self.player1 = {
             "chara": "empty",   # name of chara, or "empty"
-            "player": "empty",  #name of player, or "empty"
+            "player": "empty",  # name of player, or "empty"
             "team": "empty",   # name of team, or "empty"
             "pos": -1
         }
@@ -43,97 +60,129 @@ class Killfeed:
         self.index = index
         # Tell if the killfeed is valid, mostly for convenience.
         self.is_valid = True
-
+        self.is_headshot = False
         self.frame = frame
         self.game_type = frame.game.game_type
 
         # Get row image
         killfeed_pos = OW.get_killfeed_pos(index)[frame.game.game_type]
-        killfeed_with_gap_pos = OW.get_killfeed_with_gap_pos(index)[frame.game.game_type]
+        killfeed_with_gap_pos = OW.get_killfeed_with_gap_pos(index)[
+            frame.game.game_type]
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
-        self.image_with_gap = ImageUtils.crop(frame.image, killfeed_with_gap_pos)
+        self.image_with_gap = ImageUtils.crop(
+            frame.image, killfeed_with_gap_pos)
         self.get_players()
-        self.get_assists()
+        self.get_ability_and_assists()
 
     def get_players(self):
-        """
-        Get killfeed in a row.
-        @Author: Appcell, adapted from code by Leavebody, furtherly adapted from
-                 code by Appcell
-        @return: None
+        """Get 2 (or 1) player(s) info in a killfeed row.
+
+        Crop row image from frame, then do template matching with all given
+        avatar references on it. The ones with maximum scores are final 
+        recognition results. Since there're usually 2 avatars in a row, 
+        matching results have to be split into left/right groups before further
+        processing.
+
+        Author:
+            Appcell, Leavebody
+
+        Args:
+            None
+
+        Returns:
+            None 
         """
         edge_validation = self._validate_edge()
         icons_weights = self._get_icons_weights(edge_validation)
 
-        # Differentiate icons on 2 sides first!!
+        # Differentiate results from 2 sides first
         mean_pos = np.mean([i['pos'] for i in icons_weights])
         icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
         icons_weights_right = [i for i in icons_weights if i['pos'] > mean_pos]
         mean_pos_left = np.mean([i['pos'] for i in icons_weights_left])
         mean_pos_right = np.mean([i['pos'] for i in icons_weights_right])
 
-
-        if abs(mean_pos_right - mean_pos_left) < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
+        if abs(mean_pos_right - mean_pos_left) \
+            < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
             # Only one icon exists
             matched = self._get_matched_icon(icons_weights, edge_validation)
-            if len(matched) > 0 and \
-               matched[0]['pos'] >= OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
-                self.player2 = self._set_player_info(matched_right, 'right')
+            if matched and matched[0]['pos'] \
+                >= OW.KILLFEED_WIDTH[self.game_type] \
+                - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+                self.player2 = self._set_player_info(matched[0], 'right')
         else:
             # 2 icons got recognized
-            icons_weights_left = sorted(icons_weights_left, 
-                                key = itemgetter('prob'), reverse = True)[0:2]
-            icons_weights_right = sorted(icons_weights_right, 
-                                key = itemgetter('prob'), reverse = True)[0:2]
-            matched_left = self._get_matched_icon(icons_weights_left, edge_validation)
-            matched_right = self._get_matched_icon(icons_weights_right, edge_validation)
-            if len(matched_left) > 0:
+            icons_weights_left = sorted(icons_weights_left,
+                                        key=itemgetter('prob'), reverse=True)[0:2]
+            icons_weights_right = sorted(icons_weights_right,
+                                         key=itemgetter('prob'), reverse=True)[0:2]
+            matched_left = self._get_matched_icon(
+                icons_weights_left, edge_validation)
+            matched_right = self._get_matched_icon(
+                icons_weights_right, edge_validation)
+            if matched_left:
                 self.player1 = self._set_player_info(matched_left[0], 'left')
-            if len(matched_right) > 0:
+            if matched_right:
                 self.player2 = self._set_player_info(matched_right[0], 'right')
 
         if self.player2['pos'] == -1:
             self.is_valid = False
 
-
-
     def _get_matched_icon(self, icons, edge_validation):
-        # There should be a vertical edge
-        # between left 3 pixels to the icon
-        # and right 1 pixel to the icon
-        # with no more than 2 pixels in the vertical line missing.
-        # A vertical line should have a width of no more than 2.
+        """Get validated matching results from results list.
+
+        Author:
+            Leavebody, Appcell
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
         matched = list(filter(
-            lambda x: x['prob'] >= OW.KILLFEED_MAX_PROB[self.game_type] \
-                and edge_validation[x['pos']] == True,icons))
+            lambda x: x['prob'] >= OW.KILLFEED_MAX_PROB[self.game_type]
+            and edge_validation[x['pos']] is True, icons))
         return matched
 
     def _validate_edge(self):
-        """
-        Find vertical edges in killfeed image,
-        and use the edges to get the possible icon positions.
-        @return: A list of boolean, result[i] is True if there can be a icon starting from x=i,
-                and result[i] is false if x=i can starts an icon.
+        """Get a list of possible icon positions.
+
+        There should be a vertical edge between left 3 pixels to the icon and
+        right 1 pixel to the icon with no more than 2 pixels in the vertical 
+        line missing. A vertical line should have a width of no more than 2.
+
+        Find vertical edges in killfeed image, and use the edges to get the 
+        possible icon positions.
+
+        Author:
+            Leavebody, Appcell
+
+        Args:
+            None
+
+        Returns:
+            A list of boolean, result[i] is True if there can be a icon 
+            starting from x=i, and result[i] is false if x=i can starts
+            an icon.
         """
         # Generate edged image for this killfeed row.
-        edge_image = cv2.Canny(self.image, 100, 200)  
+        edge_image = cv2.Canny(self.image, 100, 200)
         # Get the "spanned" edge image.
         edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255
         # Sum on y axis and normalize
-        edge_sum = edge_span.astype('float') / OW.KILLFEED_ICON_HEIGHT[self.game_type]
+        edge_sum = edge_span.astype(
+            'float') / OW.KILLFEED_ICON_HEIGHT[self.game_type]
         edge_validation = [False, False]
-        # truecount = 0
+
         for i in range(2, OW.KILLFEED_WIDTH[self.game_type] - 38):
             edge_scores_left = edge_sum[i-2: i+2]
             edge_scores_right = edge_sum[i+33: i+37]
 
-            if (max(edge_scores_left) >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type] and
-            max(edge_scores_right) >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type]):
-                # The metric is that there should be a vertical edge
-                # between left 3 pixels to the icon position
-                # and right 1 pixel to the icon position
-                # with no more than 2 pixels in the vertical line missing.
-                # A vertical line should have a width of no more than 2.
+            if max(edge_scores_left) \
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type] \
+                and max(edge_scores_right) \
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type]:
                 edge_validation.append(True)
             else:
                 edge_validation.append(False)
@@ -142,10 +191,28 @@ class Killfeed:
         return edge_validation
 
     def _set_player_info(self, player, position):
+        """Set team & player name info for a matching result.
+
+        Author:
+            Appcell
+
+        Args:
+            None
+
+        Returns:
+            A dict of player info, with the form of:
+            {
+                "chara": "empty",   # name of chara, or "empty"
+                "player": "empty",  # name of player, or "empty"
+                "team": "empty",    # name of team, or "empty"
+                "pos": -1,          # x-axis position of icon in killfeed
+                                      row image
+            }
+
+        """
         res = {'chara': player['chara'], 'pos': player['pos']}
-        color_pos = OW.get_killfeed_team_color_pos(player['pos'], position)[self.game_type]
-        # cv2.imshow('t',self.image)
-        # cv2.waitKey(0)
+        color_pos = OW.get_killfeed_team_color_pos(
+            player['pos'], position)[self.game_type]
 
         color = self.image[color_pos[0], color_pos[1]]
         colors_ref = {}
@@ -153,26 +220,47 @@ class Killfeed:
             colors_ref = self.frame.game.team_colors
         else:
             colors_ref = self.frame.get_team_colors()
-        dist_left = ImageUtils.color_distance_normalized(color, colors_ref['left'])
-        dist_right = ImageUtils.color_distance_normalized(color, colors_ref['right'])
+        dist_left = ImageUtils.color_distance_normalized(
+            color, colors_ref['left'])
+        dist_right = ImageUtils.color_distance_normalized(
+            color, colors_ref['right'])
 
         res['team'] = self.frame.game.team_names['left'] \
-                             if dist_left < dist_right else self.frame.game.team_names['right']
+            if dist_left < dist_right else self.frame.game.team_names['right']
 
         chara = OW.get_chara_name(player['chara'])
 
         if res['team'] == self.frame.game.team_names['left']:
-            res['player'] = next((item.name for item in self.frame.players[0:6] if item.chara == chara), "empty")
+            res['player'] = next((item.name for item in self.frame.players[
+                0:6] if item.chara == chara), "empty")
         else:
-            res['player'] = next((item.name for item in self.frame.players[6:12] if item.chara == chara), "empty")
+            res['player'] = next((item.name for item in self.frame.players[
+                6:12] if item.chara == chara), "empty")
 
         return res
-    
+
     def _set_assist_info(self, assist):
+        """Set team & player name info for a assisting chara.
+
+        Author:
+            Appcell
+
+        Args:
+            None
+
+        Returns:
+            A dict of player info, with the form of:
+            {
+                "chara": "empty",   # name of chara, or "empty"
+                "player": "empty",  # name of player, or "empty"
+                "team": "empty",    # name of team, or "empty"
+            }
+
+        """
         res = {
-        'chara': assist['chara'],
-        'player': 'empty',
-        'team': assist['team']
+            'chara': assist['chara'],
+            'player': 'empty',
+            'team': assist['team']
         }
 
         if assist['team'] == self.frame.game.team_names['left']:
@@ -186,29 +274,33 @@ class Killfeed:
         return res
 
     def _get_icons_weights(self, edge_validation):
-        """
-        Get possible icon and their weights in the killfeed image.
-        @param killfeed_image: The killfeed image.
-        @param edge_validation: A list of boolean. Should be the result of _validate_edge()
-        @param name:
-        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
-        """
-        # valid_pixel_count = edge_validation.count(True)
-        # if valid_pixel_count <= 7:
-        #     return self._get_icons_weights_discrete(edge_validation)
-        # else:
-        return self._get_icons_weights_full(edge_validation)
+        """Get icon comparison scores of row image and icon references.
 
-    def _get_icons_weights_full(self, edge_validation):
-        """
-        Use match template in cv2 to get possible icon and their weights in the killfeed image.
-        @param killfeed_image: The killfeed image.
-        @param edge_validation: A list of booleans. Should be the result of _validate_edge()
-        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
+        Use match template in cv2 to get possible icon and their weights in the
+        killfeed image.
+
+        Author:
+            Leavebody
+
+        Args:
+            edge_validation: A list of booleans. Should be the result of
+                _validate_edge()
+
+        Returns:
+            A list of dict of matching results, including all possible icons 
+            in this killfeed image. A matching result is in the form of:
+            {
+                "chara": "empty",   # name of chara, or "empty"
+                "prob": "empty",  # score from comparison
+                "pos": "empty",    # x-axis position of icon in killfeed
+                                     row image
+            }
+
         """
         result = []
         for (chara, icon) in self.frame.game.killfeed_icons_ref.iteritems():
-            match_result = cv2.matchTemplate(self.image, icon, cv2.TM_CCOEFF_NORMED)
+            match_result = cv2.matchTemplate(
+                self.image, icon, cv2.TM_CCOEFF_NORMED)
 
             # Find two most possible location of this character's icon in the killfeed image.
             # Mask the pixels around the first location to find the second one.
@@ -218,69 +310,98 @@ class Killfeed:
                     'chara': chara,
                     'prob': max_val,
                     'pos': max_loc[0]
-                    })
+                })
 
             half_mask_width = 5
             mask_index_left = max((max_loc[0] - half_mask_width, 0))
-            mask_index_right = min((max_loc[0] + half_mask_width + 1,
-                                    OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_ICON_WIDTH[self.game_type]))
+            mask_index_right = min((
+                max_loc[0] + half_mask_width + 1,
+                OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_ICON_WIDTH[self.game_type]))
             match_result_masked = np.matrix(match_result)
-            match_result_masked[0:match_result_masked.shape[0], mask_index_left: mask_index_right] = -1
+            match_result_masked[0:match_result_masked.shape[
+                0], mask_index_left: mask_index_right] = -1
 
             _, max_val2, _, max_loc2 = cv2.minMaxLoc(match_result_masked)
-
 
             if edge_validation[max_loc2[0]]:
                 result.append({
                     'chara': chara,
                     'prob': max_val2,
                     'pos': max_loc2[0]
-                    })
+                })
 
         return result
 
+    def get_ability_and_assists(self):
+        """Retrieve info of ability and assisting players in a row
 
+        If distance between 2 avatar icons, width of arrow icon removed, is
+        not divisible by width of an assist icon, then an ability icon must
+        exist somewhere. Cut it off and compare with all possible ability
+        icons to find the best match.
 
-    def get_assists(self):
+        After removing ability icon & arrow icon, what's left between 2
+        avatars must be n assist icons. Cut each from killfeed image, and then
+        compare with references. Pick the one with maximum score as result.
+
+        All results are written into self.ability and self.assists.
+
+        Author:
+            Appcell
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """
         if self.player1['pos'] == -1 or self.player2['pos'] == -1:
             return
-        distance = self.player2['pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type]
-        gap = ImageUtils.crop(self.image_with_gap, 
-              [0, self.image_with_gap.shape[0], self.player1['pos'], distance])
 
-        ability_icon = ImageUtils.crop(self.image_with_gap, 
-                       OW.get_ability_icon_pos(self.player1['pos'], self.player2['pos'])[self.game_type])
+        distance = self.player2[
+            'pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type]
+        gap = ImageUtils.crop(
+            self.image_with_gap,
+            [0, self.image_with_gap.shape[0], self.player1['pos'], distance])
 
-        
-        assist_num = int((distance - OW.ABILITY_GAP_NORMAL[self.game_type]) / OW.ASSIST_GAP[self.game_type]) - 1
-        
+        ability_icon = ImageUtils.crop(
+            self.image_with_gap,
+            OW.get_ability_icon_pos(self.player2['pos'])[self.game_type])
+
+        assist_num = int(
+            (distance - OW.ABILITY_GAP_NORMAL[self.game_type]) / OW.ASSIST_GAP[self.game_type]) - 1
+
         ability_list = OW.ABILITY_LIST[self.player1['chara']]
-        ability_icons_ref = self.frame.game.ability_icons_ref[self.player1['chara']]
+        ability_icons_ref = self.frame.game.ability_icons_ref[
+            self.player1['chara']]
 
         if (distance - OW.ABILITY_GAP_NORMAL[self.game_type]) % OW.ASSIST_GAP[self.game_type] > 5:
             # Has ability icon
             max_prob = -10
-            max_ind = 0
             for (ind, ability_index) in enumerate(ability_list):
                 filtered_icon = self._preprocess_ability_icon(ability_icon)
-                s = measure.compare_ssim(filtered_icon, ability_icons_ref[ind], multichannel=True)
-                if s > max_prob:
-                    max_prob = s
+                score = measure.compare_ssim(
+                    filtered_icon, 
+                    ability_icons_ref[ind], 
+                    multichannel=True)
+                if score > max_prob:
+                    max_prob = score
                     self.ability = ability_index
-                    max_ind = ind
 
             if max_prob < 0.1 and self.player1['chara'] == OW.GENJI:
                 self.ability = OW.ABILITY_E
 
-
         for i in range(assist_num):
             # TODO: write this into ow.py!
-            assist_icon = ImageUtils.crop(self.image, 
-                [OW.ABILITY_ICON_Y_MIN[self.game_type], 
-                 OW.ASSIST_ICON_HEIGHT[self.game_type], 
-                 8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type], 
-                 OW.ASSIST_ICON_WIDTH[self.game_type]])
-
+            assist_icon = ImageUtils.crop(
+                self.image,
+                [
+                    OW.ABILITY_ICON_Y_MIN[self.game_type],
+                    OW.ASSIST_ICON_HEIGHT[self.game_type],
+                    8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type] \
+                        + OW.KILLFEED_ICON_WIDTH[self.game_type],
+                    OW.ASSIST_ICON_WIDTH[self.game_type]])
             assist = {
                 "chara": "empty",
                 "player": "empty",
@@ -288,67 +409,47 @@ class Killfeed:
             }
             max_score = -10
             for (chara, icon) in self.frame.game.assist_icons_ref.iteritems():
-                s = measure.compare_ssim(assist_icon, icon, multichannel=True)
-                if s > max_score:
-                    max_score = s
+                score = measure.compare_ssim(assist_icon, 
+                                             icon, multichannel=True)
+                if score > max_score:
+                    max_score = score
                     assist['chara'] = chara
 
             self.assists.append(self._set_assist_info(assist))
 
     def _preprocess_ability_icon(self, icon):
+        """Preprocess an ability icon cut from frame.
 
-        ability_pos = OW.get_ability_icon_pos(self.player1['pos'], 
-                        self.player2['pos'])[self.game_type]
-        color = self.image_with_gap[ability_pos[0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
+        Main idea here is to find color of icon first. Color of ability
+        icon is same as of arrow icon on right side. Given color, remove all parts
+        with different colors.
+
+        Author:
+            Appcell
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """       
+        ability_pos = OW.get_ability_icon_pos(self.player2['pos'])[self.game_type]
+        color = self.image_with_gap[ability_pos[
+            0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
         filtered_icon = np.zeros((icon.shape[0], icon.shape[1]))
-        # There must be a better way for this
+        
+        # TODO: Labelling needed here!!! Especially when background looks
+        # similar to foreground.
+
+        # TODO: Write consts here into ow.py
+        if ImageUtils.color_distance(color, np.array([255, 255, 255])) < 40:
+            self.is_headshot = True
+
+        # TODO: There must be a better way for this
         for i in range(icon.shape[0]):
             for j in range(icon.shape[1]):
-                if ImageUtils.color_distance(icon[i, j, :], color) < OW.ABILITY_ICON_COLOR_FILTER_THRESHOLD[self.game_type]:
+                if ImageUtils.color_distance(icon[i, j, :], color) \
+                    < OW.ABILITY_ICON_COLOR_FILTER_THRESHOLD[self.game_type]:
                     filtered_icon[i, j] = 255
-
         return filtered_icon.astype('uint8')
-
-
-    # def _get_icons_weights_discrete(self, edge_validation):
-    #     """
-    #     An alternate way to get weights of icons. Only matches the icon where the pixel passes edge validation.
-    #     Experiments show that when there are less than 8 valid pixels in edge_validation,
-    #     it's faster than _get_icons_weights_full().
-    #     @param killfeed_image: The killfeed image.
-    #     @param edge_validation: A list of boolean. Should be the result of _validate_edge()
-    #     @param chara:
-    #     @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
-    #     """
-    #     result_raw = []
-    #     for x in range(len(edge_validation)):
-    #         if not edge_validation[x]:
-    #             continue
-    #         to_compare = ImageUtils.crop(self.image, 
-    #                      [0, OW.KILLFEED_ICON_HEIGHT[self.game_type], x, OW.KILLFEED_ICON_WIDTH[self.game_type]])
-    #         best_score = -1
-    #         best_chara = ""
-    #         for (object_chara, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
-    #             score = self._match_template_score(to_compare, object_icon)
-    #             if score > best_score:
-    #                 best_score = score
-    #                 best_chara = object_chara
-    #                 result_raw.append({
-    #                         'chara': best_chara,
-    #                         'prob': best_score,
-    #                         'pos': x
-    #                         })
-    #     mask = [False] * len(edge_validation)
-    #     result_raw = sorted(result_raw, key = itemgetter('prob'), reverse = True)
-    #     result = []
-    #     for match in result_raw:
-    #         if mask[match.x]:
-    #             continue
-    #         mask_left_index = max(0, match.x - 5)
-    #         mask_right_index = min(len(mask), match.x + 5)
-    #         mask[mask_left_index:mask_right_index] = [True]*(mask_right_index-mask_left_index)
-    #         result.append(match)
-
-    #     return result
-
-
