@@ -94,16 +94,26 @@ class Game:
         """
         self.video_path = gui_info["video_path"]
         self.output_path = gui_info["output_path"]
-        self.team_names['left'] = gui_info["name_team_left"] \
-            if gui_info["name_team_left"] else ["Team Left"]
-        self.team_names['right'] = gui_info["name_team_right"] \
-            if gui_info["name_team_right"] else ["Team Right"]
-        self.name_players_team_left = gui_info["name_players_team_left"] \
-            if len(gui_info["name_players_team_left"]) == 6 \
-            else ["1", "2", "3", "4", "5", "6"]
-        self.name_players_team_right = gui_info["name_players_team_right"] \
-            if len(gui_info["name_players_team_right"]) == 6 \
-            else ["7", "8", "9", "10", "11", "12"]
+
+        if gui_info["name_team_left"]:
+            self.team_names['left'] = gui_info["name_team_left"]
+        else:
+            self.team_names['left'] = ["Team Left"]
+
+        if gui_info["name_team_right"]:
+            self.team_names['right'] = gui_info["name_team_right"]
+        else:
+            self.team_names['right'] = ["Team Right"]
+
+        if len(gui_info["name_players_team_left"]) == 6:
+            self.name_players_team_left = gui_info["name_players_team_left"]
+        else:
+            self.name_players_team_left = ["1", "2", "3", "4", "5", "6"]
+
+        if len(gui_info["name_players_team_right"]) == 6:
+            self.name_players_team_right = gui_info["name_players_team_right"]
+        else:
+            self.name_players_team_right = ["7", "8", "9", "10", "11", "12"]
 
     def analyze(self):
         """Main analysis process

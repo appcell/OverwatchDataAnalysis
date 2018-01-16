@@ -34,11 +34,15 @@ class Player:
         #: image of current frame
         self.image = self.frame.image
         #: the player name
-        self.name = self.frame.game.name_players_team_left[index] if index < 6 \
-            else self.frame.game.name_players_team_right[index - 6]
+        if index < 6:
+            self.name = self.frame.game.name_players_team_left[index]
+        else:
+            self.name = self.frame.game.name_players_team_right[index - 6]
         #: team name
-        self.team = self.frame.game.team_names['left'] if index < 6 \
-            else self.frame.game.team_names['right']
+        if index < 6:
+            self.team = self.frame.game.team_names['left']
+        else:
+            self.team = self.frame.game.team_names['right']
         #: the character current player uses
         self.chara = None
         #: whether this player has ultimate ability now
@@ -86,8 +90,9 @@ class Player:
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
-        prob = 1 if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[
-            self.frame.game.game_type] else prob
+
+        if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type]:
+            prob = 1
 
         if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
             self.is_ult_ready = True

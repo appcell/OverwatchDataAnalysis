@@ -225,8 +225,10 @@ class Killfeed:
         dist_right = ImageUtils.color_distance_normalized(
             color, colors_ref['right'])
 
-        res['team'] = self.frame.game.team_names['left'] \
-            if dist_left < dist_right else self.frame.game.team_names['right']
+        if dist_left < dist_right:
+            res['team'] = self.frame.game.team_names['left']
+        else:
+            res['team'] = self.frame.game.team_names['right']
 
         chara = OW.get_chara_name(player['chara'])
 
