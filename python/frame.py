@@ -5,10 +5,18 @@ from player import Player
 from killfeed import Killfeed
 
 
-class Frame:
+class Frame(object):
     """Class of a Frame object.
 
     Retrieves and stores all info captured in one frame.
+
+    Attributes:
+        is_valid: If the frame itself is valid, i.e. during a match
+        players: List of Player instances in current frame, usually 12
+        killfeeds: List of Killfeed instances in current frame, 6 at max
+        image: image of the frame, resized to 720p
+        time: time of frame in video, in seconds
+        game: the Game object who fathers all frames
     """
 
     def __init__(self, frame_image, frame_time, game):
@@ -25,14 +33,9 @@ class Frame:
         Returns:
             None 
         """
-
-        # If the frame itself is valid, i.e. during a match
         self.is_valid = True
-        # List of Player instances in current frame, usually 12
         self.players = []
-        # List of Killfeed instances in current frame, 6 at max
         self.killfeeds = []
-        # Resize image to 720p
         self.image = ImageUtils.resize(frame_image, 1280, 720)
         self.time = frame_time
         self.game = game
@@ -40,7 +43,6 @@ class Frame:
         self.get_players()
         self.get_killfeeds()
         self.validate()
-
         # cv2.imshow('t',self.image)
         # cv2.waitKey(0)
         self.free()

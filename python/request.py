@@ -8,7 +8,7 @@ def client(host='www.douban.com', port=80):
     s.connect((ip, port))
     message = "GET / HTTP/1.1\r\n\r\n".encode()
     s.sendall(message)
-    #
+
     reply = s.recv(4096)
     data = reply.split('\r\n\r\n')[1]
     return data

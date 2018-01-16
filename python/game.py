@@ -3,10 +3,30 @@ from frame import Frame
 from utils.video_loader import VideoLoader
 
 
-class Game:
-    """Class of a Frame object.
+class Game(object):
+    """Class of a Game object.
 
     Contains meta info of a game, also all info retrieved from video.
+
+    Attributes:
+        game_type: type of this game, can be OW.CAMETYPE_OWL or
+            OW.GAMETYPE_CUSTOM
+        analyzer_fps: FPS of game analyzer, usually 2 for OWL video
+        team_names: names of both teams
+        name_players_team_left: names of players in left team
+        name_players_team_right: names of players in right team
+        team_colors: theme color of both teams. In form of:
+                     {
+                         "left": None,
+                         "right": None
+                     }
+        video_path: video path
+        output_path: output path
+        frames: list of all analyzed frames of the game
+        avatars_ref: list of all topbar reference avatars fused
+        killfeed_icons_ref: list of all killfeed reference icons
+        assist_icons_ref: list of all killfeed reference assist icons
+        ability_icons_ref: list of all killfeed reference ability icons
     """
 
     def __init__(self, game_type, analyzer_fps):
@@ -24,42 +44,16 @@ class Game:
         Returns:
             None 
         """
-
-        #: Type of this game: 0 = OWL, 1 = Custom matches
         self.game_type = game_type
-
-        #: FPS of game analyzer.
         self.analyzer_fps = analyzer_fps
-
-        #: Names of both teams.
-        self.name_team_left = ""
-        self.name_team_right = ""
-
-        self.team_names = {
-            "left": "",
-            "right": ""
-        }
-
-        #: Names of players in both teams.
+        self.team_names = {"left": "", "right": ""}
         self.name_players_team_left = []
         self.name_players_team_right = []
-
-        #: Theme color of both teams. In form of:
-        # {
-        #     "left": None,
-        #     "right": None
-        # }
         self.team_colors = None
-
-        #: Video path & output path
         self.video_path = ""
         self.output_path = ""
-
-        #: A list of all analyzed frames of the game.
         self.frames = []
         self.avatars_ref = {}
-
-        # Read in killfeed & assist & ability icons
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
         self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]

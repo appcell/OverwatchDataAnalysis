@@ -12,6 +12,17 @@ class Player:
     """Class of a Killfeed object.
 
     Contains info of one player in one frame.
+
+    Attributes:
+        index: index of player, from 0 to 11
+        frame: pointer to frame obj
+        image: image of current frame
+        name: the player name
+        team: team name
+        chara: the character current player uses
+        is_ult_ready: whether this player has ultimate ability now
+        is_dead: whether this chara is dead
+        is_observed: whether this chara is observe by cam
     """
 
     def __init__(self, index, frame):
@@ -27,35 +38,27 @@ class Player:
         Returns:
             None 
         """
-        #: index of player, from 0 to 11
         self.index = index
-        #: pointer to frame obj
         self.frame = frame
-        #: image of current frame
         self.image = self.frame.image
-        #: the player name
         if index < 6:
             self.name = self.frame.game.name_players_team_left[index]
         else:
             self.name = self.frame.game.name_players_team_right[index - 6]
-        #: team name
         if index < 6:
             self.team = self.frame.game.team_names['left']
         else:
             self.team = self.frame.game.team_names['right']
-        #: the character current player uses
         self.chara = None
-        #: whether this player has ultimate ability now
         self.is_ult_ready = False
-        #: whether this chara is dead
         self.is_dead = False
+        self.is_observed = None 
 
         # TODO: future work
-        self.is_observed = None 
         self.health = None
         self.ult_charge = None
         self.is_onfire = None
-        # Analysis process
+
         self.get_ult_status()
         self.get_chara()
 
@@ -84,8 +87,8 @@ class Player:
 
         # Compare cropped icon with reference, get the probability of them
         # being similar
-        prob = cv2.matchTemplate(
-            ult_icon, ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
+        prob = cv2.matchTemplate(ult_icon, 
+                                 ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
 
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.

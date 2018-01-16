@@ -11,6 +11,27 @@ class Killfeed:
     """Class of a Killfeed object.
 
     Contains info in one killfeed row.
+    Player and chara might be different from analysis of current frame, thus
+    extra variables needed.
+
+    Attributes:
+        player1: Killer/Resurrector (On left side)
+        player2: Killed/Resurrected (On right side)
+        ability: ability code, see overwatch.py line 282
+        assists: list of assisting players, with the form of a dict:
+                 {
+                     "chara": "empty",
+                     "player": "empty",
+                     "team": "empty"
+                 }        
+        index: row number of current killfeed, ranges from 0 to 5.
+        is_valid: tell if the killfeed is valid, mostly for convenience only
+        is_headshot: if the elimination is by a headshot
+        frame: the Frame instance who fathers this killfeed
+        game_type: type of this game, can be OW.CAMETYPE_OWL or
+            OW.GAMETYPE_CUSTOM
+        image: image of killfeed row, without gap
+        image_with_gap: image of killfeed row, with gap
     """
 
     def __init__(self, frame, index):
@@ -26,51 +47,33 @@ class Killfeed:
         Returns:
             None 
         """
-        # player and chara might be different from analysis of current frame!
-        # Thus extra variables needed.
-
-        # Killer/Resurrector (On left side)
         self.player1 = {
             "chara": "empty",   # name of chara, or "empty"
             "player": "empty",  # name of player, or "empty"
             "team": "empty",   # name of team, or "empty"
             "pos": -1
         }
-
-        # Killed/Resurrected (On right side)
         self.player2 = {
             "chara": "empty",
             "player": "empty",
             "team": "empty",
             "pos": -1
         }
-
-        # ability code, see overwatch.py line 282
         self.ability = 0
-
-        # List of assisting players, with the form of a dict:
-        # {
-        #     "chara": "empty",
-        #     "player": "empty",
-        #     "team": "empty"
-        # }
         self.assists = []
-
-        # Row number of current killfeed, ranges from 0 to 5.
         self.index = index
-        # Tell if the killfeed is valid, mostly for convenience.
         self.is_valid = True
         self.is_headshot = False
         self.frame = frame
         self.game_type = frame.game.game_type
 
-        # Get row image
         killfeed_pos = OW.get_killfeed_pos(index)[frame.game.game_type]
         killfeed_with_gap_pos = OW.get_killfeed_with_gap_pos(index)[
             frame.game.game_type]
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
+        
         self.get_players()
         self.get_ability_and_assists()
 

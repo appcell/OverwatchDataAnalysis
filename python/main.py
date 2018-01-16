@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 import time
 from game import Game
 from gui import Gui
