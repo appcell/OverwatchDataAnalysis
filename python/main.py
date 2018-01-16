@@ -35,7 +35,7 @@ def analyze():
                     "Player10", 
                     "Player11", 
                     "Player12"],
-                "video_path": "../videos/2.mp4",
+                "video_path": "../videos/SDvsNYXL_Preseason.mp4",
                 "output_path": ""
                }
 

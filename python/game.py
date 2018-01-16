@@ -127,7 +127,7 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        start_time = 110
+        start_time = 80
         end_time = 120
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
