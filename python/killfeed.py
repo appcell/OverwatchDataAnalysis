@@ -42,7 +42,7 @@ class Killfeed:
         # Row number of current killfeed, ranges from 0 to 5.
         self.index = index
         # Tell if the killfeed is valid, mostly for convenience.
-        self.is_valid = False
+        self.is_valid = True
 
         self.frame = frame
         self.game_type = frame.game.game_type
@@ -64,37 +64,50 @@ class Killfeed:
         """
         edge_validation = self._validate_edge()
         icons_weights = self._get_icons_weights(edge_validation)
-        # TODO Only need two best matches in the end. Kept three while debugging.
-        icons_weights = sorted(icons_weights, key = itemgetter('prob'), reverse = True)
-        best_matches = icons_weights[0:3]
 
+        # Differentiate icons on 2 sides first!!
+        mean_pos = np.mean([i['pos'] for i in icons_weights])
+        icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
+        icons_weights_right = [i for i in icons_weights if i['pos'] > mean_pos]
+        mean_pos_left = np.mean([i['pos'] for i in icons_weights_left])
+        mean_pos_right = np.mean([i['pos'] for i in icons_weights_right])
+
+
+        if abs(mean_pos_right - mean_pos_left) < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
+            # Only one icon exists
+            matched = self._get_matched_icon(icons_weights, edge_validation)
+            if len(matched) > 0 and \
+               matched[0]['pos'] >= OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+                self.player2 = self._set_player_info(matched_right, 'right')
+        else:
+            # 2 icons got recognized
+            icons_weights_left = sorted(icons_weights_left, 
+                                key = itemgetter('prob'), reverse = True)[0:2]
+            icons_weights_right = sorted(icons_weights_right, 
+                                key = itemgetter('prob'), reverse = True)[0:2]
+            matched_left = self._get_matched_icon(icons_weights_left, edge_validation)
+            matched_right = self._get_matched_icon(icons_weights_right, edge_validation)
+            if len(matched_left) > 0:
+                self.player1 = self._set_player_info(matched_left[0], 'left')
+            if len(matched_right) > 0:
+                self.player2 = self._set_player_info(matched_right[0], 'right')
+
+        if self.player2['pos'] == -1:
+            self.is_valid = False
+
+
+
+    def _get_matched_icon(self, icons, edge_validation):
         # There should be a vertical edge
         # between left 3 pixels to the icon
         # and right 1 pixel to the icon
         # with no more than 2 pixels in the vertical line missing.
         # A vertical line should have a width of no more than 2.
         matched = list(filter(
-            lambda x: x['prob'] >= OW.KILLFEED_MAX_PROB[self.game_type] and edge_validation[x['pos']] == True,
-            best_matches))
-
-        if len(matched) == 0:
-            self.is_valid = False
-        elif len(matched) == 1:
-            # If only one icon gets recognized, it has to be on right side.
-            if matched[0].x < OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
-                self.is_valid = False
-            else:
-                self.is_valid = True
-                self.player2 = self._set_player_info(matched[0], 'right')
-        else:
-            self.is_valid = True
-            if matched[0]['pos'] < matched[1]['pos']:
-                self.player1 = self._set_player_info(matched[0], 'left')
-                self.player2 = self._set_player_info(matched[1], 'right')
-            else:
-                self.player2 = self._set_player_info(matched[0], 'right')
-                self.player1 = self._set_player_info(matched[1], 'left')
-
+            lambda x: x['prob'] >= OW.KILLFEED_MAX_PROB[self.game_type] \
+                and edge_validation[x['pos']] == True,icons))
+        # print matched
+        return matched
 
     def _validate_edge(self):
         """
@@ -143,11 +156,7 @@ class Killfeed:
             colors_ref = self.frame.get_team_colors()
         dist_left = ImageUtils.color_distance_normalized(color, colors_ref['left'])
         dist_right = ImageUtils.color_distance_normalized(color, colors_ref['right'])
-        print [color_pos[0], color_pos[1]]
-        print colors_ref
-        print color
-        print [dist_left, dist_right]
-        print "==========="
+
         res['team'] = self.frame.game.team_names['left'] \
                              if dist_left < dist_right else self.frame.game.team_names['right']
 
@@ -185,11 +194,11 @@ class Killfeed:
         @param name:
         @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
         """
-        valid_pixel_count = edge_validation.count(True)
-        if valid_pixel_count <= 7:
-            return self._get_icons_weights_discrete(edge_validation)
-        else:
-            return self._get_icons_weights_full(edge_validation)
+        # valid_pixel_count = edge_validation.count(True)
+        # if valid_pixel_count <= 7:
+        #     return self._get_icons_weights_discrete(edge_validation)
+        # else:
+        return self._get_icons_weights_full(edge_validation)
 
     def _get_icons_weights_full(self, edge_validation):
         """
@@ -221,6 +230,7 @@ class Killfeed:
 
             _, max_val2, _, max_loc2 = cv2.minMaxLoc(match_result_masked)
 
+
             if edge_validation[max_loc2[0]]:
                 result.append({
                     'chara': chara,
@@ -230,45 +240,7 @@ class Killfeed:
 
         return result
 
-    def _get_icons_weights_discrete(self, edge_validation):
-        """
-        An alternate way to get weights of icons. Only matches the icon where the pixel passes edge validation.
-        Experiments show that when there are less than 8 valid pixels in edge_validation,
-        it's faster than _get_icons_weights_full().
-        @param killfeed_image: The killfeed image.
-        @param edge_validation: A list of boolean. Should be the result of _validate_edge()
-        @param chara:
-        @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
-        """
-        result_raw = []
-        for x in range(len(edge_validation)):
-            if not edge_validation[x]:
-                continue
-            to_compare = util.crop_by_limit(killfeed_image, 0, OW.KILLFEED_ICON_HEIGHT[self.game_type], x, OW.KILLFEED_ICON_WIDTH[self.game_type])
-            best_score = -1
-            best_chara = ""
-            for (object_chara, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
-                score = self._match_template_score(to_compare, object_icon)
-                if score > best_score:
-                    best_score = score
-                    best_chara = object_chara
-                    result_raw.append({
-                            'chara': best_chara,
-                            'prob': best_score,
-                            'pos': x
-                            })
-        mask = [False] * len(edge_validation)
-        result_raw = sorted(result_raw, key = itemgetter('prob'), reverse = True)
-        result = []
-        for match in result_raw:
-            if mask[match.x]:
-                continue
-            mask_left_index = max(0, match.x - 5)
-            mask_right_index = min(len(mask), match.x + 5)
-            mask[mask_left_index:mask_right_index] = [True]*(mask_right_index-mask_left_index)
-            result.append(match)
 
-        return result
 
     def get_assists(self):
         if self.player1['pos'] == -1 or self.player2['pos'] == -1:
@@ -339,6 +311,45 @@ class Killfeed:
         return filtered_icon.astype('uint8')
 
 
+    # def _get_icons_weights_discrete(self, edge_validation):
+    #     """
+    #     An alternate way to get weights of icons. Only matches the icon where the pixel passes edge validation.
+    #     Experiments show that when there are less than 8 valid pixels in edge_validation,
+    #     it's faster than _get_icons_weights_full().
+    #     @param killfeed_image: The killfeed image.
+    #     @param edge_validation: A list of boolean. Should be the result of _validate_edge()
+    #     @param chara:
+    #     @return: A list of KillfeedIconMatch object, which includes all possible icons in this killfeed image.
+    #     """
+    #     result_raw = []
+    #     for x in range(len(edge_validation)):
+    #         if not edge_validation[x]:
+    #             continue
+    #         to_compare = ImageUtils.crop(self.image, 
+    #                      [0, OW.KILLFEED_ICON_HEIGHT[self.game_type], x, OW.KILLFEED_ICON_WIDTH[self.game_type]])
+    #         best_score = -1
+    #         best_chara = ""
+    #         for (object_chara, object_icon) in self.icons.ICONS_CHARACTER.iteritems():
+    #             score = self._match_template_score(to_compare, object_icon)
+    #             if score > best_score:
+    #                 best_score = score
+    #                 best_chara = object_chara
+    #                 result_raw.append({
+    #                         'chara': best_chara,
+    #                         'prob': best_score,
+    #                         'pos': x
+    #                         })
+    #     mask = [False] * len(edge_validation)
+    #     result_raw = sorted(result_raw, key = itemgetter('prob'), reverse = True)
+    #     result = []
+    #     for match in result_raw:
+    #         if mask[match.x]:
+    #             continue
+    #         mask_left_index = max(0, match.x - 5)
+    #         mask_right_index = min(len(mask), match.x + 5)
+    #         mask[mask_left_index:mask_right_index] = [True]*(mask_right_index-mask_left_index)
+    #         result.append(match)
 
+    #     return result
 
 

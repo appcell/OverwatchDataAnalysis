@@ -9,7 +9,7 @@ def main():
            "name_team_right": "BU", 
            "name_players_team_left": ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6"],
            "name_players_team_right": ["Player7", "Player8", "Player9", "Player10", "Player11", "Player12"],
-           "video_path": "../../videos/1.mp4",
+           "video_path": "../videos/2.mp4",
            "output_path": ""
            }
 

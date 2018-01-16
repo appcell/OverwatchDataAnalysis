@@ -160,13 +160,13 @@ def get_ult_icon_pos(index):
 def get_ult_icon_ref(index):
     if index < 6:
         return {
-            GAMETYPE_OWL: ImageUtils.read("../../images/awayUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("../../images/awayUlt.png")
+            GAMETYPE_OWL: ImageUtils.read("../images/awayUlt.png"),
+            GAMETYPE_CUSTOM: ImageUtils.read("../images/awayUlt.png")
         }
     else:
         return {
-            GAMETYPE_OWL: ImageUtils.read("../../images/homeUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("../../images/homeUlt.png")
+            GAMETYPE_OWL: ImageUtils.read("../images/homeUlt.png"),
+            GAMETYPE_CUSTOM: ImageUtils.read("../images/homeUlt.png")
         }
 
 
@@ -220,7 +220,7 @@ def get_avatars_ref():
     @Author: Appcell
     @return: a dict of all reference avatar images
     """
-    return {chara: ImageUtils.resize(ImageUtils.read_with_transparency("../../images/charas/" + chara + ".png"), AVATAR_WIDTH_REF, AVATAR_HEIGHT_REF) \
+    return {chara: ImageUtils.resize(ImageUtils.read_with_transparency("../images/charas/" + chara + ".png"), AVATAR_WIDTH_REF, AVATAR_HEIGHT_REF) \
      for chara in CHARACTER_LIST}
 
 def get_avatar_pos_small(index):
@@ -328,9 +328,9 @@ def get_killfeed_icons_ref():
     @return: a dict of all reference killfeed icons
     """
     return {
-        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../../images/icons/" + chara + ".png"), 
+        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../images/icons/" + chara + ".png"), 
             KILLFEED_ICON_WIDTH[GAMETYPE_OWL], KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) for chara in KILLFEED_OBJECT_LIST},
-        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../../images/icons/" + chara + ".png"), 
+        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../images/icons/" + chara + ".png"), 
             KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) for chara in KILLFEED_OBJECT_LIST},
     } 
 def get_assist_icons_ref():
@@ -340,9 +340,9 @@ def get_assist_icons_ref():
     @return: a dict of all reference killfeed icons
     """
     return {
-        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../../images/assists/" + chara + ".png"), 
+        GAMETYPE_OWL: {chara: ImageUtils.resize(ImageUtils.read("../images/assists/" + chara + ".png"), 
             ASSIST_ICON_WIDTH[GAMETYPE_OWL], ASSIST_ICON_HEIGHT[GAMETYPE_OWL]) for chara in ASSIST_CHARACTER_LIST},
-        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../../images/assists/" + chara + ".png"), 
+        GAMETYPE_CUSTOM: {chara: ImageUtils.resize(ImageUtils.read("../images/assists/" + chara + ".png"), 
             ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM], ASSIST_ICON_HEIGHT[GAMETYPE_CUSTOM]) for chara in ASSIST_CHARACTER_LIST},
     }
 
@@ -355,13 +355,13 @@ def get_killfeed_team_color_pos(pos_x, position):
     """
     if position == 'left':
         return {
-            GAMETYPE_OWL:  [0, pos_x - 5],
-            GAMETYPE_CUSTOM:  [0, pos_x - 5]
+            GAMETYPE_OWL:  [2, pos_x - 10],
+            GAMETYPE_CUSTOM:  [2, pos_x - 10]
             }
     else:
         return {
-            GAMETYPE_OWL:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 5],
-            GAMETYPE_CUSTOM:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 5]
+            GAMETYPE_OWL:  [2, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 10],
+            GAMETYPE_CUSTOM:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 10]
             }
 
 
@@ -472,7 +472,7 @@ def get_ability_icons_ref():
         icons_list_OWL = []
         icons_list_Custom = []
         for i in ability_list:
-            icon = ImageUtils.rgb_to_gray(ImageUtils.read("../../images/abilities/" + chara + "/" + str(i) + ".png"))
+            icon = ImageUtils.rgb_to_gray(ImageUtils.read("../images/abilities/" + chara + "/" + str(i) + ".png"))
             icons_list_OWL.append(ImageUtils.resize(
                 icon,
                 ABILITY_ICON_WIDTH[GAMETYPE_OWL],

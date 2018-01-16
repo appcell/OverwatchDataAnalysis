@@ -18,8 +18,8 @@ class Frame:
         self.time = frame_time
         self.game = game
 
-        cv2.imshow('t',self.image)
-        cv2.waitKey(0)
+        # cv2.imshow('t',self.image)
+        # cv2.waitKey(0)
         self.get_players()
         self.get_killfeeds()
         self.validate()
