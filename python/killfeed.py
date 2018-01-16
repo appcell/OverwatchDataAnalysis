@@ -106,7 +106,6 @@ class Killfeed:
         matched = list(filter(
             lambda x: x['prob'] >= OW.KILLFEED_MAX_PROB[self.game_type] \
                 and edge_validation[x['pos']] == True,icons))
-        # print matched
         return matched
 
     def _validate_edge(self):
@@ -145,8 +144,8 @@ class Killfeed:
     def _set_player_info(self, player, position):
         res = {'chara': player['chara'], 'pos': player['pos']}
         color_pos = OW.get_killfeed_team_color_pos(player['pos'], position)[self.game_type]
-        cv2.imshow('t',self.image)
-        cv2.waitKey(0)
+        # cv2.imshow('t',self.image)
+        # cv2.waitKey(0)
 
         color = self.image[color_pos[0], color_pos[1]]
         colors_ref = {}

@@ -45,10 +45,10 @@ class Frame:
             killfeed = Killfeed(self, i)
             if killfeed.is_valid == True:
                 self.killfeeds.append(killfeed)
-                print killfeed.player1
-                print killfeed.player2
-                print killfeed.ability
-                print killfeed.assists
+                # print killfeed.player1
+                # print killfeed.player2
+                # print killfeed.ability
+                # print killfeed.assists
             else:
                 break
 
