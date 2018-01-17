@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import overwatch as OW
 from utils import image as ImageUtils
@@ -40,11 +41,15 @@ class Frame(object):
         self.time = frame_time
         self.game = game
 
+
+
         self.get_players()
         self.get_killfeeds()
         self.validate()
-        # cv2.imshow('t',self.image)
-        # cv2.waitKey(0)
+
+        # if self.time == 8.5:
+        #     cv2.imshow('t',self.image)
+        #     cv2.waitKey(0)
         self.free()
 
     def free(self):
@@ -112,11 +117,20 @@ class Frame(object):
         for i in range(6):
             killfeed = Killfeed(self, i)
             if killfeed.is_valid is True:
-                self.killfeeds.append(killfeed)
-                # print killfeed.player1
-                # print killfeed.player2
-                # print killfeed.ability
-                # print killfeed.assists
+                if self.game.frames and self.game.frames[-1].killfeeds:
+                    last_killfeed = self.game.frames[-1].killfeeds[-1]
+                    if killfeed == last_killfeed:
+                        break
+                    else:
+                        self.killfeeds.append(killfeed)
+                else:
+                    self.killfeeds.append(killfeed)
+                print "======= Line " + str(i) + " ======="
+                print "Player1: " + str(killfeed.player1)
+                print "Player2: " + str(killfeed.player2)
+                print "Ability: " + str(killfeed.ability)
+                print "Assists: " + str(killfeed.assists)
+                print "Is headshot: " + str(killfeed.is_headshot)
             else:
                 break
 

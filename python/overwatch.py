@@ -106,8 +106,8 @@ def get_chara_name(name):
 # ==========================================================
 # **********************************************************
 
-TEAM_COLOR_PICK_POS_LEFT_OWL = [0, 0]
-TEAM_COLOR_PICK_POS_RIGHT_OWL = [0, 1279]
+TEAM_COLOR_PICK_POS_LEFT_OWL = [53, 40]
+TEAM_COLOR_PICK_POS_RIGHT_OWL = [56, 1188]
 TEAM_COLOR_PICK_POS_LEFT_CUSTOM = [0, 0]
 TEAM_COLOR_PICK_POS_RIGHT_CUSTOM = [0, 1279]
 
@@ -348,6 +348,8 @@ KILLFEED_GAP_CUSTOM = 35
 
 KILLFEED_MAX_PROB = {GAMETYPE_OWL: 0.6, GAMETYPE_CUSTOM: 0.6}
 
+KILLFEED_MAX_COLOR_DISTANCE = {GAMETYPE_OWL: 90, GAMETYPE_CUSTOM: 20}
+
 
 def get_killfeed_icons_ref():
     """Read all reference killfeed avatars, then write into dict
@@ -413,6 +415,7 @@ def get_killfeed_team_color_pos(pos_x, position):
     Returns:
         Pos array of this pixel
     """
+
     if position == 'left':
         return {
             GAMETYPE_OWL:  [2, pos_x - 10],

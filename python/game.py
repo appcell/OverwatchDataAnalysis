@@ -127,19 +127,21 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        start_time = 80
-        end_time = 120
+        start_time = 0
+        end_time = 100
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
-
+        step_cnt = 0
         while frame_image is not None and frame_image_index < end_time * video.fps:
             frame = Frame(frame_image,
-                          start_time + (1 / self.analyzer_fps) * \
-                          (frame_image_index - start_time * video.fps),
+                          start_time + (1 / float(self.analyzer_fps)) * step_cnt,
                           self)
             self.frames.append(frame)
+            if frame.is_valid:
+                print frame.time
 
             frame_image_index += step
+            step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
         video.close()
 
