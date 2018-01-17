@@ -2,7 +2,10 @@
 """
 @Author: Komorebi 
 """
-from excel.utils import capitalize
+from excel.utils import (
+    capitalize,
+    upper,
+)
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import (
     Alignment,
@@ -121,7 +124,7 @@ class Sheet:
 
     def _append_player(self, players):
         for i, player in enumerate(players):
-            s = '0{} {}'.format(i + 1, player.name.upper())
+            s = '{:0>2d} {}'.format(i + 1, upper(player.name.encode('utf-8')))
             if i < 6:
                 cell = Config.LEFT['player']['player{}'.format(i + 1)]
             else:

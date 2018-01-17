@@ -35,3 +35,9 @@ def to_hex(array):
         return 'F7F7F7'
     else:
         return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:]
+
+
+def upper(name):
+    u = [chr(i) for i in range(97, 123)] + [chr(i) for i in range(65, 91)] + [' ']
+    result = list(map(lambda s: s in u, name))
+    return name.upper() if False not in result else name
