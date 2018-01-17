@@ -2,7 +2,7 @@ import overwatch as OW
 from frame import Frame
 from utils.video_loader import VideoLoader
 from excel import Excel
-
+import os
 
 class Game(object):
     """Class of a Game object.
@@ -60,6 +60,7 @@ class Game(object):
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
+        print self.output_path
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
 
@@ -88,8 +89,11 @@ class Game(object):
         Returns:
             None 
         """
+        filename = os.path.split(gui_info["video_path"])[1]
         self.video_path = gui_info["video_path"]
-        self.output_path = gui_info["output_path"]
+        self.output_path = gui_info["output_path"] \
+            + '/' \
+            + filename[:filename.index('.')] + '.xlsx'
 
         if gui_info["name_team_left"]:
             self.team_names['left'] = gui_info["name_team_left"]
