@@ -4,8 +4,13 @@ from gui import Gui
 import overwatch as OW
 
 
+def main():
+    gui = Gui()
+    gui.info()
+    gui.show()
 
 
-
-    T = time.time()
-    print "time:", time.time() - T
+if __name__ == '__main__':
+    main()
+    # T = time.time()
+    # print "time:", time.time() - T

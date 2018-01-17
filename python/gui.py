@@ -179,13 +179,3 @@ class Gui(object):
         gui_info = self.info()
         analyze(gui_info)
         tkMessageBox.showinfo('一个微小的弹窗', '保存成功！')
-
-
-def main():
-    gui = Gui()
-    gui.info()
-    gui.show()
-
-
-if __name__ == '__main__':
-    main()
