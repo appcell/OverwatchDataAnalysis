@@ -61,6 +61,19 @@ class Player:
 
         self.get_ult_status()
         self.get_chara()
+        self.free()
+
+    def free(self):
+        """Free RAM by removing images from the Frame instance.
+        Done after analysis.
+        Author:
+            Appcell
+        Args:
+            None
+        Returns:
+            None 
+        """
+        del self.image
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.
