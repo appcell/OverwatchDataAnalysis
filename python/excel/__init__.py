@@ -23,4 +23,4 @@ class Excel(object):
     def save(self, filename='text', postfix='xlsx'):
         self.sheet1.new()
         self.sheet2.new()
-        self._wb.save('{}\{}.{}'.format(self.game.output_path, filename, postfix))
+        self._wb.save(self.game.output_path)
