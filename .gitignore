@@ -1,1 +1,9 @@
 /videos
+/results
+/python/.idea
+/python/src/test.py
+/temp
+.idea/
+*.DS_Store
+*.pyc
+*.orig
