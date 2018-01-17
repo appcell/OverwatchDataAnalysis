@@ -119,12 +119,12 @@ class Gui(object):
         self.right_frame = right_frame
 
     def click_save(self):
-        filename = filedialog.askdirectory(initialdir='~/OW/OverwatchDataAnalysis')
+        filename = filedialog.askdirectory(initialdir='~/')
         self.save_path.config(text=filename)
 
     def click_read(self):
         # self.root.
-        filename = filedialog.askopenfilename(initialdir='~/OW/OverwatchDataAnalysis/videos')
+        filename = filedialog.askopenfilename(initialdir='~/')
         self.read_path.config(text=filename)
 
     def check_update(self):
