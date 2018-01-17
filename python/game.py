@@ -1,6 +1,7 @@
 import overwatch as OW
 from frame import Frame
 from utils.video_loader import VideoLoader
+from excel import Excel
 
 
 class Game(object):
@@ -128,7 +129,7 @@ class Game(object):
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
         start_time = 0
-        end_time = 100
+        end_time = 50
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
@@ -154,4 +155,4 @@ class Game(object):
         Returns:
             None 
         """
-        pass
+        Excel(self).save()
