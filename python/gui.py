@@ -30,7 +30,7 @@ def analyze(gui_info):
     """
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
-    game.analyze(14, 20)
+    game.analyze(0, 0)
     game.output_to_excel()
 
 def log(*args):
@@ -133,13 +133,13 @@ class Gui(object):
             'current_version': 0.1,
         }
 
-        time.sleep(1)
-        #
-        json_data = json_request()
-        if version['current_version'] < json_data['current_version']:
-            tkMessageBox.showinfo('版本更新', '有新版本，请更新')
-        else:
-            pass
+        # time.sleep(1)
+        # #
+        # json_data = json_request()
+        # if version['current_version'] < json_data['current_version']:
+        #     tkMessageBox.showinfo('版本更新', '有新版本，请更新')
+        # else:
+        #     pass
 
     def info(self):
         info = {

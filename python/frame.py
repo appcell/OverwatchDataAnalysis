@@ -248,7 +248,7 @@ class Frame(object):
             A dict of avatars.
         """
         all_avatars = {}
-
+        # print self.time
         # 
         if self.game.team_colors is not None:
             all_avatars = self.game.avatars_ref
