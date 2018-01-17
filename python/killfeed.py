@@ -126,7 +126,7 @@ class Killfeed:
         if abs(mean_pos_right - mean_pos_left) \
             < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
             # Only one icon exists
-            matched = self._get_matched_icon(icons_weights, edge_validation)
+            matched = icons_weights
             if matched and matched[0]['pos'] \
                 >= OW.KILLFEED_WIDTH[self.game_type] \
                 - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
