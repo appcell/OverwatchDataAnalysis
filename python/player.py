@@ -137,7 +137,11 @@ class Player:
                 score = s_final
                 self.chara = name
                 self.is_observed = True if s > s_small else False
-
+        if self.chara == None:
+            self.chara = "empty"
+            self.is_dead = True
+            return
+            
         self.get_living_status(avatars_ref[self.chara])
 
     def get_living_status(self, avatar_ref):

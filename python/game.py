@@ -58,6 +58,7 @@ class Game(object):
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
         self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
+        self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
@@ -110,7 +111,7 @@ class Game(object):
         else:
             self.name_players_team_right = ["7", "8", "9", "10", "11", "12"]
 
-    def analyze(self):
+    def analyze(self, start_time=0, end_time=0):
         """Main analysis process
 
         Capture frames with given video, retrieve info from each frame. All 
@@ -128,22 +129,31 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        start_time = 16
-        end_time = 18
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
         while frame_image is not None and frame_image_index < end_time * video.fps:
+            # while frame_image is not None:
             frame = Frame(frame_image,
                           start_time + (1 / float(self.analyzer_fps)) * step_cnt,
                           self)
-            if frame.is_valid:
-                print frame.time
-                self.frames.append(frame)
+            self.frames.append(frame)
+
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
         video.close()
+        self.clear_all_frames()
+        self.output_to_excel()
+
+        # for frame in self.frames:
+        #     print frame.time
+        #     for killfeed in frame.killfeeds:
+        #         print "Player1: " + str(killfeed.player1)
+        #         print "Player2: " + str(killfeed.player2)
+        #         print "Ability: " + str(killfeed.ability)
+        #         print "Assists: " + str(killfeed.assists)
+        #         print "Is headshot: " + str(killfeed.is_headshot)
 
     def output_to_excel(self):
         """Output the full event list to an excel file.
@@ -155,3 +165,24 @@ class Game(object):
             None 
         """
         Excel(self).save()
+
+    def clear_all_frames(self):
+        # There must be a better way for this
+        frame_num = len(self.frames)
+        for i in range(frame_num-1, 0, -1):
+            frame = self.frames[i]
+            prev_frame = self.frames[i - 1]
+            if frame.killfeeds and prev_frame.killfeeds \
+                and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
+                frame.killfeeds.pop(0)
+            frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
+                self.game_type] / self.analyzer_fps))
+            if frame_before_effect_ind >= 0:
+                frame_before_effect = self.frames[frame_before_effect_ind]
+                if (not frame_before_effect.is_valid) and not frame.is_valid:
+                    for j in range(frame_before_effect_ind, i):
+                        self.frames[j].is_valid = False
+        self.frames = list(filter(
+            lambda frame: frame.is_valid is True, 
+            self.frames))
+

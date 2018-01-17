@@ -35,13 +35,13 @@ def analyze():
                     "Player10", 
                     "Player11", 
                     "Player12"],
-                "video_path": "../videos/SDvsNYXL_Preseason.mp4",
-                "output_path": ""
+                "video_path": "../videos/rep.mp4",
+                "output_path": "../output/rep"
                }
 
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
-    game.analyze()
+    game.analyze(14, 20)
     game.output_to_excel()
 
 

@@ -621,3 +621,27 @@ FRAME_VALIDATION_POS = {GAMETYPE_OWL: [
     0, 15, 0, 70], GAMETYPE_CUSTOM: [0, 15, 0, 70]}
 FRAME_VALIDATION_COLOR_MEAN = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
 FRAME_VALIDATION_COLOR_STD = {GAMETYPE_OWL: 3, GAMETYPE_CUSTOM: 3}
+FRAME_VALIDATION_EFFECT_TIME = {GAMETYPE_OWL: 2.0, GAMETYPE_CUSTOM: 2.0}
+FRAME_VALIDATION_REPLAY_PROB = {GAMETYPE_OWL: 0.5, GAMETYPE_CUSTOM: 0.5}
+def get_replay_icon_pos():
+    return {
+        GAMETYPE_OWL: [109, 66, 64, 74],
+        GAMETYPE_CUSTOM: [111, 64, 64, 74],
+    }
+
+def get_replay_icon_ref():
+    """Read in relay icon.
+
+    Author:
+        Appcell
+
+    Args:
+        None
+
+    Returns:
+        A dict of replay icons. Actualy this is only used by OWL games.
+    """
+    return {
+        GAMETYPE_OWL: ImageUtils.read("../images/replay.png"),
+        GAMETYPE_CUSTOM: ImageUtils.read("../images/replay.png")
+    }

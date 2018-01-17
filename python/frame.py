@@ -48,8 +48,7 @@ class Frame(object):
         self.validate()
 
         # if self.time == 8.5:
-        #     cv2.imshow('t',self.image)
-        #     cv2.waitKey(0)
+
         self.free()
 
     def free(self):
@@ -119,20 +118,15 @@ class Frame(object):
             if killfeed.is_valid is True:
                 if self.game.frames and self.game.frames[-1].killfeeds:
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
-                    print len(self.game.frames)
                     if killfeed == last_killfeed:
+                        # print i
+                        self.killfeeds.append(killfeed)
                         break
                     else:
                         self.killfeeds.append(killfeed)
                 else:
                     self.killfeeds.append(killfeed)
-                # print "======= Line " + str(i) + " ======="
-                # print "Player1: " + str(killfeed.player1)
-                # print "Player2: " + str(killfeed.player2)
-                # print "Ability: " + str(killfeed.ability)
-                # print "Assists: " + str(killfeed.assists)
-                # print "Is headshot: " + str(killfeed.is_headshot)
-            else:
+            elif i >= 1:
                 break
 
         self.killfeeds.reverse()
@@ -174,6 +168,17 @@ class Frame(object):
         if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
+            self.is_valid = True
+
+        replay_icon = ImageUtils.crop(
+            self.image, OW.get_replay_icon_pos()[self.game.game_type])
+        # cv2.imshow('t', self.image)
+        # cv2.waitKey(0)
+
+        replay_match_result = cv2.matchTemplate(
+                replay_icon, self.game.replay_icon_ref, cv2.TM_CCOEFF_NORMED)
+        _, max_val, _, _ = cv2.minMaxLoc(replay_match_result)
+        if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
 
         if self.is_valid is True and self.game.team_colors is None:

@@ -84,6 +84,7 @@ class Killfeed:
             and self.player1['team'] == other.player1['team'] \
             and self.player2['team'] == other.player2['team']:
             return True
+        return False
 
     def get_players(self):
         """Get 2 (or 1) player(s) info in a killfeed row.
@@ -233,9 +234,9 @@ class Killfeed:
         if dist_left > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type] \
             and dist_right > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type]:
             res['pos'] = -1
-            cv2.imshow('t',self.image)
-            cv2.waitKey(0)
-            print [player['chara'], dist_left, dist_right, color, colors_ref['left'], colors_ref['right']]
+            # cv2.imshow('t',self.image)
+            # cv2.waitKey(0)
+            # print [player['chara'], dist_left, dist_right, color, colors_ref['left'], colors_ref['right']]
             return res
 
         if dist_left < dist_right:
