@@ -223,7 +223,10 @@ class Sheet:
 
         # 上一帧的大招状况
         self.ultimate_status = {i: False for i in range(1, 13)}
-        # 上一帧玩家选择的英雄
+
+        self.previous_chara = [player.chara for player in game.frames[0].players]
+        self.next_chara = [player.chara for player in game.frames[1].players]
+
         self.player_hero = {i: None for i in range(1, 13)}
 
     def _new_data(self, data):
@@ -270,10 +273,10 @@ class Sheet:
 
     def new(self):
         frames = self.game.frames
-        for frame in frames:
+        for i, frame in enumerate(frames):
             self._killfeed_append(frame.killfeeds, frame.time)
             self._ultimate_append(frame.players, frame.time)
-            self._switch_hero_append(frame.players, frame.time)
+            self._switch_hero_append(frame.players, frame.time, i)
         self.save()
 
     def _killfeed_append(self, killfeeds, time):
@@ -333,28 +336,37 @@ class Sheet:
             else:
                 break
 
-    def _switch_hero_append(self, players, time):
-        for player in players:
-            chara = self.player_hero[player.index + 1]
-            if chara == player.chara:
-                return None
-            elif chara is None:
-                self.player_hero[player.index + 1] = player.chara
-            else:
+    def _switch_hero_append(self, players, time, index):
+        frames = self.game.frames
+        length = len(frames)
+        if index == 0:
+            return
+        elif index >= length - 2:
+            return
+        else:
+            for i, player in enumerate(players):
+                top_chara = self.previous_chara[i]
+                next_chara = self.next_chara[i]
                 if player.is_dead:
-                    return None
-                self.player_hero[player.index + 1] = player.chara
-                d = {
-                    'time': time,
-                    'action': 'hero switch',
-                    'subject player': player.name,
-                    'subject hero': player.chara,
-                    'PS': 'Switch from {} to {}'.format(chara, player.chara),
-                    '_$color': {
-                        'subject player': Config.team_colors[player.team],
-                    }
-                }
-                self._append(**d)
+                    continue
+                elif top_chara != player.chara:
+                    if top_chara == next_chara:
+                        self.next_chara[i] = frames[index + 2].players[i].chara
+                        continue
+                    elif player.chara == next_chara:
+                        d = {
+                            'time': time,
+                            'action': 'hero switch',
+                            'subject player': player.name,
+                            'subject hero': player.chara,
+                            'PS': 'Switch from {} to {}'.format(top_chara, player.chara),
+                            '_$color': {
+                                'subject player': Config.team_colors[player.team],
+                            }
+                        }
+                        self._append(**d)
+                        self.previous_chara[i] = player.chara
+                        self.next_chara[i] = frames[index + 1].players[i].chara
 
     def save(self):
         """

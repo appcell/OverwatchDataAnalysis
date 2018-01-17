@@ -11,8 +11,10 @@ def time_format(seconds):
     :return: 时: 分: 秒
     """
     m, s = divmod(seconds, 60)
+    find = lambda x: str(x).find('.')
+    hm = int(str(s).split('.')[1]) if find(s) != -1 else 0
     h, m = divmod(m, 60)
-    return "%02d:%02d:%02d" % (h, m, s)
+    return "%02d:%02d:%02d.%d" % (h, m, s, hm)
 
 
 def capitalize(s):
