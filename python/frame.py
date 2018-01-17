@@ -119,18 +119,19 @@ class Frame(object):
             if killfeed.is_valid is True:
                 if self.game.frames and self.game.frames[-1].killfeeds:
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
+                    print len(self.game.frames)
                     if killfeed == last_killfeed:
                         break
                     else:
                         self.killfeeds.append(killfeed)
                 else:
                     self.killfeeds.append(killfeed)
-                print "======= Line " + str(i) + " ======="
-                print "Player1: " + str(killfeed.player1)
-                print "Player2: " + str(killfeed.player2)
-                print "Ability: " + str(killfeed.ability)
-                print "Assists: " + str(killfeed.assists)
-                print "Is headshot: " + str(killfeed.is_headshot)
+                # print "======= Line " + str(i) + " ======="
+                # print "Player1: " + str(killfeed.player1)
+                # print "Player2: " + str(killfeed.player2)
+                # print "Ability: " + str(killfeed.ability)
+                # print "Assists: " + str(killfeed.assists)
+                # print "Is headshot: " + str(killfeed.is_headshot)
             else:
                 break
 
