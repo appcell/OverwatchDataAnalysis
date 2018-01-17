@@ -302,7 +302,7 @@ class Sheet:
 
             for i, assist in enumerate(obj.assists):
                 d['a player {}'.format(i + 1)] = assist['player']
-                d['a hero {}'.format(i + 1)] = assist['chara']
+                d['a hero {}'.format(i + 1)] = utils.capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
             self._append(**d)
