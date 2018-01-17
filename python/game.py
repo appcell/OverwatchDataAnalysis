@@ -1,6 +1,7 @@
 import overwatch as OW
 from frame import Frame
 from utils.video_loader import VideoLoader
+from excel import Excel
 
 
 class Game(object):
@@ -153,4 +154,4 @@ class Game(object):
         Returns:
             None 
         """
-        pass
+        Excel(self).save()

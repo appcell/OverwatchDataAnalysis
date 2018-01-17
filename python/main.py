@@ -1,6 +1,6 @@
 import time
 from game import Game
-from gui import Gui
+# from gui import Gui
 import overwatch as OW
 
 
@@ -42,6 +42,7 @@ def analyze():
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
     game.analyze()
+    game.output_to_excel()
 
 
 if __name__ == '__main__':
