@@ -10,6 +10,7 @@ class VideoLoader:
     def __init__(self, path):
         self.cap = cv2.VideoCapture(path)
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)  # frame per second
+        self.frame_number = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def get_frame_image(self, frame_index):
         """
