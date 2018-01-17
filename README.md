@@ -1,6 +1,6 @@
 # 守望先锋录像分析器 v0.1 内测版
 
-# Overwatch Replay Analyzer (ORA) v0.1 Alpha
+Overwatch Replay Analyzer (ORA) v0.1 Alpha
 
 ## 软件简介
 
