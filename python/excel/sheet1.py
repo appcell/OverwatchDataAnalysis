@@ -227,8 +227,6 @@ class Sheet:
         self.previous_chara = [player.chara for player in game.frames[0].players]
         self.next_chara = [player.chara for player in game.frames[1].players]
 
-        self.player_hero = {i: None for i in range(1, 13)}
-
     def _new_data(self, data):
         """
         从数据中提取出想要的信息，并加入到 Config 中
