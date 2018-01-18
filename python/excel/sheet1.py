@@ -132,11 +132,18 @@ ABILITY_FORMAT = {
 
 def _cell_style():
     d = {
-        'font': {
+        'font1': {
             'name': 'Microsoft YaHei',
             'size': 12,
             'bold': True,
             'vertAlign': 'baseline',
+        },
+        'font2': {
+            'name': 'Microsoft YaHei',
+            'size': 12,
+            'bold': True,
+            'vertAlign': 'baseline',
+            'color': 'FFFFFF',
         },
         'alignment': {
             'horizontal': 'center',
@@ -151,20 +158,30 @@ def _cell_style():
 def set_action(obj):
     player1, player2 = obj.player1, obj.player2
     if player1['chara'] == 'mercy' and player1['team'] == player2['team']:
-        return 'resurrect'
+        return 'Resurrect'
     elif player2['chara'] == 'meka':
-        return 'demech'
+        return 'Demech'
     else:
-        return 'eliminate'
+        return 'Eliminate'
 
 
 def set_comments(action):
     table = {
-        'resurrect': 'Resurrect',
-        'demech': 'MEKA destroyed',
-        'eliminate': '',
+        'Resurrect': 'Resurrect',
+        'Demech': 'MEKA destroyed',
+        'Eliminate': '',
     }
     return table[action]
+
+
+def set_player_name(assist, index, charas):
+    name, chara = assist['player'], assist['chara']
+    if name != 'empty':
+        return name
+    team_charas = charas[:6] if index <= 5 else charas[6:]
+    for n, c in team_charas:
+        if chara == c:
+            return n
 
 
 class Config(object):
@@ -177,6 +194,7 @@ class Config(object):
     title_top = TITLE_TOP
     title = TITLE
     ability = ABILITY_FORMAT
+    peculiar_cell = []
 
 
 class Save:
@@ -186,7 +204,7 @@ class Save:
     @staticmethod
     def _set_cell_style(cell, title):
         style = Config.cell_style
-        cell.font = Font(**style['font'])
+        cell.font = Font(**style['font2']) if title in Config.peculiar_cell else Font(**style['font1'])
         cell.alignment = Alignment(**style['alignment'])
         if title in style['fill'].keys():
             cell.fill = PatternFill(**style['fill'][title])
@@ -227,6 +245,8 @@ class Sheet:
         self.previous_chara = [player.chara for player in game.frames[0].players]
         self.next_chara = [player.chara for player in game.frames[1].players]
 
+        self.player_and_chara = []
+
     def _new_data(self, data):
         """
         从数据中提取出想要的信息，并加入到 Config 中
@@ -235,9 +255,12 @@ class Sheet:
             color = data.pop('_$color')
             for k, v in color.items():
                 cell = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
+                c, b = v
+                if b:
+                    Config.peculiar_cell.append(cell)
                 Config.cell_style['fill'][cell] = {
                     'fill_type': 'solid',
-                    'fgColor': v,
+                    'fgColor': c,
                 }
         return data
 
@@ -272,8 +295,9 @@ class Sheet:
     def new(self):
         frames = self.game.frames
         for i, frame in enumerate(frames):
+            self.player_and_chara = [(player.name, player.chara) for player in frame.players]
             self._killfeed_append(frame.killfeeds, frame.time)
-            self._ultimate_append(frame.players, frame.time)
+            # self._ultimate_append(frame.players, frame.time)
             self._switch_hero_append(frame.players, frame.time, i)
         self.save()
 
@@ -293,6 +317,9 @@ class Sheet:
             d['subject player'] = player1['player']
             d['object hero'] = player2['chara']
             d['object player'] = player2['player']
+            if obj.is_headshot:
+                d['critical kill'] = 'Y'
+                d['PS'] = 'Head Shot'
             d['_$color'] = {}
             for i, p in enumerate([player1, player2]):
                 if p['player'] != 'empty':
@@ -302,7 +329,7 @@ class Sheet:
                         d['_$color']['object player'] = Config.team_colors[player2['team']]
 
             for i, assist in enumerate(obj.assists):
-                d['a player {}'.format(i + 1)] = assist['player']
+                d['a player {}'.format(i + 1)] = set_player_name(assist, i, self.player_and_chara)
                 d['a hero {}'.format(i + 1)] = utils.capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
@@ -325,14 +352,12 @@ class Sheet:
             index = player.index + 1
             if player.is_ult_ready and not status[index]:
                 status[index] = True
-                d['action'] = 'ult ready'
+                d['action'] = 'Ult ready'
                 self._append(**d)
             elif not player.is_ult_ready and status[index]:
                 status[index] = False
-                d['action'] = 'ult used'
+                d['action'] = 'Ult used'
                 self._append(**d)
-            else:
-                break
 
     def _switch_hero_append(self, players, time, index):
         frames = self.game.frames
@@ -354,10 +379,11 @@ class Sheet:
                     elif player.chara == next_chara:
                         d = {
                             'time': time,
-                            'action': 'hero switch',
+                            'action': 'Hero switch',
                             'subject player': player.name,
                             'subject hero': player.chara,
                             'comments': 'Switch from {} to {}'.format(utils.capitalize(top_chara), utils.capitalize(player.chara)),
+
                             '_$color': {
                                 'subject player': Config.team_colors[player.team],
                             }
