@@ -41,7 +41,7 @@ class Frame(object):
         self.time = frame_time
         self.game = game
 
-        print self.time
+        #print self.time
 
         self.get_players()
         self.get_killfeeds()
