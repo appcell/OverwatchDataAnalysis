@@ -2,7 +2,7 @@
 """
 @Author: Komorebi 
 """
-import excel.utils as utils
+import utils as utils
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import (
     Alignment,

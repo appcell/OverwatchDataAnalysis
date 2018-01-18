@@ -1,8 +1,6 @@
 import time
-from game import Game
-from gui import Gui
-import overwatch as OW
-
+from ora.game import Game
+from ora.gui import Gui
 
 def main():
     gui = Gui()

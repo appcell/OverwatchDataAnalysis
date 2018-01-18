@@ -1,6 +1,6 @@
 from utils import image as ImageUtils
 
-
+import os
 # **********************************************************
 # ==========================================================
 #                       Meta Macros
@@ -171,12 +171,12 @@ def get_ult_icon_pos(index):
 def get_ult_icon_ref(index):
     if index < 6:
         return {
-            GAMETYPE_OWL: ImageUtils.read("../images/awayUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("../images/awayUlt.png")
+            GAMETYPE_OWL: ImageUtils.read("./images/awayUlt.png"),
+            GAMETYPE_CUSTOM: ImageUtils.read("./images/awayUlt.png")
         }
     return {
-        GAMETYPE_OWL: ImageUtils.read("../images/homeUlt.png"),
-        GAMETYPE_CUSTOM: ImageUtils.read("../images/homeUlt.png")
+        GAMETYPE_OWL: ImageUtils.read("./images/homeUlt.png"),
+        GAMETYPE_CUSTOM: ImageUtils.read("./images/homeUlt.png")
     }
 
 
@@ -236,7 +236,7 @@ def get_avatars_ref():
         A dict of all reference avatar images
     """
     return {chara: ImageUtils.resize(
-        ImageUtils.read_with_transparency("../images/charas/" + chara + ".png"), 
+        ImageUtils.read_with_transparency("./images/charas/" + chara + ".png"), 
         AVATAR_WIDTH_REF, 
         AVATAR_HEIGHT_REF) for chara in CHARACTER_LIST}
 
@@ -365,12 +365,12 @@ def get_killfeed_icons_ref():
     """
     return {
         GAMETYPE_OWL: {chara: ImageUtils.resize(
-            ImageUtils.read("../images/icons/" + chara + ".png"),
+            ImageUtils.read("./images/icons/" + chara + ".png"),
             KILLFEED_ICON_WIDTH[GAMETYPE_OWL], 
             KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) \
                 for chara in KILLFEED_OBJECT_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
-            ImageUtils.read("../images/icons/" + chara + ".png"),
+            ImageUtils.read("./images/icons/" + chara + ".png"),
             KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], 
             KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
                 for chara in KILLFEED_OBJECT_LIST},
@@ -391,11 +391,11 @@ def get_assist_icons_ref():
     """
     return {
         GAMETYPE_OWL: {chara: ImageUtils.resize(
-            ImageUtils.read("../images/assists/" + chara + ".png"),
+            ImageUtils.read("./images/assists/" + chara + ".png"),
             ASSIST_ICON_WIDTH[GAMETYPE_OWL], ASSIST_ICON_HEIGHT[GAMETYPE_OWL]) \
                 for chara in ASSIST_CHARACTER_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
-            ImageUtils.read("../images/assists/" + chara + ".png"),
+            ImageUtils.read("./images/assists/" + chara + ".png"),
             ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM], 
             ASSIST_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
                 for chara in ASSIST_CHARACTER_LIST},
@@ -554,7 +554,7 @@ def get_ability_icons_ref():
         icons_list_custom = []
         for i in ability_list:
             icon = ImageUtils.rgb_to_gray(ImageUtils.read(
-                "../images/abilities/" + chara + "/" + str(i) + ".png"))
+                "./images/abilities/" + chara + "/" + str(i) + ".png"))
             icons_list_owl.append(ImageUtils.resize(
                 icon,
                 ABILITY_ICON_WIDTH[GAMETYPE_OWL],
@@ -642,6 +642,6 @@ def get_replay_icon_ref():
         A dict of replay icons. Actualy this is only used by OWL games.
     """
     return {
-        GAMETYPE_OWL: ImageUtils.read("../images/replay.png"),
-        GAMETYPE_CUSTOM: ImageUtils.read("../images/replay.png")
+        GAMETYPE_OWL: ImageUtils.read("./images/replay.png"),
+        GAMETYPE_CUSTOM: ImageUtils.read("./images/replay.png")
     }

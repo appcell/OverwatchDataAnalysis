@@ -2,7 +2,7 @@
 """
 @Author: Komorebi 
 """
-from excel.utils import (
+from utils import (
     capitalize,
     upper,
 )

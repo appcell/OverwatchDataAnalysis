@@ -2,8 +2,8 @@
 @Author: Komorebi 
 """
 from openpyxl import Workbook
-from excel.sheet1 import Sheet as Sheet1
-from excel.sheet2 import Sheet as Sheet2
+from sheet1 import Sheet as Sheet1
+from sheet2 import Sheet as Sheet2
 
 
 def create_sheet():
