@@ -26,15 +26,13 @@ def capitalize(s):
     if s == 'dva':
         return 'D. Va'
     else:
-        return None if s is None else s.capitalize()
+        return s.capitalize()
 
 
 def to_hex(array):
     b, g, r = array[0], array[1], array[2]
-    if (int(r) + int(g) + int(b))/3 < 90:
-        return 'F7F7F7'
-    else:
-        return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:]
+    is_deep = ((int(b) + int(g) + int(r)) / 3) < 90
+    return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:], is_deep
 
 
 def upper(name):
