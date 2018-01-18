@@ -123,8 +123,8 @@ ABILITY_FORMAT = {
     0: 'Plain Attack',
     1: 'Shift',
     2: 'E',
-    3: 'Ultmate 1',
-    4: 'Ultmate 2',
+    3: 'Ultimate 1',
+    4: 'Ultimate 2',
     5: 'RMB',
     6: 'Passive',
 }
@@ -298,6 +298,7 @@ class Sheet:
             self.player_and_chara = [(player.name, player.chara) for player in frame.players]
             self._killfeed_append(frame.killfeeds, frame.time)
             # self._ultimate_append(frame.players, frame.time)
+            # ultimate detection not working properly
             self._switch_hero_append(frame.players, frame.time, i)
         self.save()
 
