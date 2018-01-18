@@ -44,7 +44,7 @@ TITLE = [
     'action',
 ] + SUBJECT + OBJECT + SUPPLEMENT + ASSIST
 
-PRINT_DATA_FORMAT = {t: i+1 for i, t in enumerate(TITLE + ['PS'])}
+PRINT_DATA_FORMAT = {t: i+1 for i, t in enumerate(TITLE + ['comments'])}
 
 TITLE_TOP = [
     '',
@@ -65,7 +65,7 @@ TITLE_TOP = [
     '',
     'assist 5',
     '',
-    'PS',
+    'comments',
 ]
 
 DIMENSIONS = {
@@ -87,7 +87,7 @@ DIMENSIONS = {
     'a hero 4': 'P',
     'a player 5': 'Q',
     'a hero 5': 'R',
-    'PS': 'S',
+    'comments': 'S',
 }
 
 TITLE_TOP_MERGE_CELL = {
@@ -99,7 +99,7 @@ TITLE_TOP_MERGE_CELL = {
     'assist 3': '{}1:{}1'.format(DIMENSIONS['a player 3'], DIMENSIONS['a hero 3']),
     'assist 4': '{}1:{}1'.format(DIMENSIONS['a player 4'], DIMENSIONS['a hero 4']),
     'assist 5': '{}1:{}1'.format(DIMENSIONS['a player 5'], DIMENSIONS['a hero 5']),
-    'PS': '{}1:{}2'.format(DIMENSIONS['PS'], DIMENSIONS['PS']),
+    'comments': '{}1:{}2'.format(DIMENSIONS['comments'], DIMENSIONS['comments']),
 }
 
 PLAYER_WIDTH_CONFIG = {DIMENSIONS['a player {}'.format(i)]: 14 for i in range(1, 6)}
@@ -108,24 +108,24 @@ CELL_WIDTH_CONFIG = {
     DIMENSIONS['time']: 16.5,
     DIMENSIONS['action']: 20,
     DIMENSIONS['subject player']: 18,
-    DIMENSIONS['subject hero']: 14,
+    DIMENSIONS['subject hero']: 15,
     DIMENSIONS['object player']: 18,
-    DIMENSIONS['object hero']: 14,
-    DIMENSIONS['ability']: 14,
+    DIMENSIONS['object hero']: 15,
+    DIMENSIONS['ability']: 14.5,
     DIMENSIONS['critical kill']: 14,
-    DIMENSIONS['PS']: 32.5,
+    DIMENSIONS['comments']: 32.5,
 }
 CELL_WIDTH_CONFIG.update(PLAYER_WIDTH_CONFIG)
 CELL_WIDTH_CONFIG.update(HERO_WIDTH_CONFIG)
 
 
 ABILITY_FORMAT = {
-    0: '平A',
-    1: 'shift',
-    2: 'e',
-    3: '大招1',
-    4: '大招2',
-    5: '右键',
+    0: 'Plain Attack',
+    1: 'Shift',
+    2: 'E',
+    3: 'Ult1',
+    4: 'Ult2',
+    5: 'RMB',
     6: '被动',
 }
 
@@ -160,15 +160,15 @@ def set_action(obj):
     if player1['chara'] == 'mercy' and player1['team'] == player2['team']:
         return 'Resurrect'
     elif player2['chara'] == 'meka':
-        return 'Meka down'
+        return 'Demech'
     else:
         return 'Eliminate'
 
 
-def set_ps(action):
+def set_comments(action):
     table = {
         'Resurrect': 'Resurrect',
-        'Meka down': 'Meka destroyed',
+        'Demech': 'MEKA destroyed',
         'Eliminate': '',
     }
     return table[action]
@@ -311,7 +311,7 @@ class Sheet:
             d['time'] = time
             # 这里先写死
             d['action'] = set_action(obj)
-            d['PS'] = set_ps(d['action'])
+            d['comments'] = set_comments(d['action'])
             d['ability'] = Config.ability[obj.ability]
             d['subject hero'] = player1['chara']
             d['subject player'] = player1['player']
@@ -382,7 +382,8 @@ class Sheet:
                             'action': 'Hero switch',
                             'subject player': player.name,
                             'subject hero': player.chara,
-                            'PS': 'Switch from {} to {}'.format(utils.capitalize(top_chara), utils.capitalize(player.chara)),
+                            'comments': 'Switch from {} to {}'.format(utils.capitalize(top_chara), utils.capitalize(player.chara)),
+
                             '_$color': {
                                 'subject player': Config.team_colors[player.team],
                             }

@@ -25,6 +25,10 @@ def capitalize(s):
     """
     if s == 'dva':
         return 'D. Va'
+    elif s == 'meka':
+        return 'MEKA'
+    elif s == 'soldier76':
+        return 'Soldier: 76'
     else:
         return s.capitalize()
 
