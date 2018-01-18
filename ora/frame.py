@@ -42,7 +42,9 @@ class Frame(object):
         self.game = game
 
         print self.time
-
+        cv2.imshow('t', self.image);
+        cv2.waitKey(0)
+        print "============================="
         self.get_players()
         self.get_killfeeds()
         self.validate()
@@ -96,6 +98,8 @@ class Frame(object):
             None 
         """
         pos = OW.get_team_color_pick_pos()[self.game.game_type]
+
+
         return {
             "left": self.image[pos[0][0], pos[0][1]],
             "right": self.image[pos[1][0], pos[1][1]]

@@ -136,10 +136,9 @@ class Game(object):
         frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
-        # while frame_image is not None and frame_image_index < end_time * video.fps:
-        while frame_image is not None and frame_image_index < video.frame_number:
-            # cv2.imshow('t', frame_image);
-            # cv2.waitKey(0)
+        while frame_image is not None and frame_image_index < end_time * video.fps:
+        # while frame_image is not None and frame_image_index < video.frame_number:
+
             frame = Frame(frame_image,
                           start_time + (1 / float(self.analyzer_fps)) * step_cnt,
                           self)

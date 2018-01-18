@@ -124,7 +124,7 @@ class Gui(object):
 
     def click_read(self):
         # self.root.
-        filename = filedialog.askopenfilename(initialdir='~/')
+        filename = filedialog.askopenfilename(initialdir='~/OW/OverwatchDataAnalysis/videos')
         self.read_path.config(text=filename)
 
     def check_update(self):

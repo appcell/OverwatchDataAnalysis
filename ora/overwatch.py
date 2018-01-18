@@ -107,7 +107,7 @@ def get_chara_name(name):
 # **********************************************************
 
 TEAM_COLOR_PICK_POS_LEFT_OWL = [53, 40]
-TEAM_COLOR_PICK_POS_RIGHT_OWL = [56, 1188]
+TEAM_COLOR_PICK_POS_RIGHT_OWL = [54, 1183]
 TEAM_COLOR_PICK_POS_LEFT_CUSTOM = [0, 0]
 TEAM_COLOR_PICK_POS_RIGHT_CUSTOM = [0, 1279]
 
@@ -132,8 +132,8 @@ ULT_ICON_Y_MIN_CUSTOM = 51
 ULT_ICON_HEIGHT_CUSTOM = 26
 ULT_ICON_GAP_CUSTOM = 71
 
-ULT_ICON_MAX_PROB = {GAMETYPE_OWL: 0.5, GAMETYPE_CUSTOM: 0.5}
-ULT_ICON_MAX_BRIGHTNESS = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
+ULT_ICON_MAX_PROB = {GAMETYPE_OWL: 0.8, GAMETYPE_CUSTOM: 0.8}
+ULT_ICON_MAX_BRIGHTNESS = {GAMETYPE_OWL: 220, GAMETYPE_CUSTOM: 220}
 
 
 def get_team_color_pick_pos():
@@ -192,17 +192,17 @@ AVATAR_HEIGHT_REF = 30
 
 # Dimensions & positions of topbar avatars in OWL (observed)
 AVATAR_X_MIN_LEFT_OWL = 62  # x of starting point from left side
-AVATAR_X_MIN_RIGHT_OWL = 857  # x of starting point from right side
+AVATAR_X_MIN_RIGHT_OWL = 854  # x of starting point from right side
 AVATAR_WIDTH_OWL = 38  # width of avatar
-AVATAR_Y_MIN_OWL = 48  # y of starting point
+AVATAR_Y_MIN_OWL = 45  # y of starting point
 AVATAR_HEIGHT_OWL = 30  # height of avatar
-AVATAR_GAP_OWL = 71  # x-gap between 2 avatars
+AVATAR_GAP_OWL = 70  # x-gap between 2 avatars
 
 # Dimensions & positions of topbar avatars in OWL (not observed)
 AVATAR_X_MIN_LEFT_SMALL_OWL = 62
 AVATAR_X_MIN_RIGHT_SMALL_OWL = 857
 AVATAR_WIDTH_SMALL_OWL = 34
-AVATAR_Y_MIN_SMALL_OWL = 52
+AVATAR_Y_MIN_SMALL_OWL = 55
 AVATAR_HEIGHT_SMALL_OWL = 23
 AVATAR_GAP_SMALL_OWL = 71
 
@@ -317,7 +317,42 @@ def get_avatar_pos(index):
                               AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
                               AVATAR_WIDTH_CUSTOM]
         }
+def get_avatar_diff_pos(index):
+    """Get position of an avatar in one frame, given player index.
 
+    The player is currently observed by cam.
+
+    Author:
+        Appcell
+
+    Args:
+        index: index of player
+
+    Returns:
+        Pos array of this avatar
+    """
+    if index < 6:
+        return {
+            GAMETYPE_OWL: [47,
+                           4,
+                           AVATAR_X_MIN_LEFT_OWL + index * AVATAR_GAP_OWL - 28,
+                           28],
+            GAMETYPE_CUSTOM: [AVATAR_Y_MIN_CUSTOM,
+                              AVATAR_HEIGHT_CUSTOM,
+                              AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
+                              AVATAR_WIDTH_CUSTOM]
+        }
+    else:
+        return {
+            GAMETYPE_OWL: [47,
+                           4,
+                           AVATAR_X_MIN_RIGHT_OWL + (index - 6) * AVATAR_GAP_OWL - 28,
+                           28],
+            GAMETYPE_CUSTOM: [AVATAR_Y_MIN_CUSTOM,
+                              AVATAR_HEIGHT_CUSTOM,
+                              AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
+                              AVATAR_WIDTH_CUSTOM]
+        }
 # **********************************************************
 # ==========================================================
 #                    Killfeed Row

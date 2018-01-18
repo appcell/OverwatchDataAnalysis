@@ -61,6 +61,13 @@ class Player:
 
         self.get_ult_status()
         self.get_chara()
+        # if self.is_observed:
+        #     print "Player" + str(self.index)
+        #     print "Chara: " + str(self.chara)
+        #     print "Ult: " + str(self.is_ult_ready)
+        #     print "Dead: " + str(self.is_dead)
+        #     print "Is observed: " + str(self.is_observed)
+            print "* * * * *"
         self.free()
 
     def free(self):
@@ -134,17 +141,30 @@ class Player:
         avatars_ref = all_avatars["normal"]
         avatars_small_ref = all_avatars["small"]
 
+        team_color = avatars_ref['ana'][0,0]
+
         # Crop avatar from frame
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index)[self.frame.game.game_type])
-        avatar_small = ImageUtils.crop(avatar, [1, avatar.shape[0] - 4, 0, avatar.shape[1]])
-        score = 0
-        # if self.index == 0:
-        #     cv2.imshow('t',avatar)
-        #     cv2.imshow('t',avatar_small)
-        #     cv2.waitKey(0)
-        for (name, avatar_ref) in avatars_ref.iteritems():
+        avatar_small = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 0, avatar.shape[1]])
+        avatar_small_ssim = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 5, avatar.shape[1]-5])
 
+        # If player is observed, not sure about this tho
+        avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
+            self.index)[self.frame.game.game_type])
+        max_diff = 0
+        for i in range(avatar_diff.shape[0]):
+            for j in range(avatar_diff.shape[1]):
+                if ImageUtils.color_distance(avatar_diff[i, j],
+                    team_color) > max_diff:
+                    max_diff = ImageUtils.color_distance(avatar_diff[i, j],
+                    team_color)
+        if max_diff < 40 and self.is_ult_ready == False:
+            self.is_observed = True
+
+        score = 0
+
+        for (name, avatar_ref) in avatars_ref.iteritems():
             s = cv2.matchTemplate(avatar, avatar_ref,
                                   cv2.TM_CCOEFF_NORMED)
             _, s, _, _ = cv2.minMaxLoc(s)
@@ -153,22 +173,16 @@ class Player:
             _, s_small, _, _ = cv2.minMaxLoc(s_small)
 
             s_final = s if s > s_small else s_small
-
-            # if self.index == 0 and (name == 'roadhog' or name == 'symmetra' or name == 'orisa'):
-            #     print [name, s_small, s]
             if s_final > score:
                 score = s_final
+                loc_final = loc[0]
                 self.chara = name
-                self.is_observed = True if s > s_small else False
-
-        if self.chara == None:
+        if self.chara is None:
             self.chara = "empty"
             self.is_dead = True
             return
             
         self.get_living_status(avatars_ref[self.chara])
-        # if self.index == 0:
-        #     print self.is_dead
 
     def get_living_status(self, avatar_ref):
         """Retrieves chara living status for current player.
@@ -185,13 +199,24 @@ class Player:
         Returns:
             None 
         """
-        avatar = ImageUtils.crop(self.image, OW.get_avatar_pos_small(
-            self.index)[self.frame.game.game_type])
+        avatar = []
+        if self.is_observed:
+            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
+                self.index)[self.frame.game.game_type])
+        else:
+            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos_small(
+                self.index)[self.frame.game.game_type])
         brightness = np.mean(avatar, 2)
         brightness_ref = np.mean(avatar_ref, 2)
         variation = brightness.max() - brightness.min()
         variation_ref = brightness_ref.max() - brightness_ref.min()
+        # if self.index == 6:
+        #     cv2.imshow('t2', avatar)
+        #     cv2.waitKey(0)
+        #     cv2.imshow('t2', avatar_ref)
+        #     cv2.waitKey(0)
 
+        # print abs(variation_ref - variation)
         # TODO: write consts here into ow.py
         if abs(variation_ref - variation) > 45:
             self.is_dead = True
