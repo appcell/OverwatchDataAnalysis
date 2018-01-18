@@ -77,6 +77,7 @@ class Killfeed:
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
+        self.free()
 
     def __eq__(self, other):
         if self.player1['chara'] == other.player1['chara'] \
@@ -85,6 +86,18 @@ class Killfeed:
             and self.player2['team'] == other.player2['team']:
             return True
         return False
+
+    def free(self):
+        """Free RAM by removing images from the Frame instance.
+        Done after analysis.
+        Author:
+            Appcell
+        Args:
+            None
+        Returns:
+            None 
+        """
+        del self.image
 
     def get_players(self):
         """Get 2 (or 1) player(s) info in a killfeed row.
@@ -126,7 +139,7 @@ class Killfeed:
         if abs(mean_pos_right - mean_pos_left) \
             < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
             # Only one icon exists
-            matched = self._get_matched_icon(icons_weights, edge_validation)
+            matched = icons_weights
             if matched and matched[0]['pos'] \
                 >= OW.KILLFEED_WIDTH[self.game_type] \
                 - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:

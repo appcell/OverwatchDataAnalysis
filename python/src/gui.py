@@ -11,32 +11,12 @@ from Tkinter import (Tk,
                      Frame, Message, Button, Entry,
                      X, LEFT, RIGHT)
 
-from game import Game
-import overwatch as OW
-
-def analyze(gui_info):
-    """Pre-analysis process
-
-    Write GUI input into Game instance, then start analysis in Game.
-
-    Author:
-        Appcell
-
-    Args:
-        None
-
-    Returns:
-        None 
-    """
-    game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
-    game.set_game_info(gui_info)
-    game.analyze(0, 0)
-    game.output_to_excel()
 
 def log(*args):
     print args
 
-class Gui(object):
+
+class Top(object):
     def __init__(self):
         self.root = Tk()
         self.root.title('Overwatch Replay Analyzer')
@@ -119,12 +99,12 @@ class Gui(object):
         self.right_frame = right_frame
 
     def click_save(self):
-        filename = filedialog.askdirectory(initialdir='~/')
+        filename = filedialog.askdirectory(initialdir='/')
         self.save_path.config(text=filename)
 
     def click_read(self):
         # self.root.
-        filename = filedialog.askopenfilename(initialdir='~/')
+        filename = filedialog.askopenfilename(initialdir='/')
         self.read_path.config(text=filename)
 
     def check_update(self):
@@ -133,13 +113,13 @@ class Gui(object):
             'current_version': 0.1,
         }
 
-        # time.sleep(1)
-        # #
-        # json_data = json_request()
-        # if version['current_version'] < json_data['current_version']:
-        #     tkMessageBox.showinfo('版本更新', '有新版本，请更新')
-        # else:
-        #     pass
+        time.sleep(1)
+        #
+        json_data = json_request()
+        if version['current_version'] < json_data['current_version']:
+            tkMessageBox.showinfo('版本更新', '有新版本，请更新')
+        else:
+            pass
 
     def info(self):
         info = {
@@ -176,6 +156,14 @@ class Gui(object):
         self.root.mainloop()
 
     def run(self):
-        gui_info = self.info()
-        analyze(gui_info)
         tkMessageBox.showinfo('一个微小的弹窗', '保存成功！')
+
+
+def main():
+    top = Top()
+    top.info()
+    top.show()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,8 +1,12 @@
+# coding: utf-8
+"""
+@Author: vega13
+"""
 import socket
 import json
 
 
-def client(host='www.douban.com', port=80):
+def client(host='www.google.com', port=80):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ip = socket.gethostbyname(host)
     s.connect((ip, port))
@@ -17,7 +21,7 @@ def client(host='www.douban.com', port=80):
 def json_request():
     # data = client()
     # json_data = json.loads(data)
-    json_data = {'name': 'ORA OWL', 'current_version': '0.2'}
+    json_data = {'name': 'ORA OWL', 'current_version': 0.2}
     return json_data
 
 

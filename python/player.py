@@ -61,6 +61,19 @@ class Player:
 
         self.get_ult_status()
         self.get_chara()
+        self.free()
+
+    def free(self):
+        """Free RAM by removing images from the Frame instance.
+        Done after analysis.
+        Author:
+            Appcell
+        Args:
+            None
+        Returns:
+            None 
+        """
+        del self.image
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.
@@ -124,25 +137,38 @@ class Player:
         # Crop avatar from frame
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index)[self.frame.game.game_type])
-
+        avatar_small = ImageUtils.crop(avatar, [1, avatar.shape[0] - 4, 0, avatar.shape[1]])
         score = 0
+        # if self.index == 0:
+        #     cv2.imshow('t',avatar)
+        #     cv2.imshow('t',avatar_small)
+        #     cv2.waitKey(0)
         for (name, avatar_ref) in avatars_ref.iteritems():
+
             s = cv2.matchTemplate(avatar, avatar_ref,
-                                  cv2.TM_CCOEFF_NORMED)[0][0]
-            s_small = cv2.matchTemplate(avatar, avatars_small_ref[
-                                        name], cv2.TM_CCOEFF_NORMED)[0][0]
+                                  cv2.TM_CCOEFF_NORMED)
+            _, s, _, _ = cv2.minMaxLoc(s)
+            s_small = cv2.matchTemplate(avatar_small, avatars_small_ref[
+                                        name], cv2.TM_CCOEFF_NORMED)
+            _, s_small, _, _ = cv2.minMaxLoc(s_small)
 
             s_final = s if s > s_small else s_small
+
+            # if self.index == 0 and (name == 'roadhog' or name == 'symmetra' or name == 'orisa'):
+            #     print [name, s_small, s]
             if s_final > score:
                 score = s_final
                 self.chara = name
                 self.is_observed = True if s > s_small else False
+
         if self.chara == None:
             self.chara = "empty"
             self.is_dead = True
             return
             
         self.get_living_status(avatars_ref[self.chara])
+        # if self.index == 0:
+        #     print self.is_dead
 
     def get_living_status(self, avatar_ref):
         """Retrieves chara living status for current player.
