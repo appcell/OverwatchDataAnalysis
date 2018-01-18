@@ -210,13 +210,7 @@ class Player:
         brightness_ref = np.mean(avatar_ref, 2)
         variation = brightness.max() - brightness.min()
         variation_ref = brightness_ref.max() - brightness_ref.min()
-        # if self.index == 6:
-        #     cv2.imshow('t2', avatar)
-        #     cv2.waitKey(0)
-        #     cv2.imshow('t2', avatar_ref)
-        #     cv2.waitKey(0)
-
-        # print abs(variation_ref - variation)
+        
         # TODO: write consts here into ow.py
         if abs(variation_ref - variation) > 45:
             self.is_dead = True

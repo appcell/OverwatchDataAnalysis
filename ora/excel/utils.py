@@ -35,7 +35,7 @@ def capitalize(s):
 
 def to_hex(array):
     b, g, r = array[0], array[1], array[2]
-    is_deep = ((int(b) + int(g) + int(r)) / 3) < 90
+    is_deep = ((int(b) + int(g) + int(r)) / 3) < 95
     return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:], is_deep
 
 
