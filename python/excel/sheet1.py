@@ -102,18 +102,18 @@ TITLE_TOP_MERGE_CELL = {
     'comments': '{}1:{}2'.format(DIMENSIONS['comments'], DIMENSIONS['comments']),
 }
 
-PLAYER_WIDTH_CONFIG = {DIMENSIONS['a player {}'.format(i)]: 14 for i in range(1, 6)}
-HERO_WIDTH_CONFIG = {DIMENSIONS['a hero {}'.format(i)]: 13 for i in range(1, 6)}
+PLAYER_WIDTH_CONFIG = {DIMENSIONS['a player {}'.format(i)]: 18 for i in range(1, 6)}
+HERO_WIDTH_CONFIG = {DIMENSIONS['a hero {}'.format(i)]: 16 for i in range(1, 6)}
 CELL_WIDTH_CONFIG = {
     DIMENSIONS['time']: 16.5,
     DIMENSIONS['action']: 20,
     DIMENSIONS['subject player']: 18,
-    DIMENSIONS['subject hero']: 15,
+    DIMENSIONS['subject hero']: 16,
     DIMENSIONS['object player']: 18,
-    DIMENSIONS['object hero']: 15,
+    DIMENSIONS['object hero']: 16,
     DIMENSIONS['ability']: 14.5,
     DIMENSIONS['critical kill']: 14,
-    DIMENSIONS['comments']: 32.5,
+    DIMENSIONS['comments']: 45.5,
 }
 CELL_WIDTH_CONFIG.update(PLAYER_WIDTH_CONFIG)
 CELL_WIDTH_CONFIG.update(HERO_WIDTH_CONFIG)
@@ -123,10 +123,10 @@ ABILITY_FORMAT = {
     0: 'Plain Attack',
     1: 'Shift',
     2: 'E',
-    3: 'Ult1',
-    4: 'Ult2',
+    3: 'Ultmate 1',
+    4: 'Ultmate 2',
     5: 'RMB',
-    6: '被动',
+    6: 'Passive',
 }
 
 
@@ -151,18 +151,18 @@ def _cell_style():
 def set_action(obj):
     player1, player2 = obj.player1, obj.player2
     if player1['chara'] == 'mercy' and player1['team'] == player2['team']:
-        return 'resurrect'
+        return 'Resurrect'
     elif player2['chara'] == 'meka':
-        return 'demech'
+        return 'Demech'
     else:
-        return 'eliminate'
+        return 'Eliminate'
 
 
 def set_comments(action):
     table = {
-        'resurrect': 'Resurrect',
-        'demech': 'MEKA destroyed',
-        'eliminate': '',
+        'Resurrect': 'Resurrect',
+        'Demech': 'MEKA destroyed',
+        'Eliminate': '',
     }
     return table[action]
 
