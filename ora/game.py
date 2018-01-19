@@ -62,7 +62,6 @@ class Game(object):
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
-        # print self.output_path
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
 
@@ -135,12 +134,12 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
 
         # For testing we specify start/end time.
         # But for release version we don't.
         frame_image_index = start_time * video.fps if is_test else 0
+        frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_test is False) \
             and (frame_image_index < end_time * video.fps and is_test is True):

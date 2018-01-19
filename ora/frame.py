@@ -186,7 +186,6 @@ class Frame(object):
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
             self.is_valid = True
-            # print mean
         else:
             self.is_valid = False
             return
@@ -201,12 +200,9 @@ class Frame(object):
         max_val_preseason = measure.compare_ssim(
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
         
-
-        # cv2.imwrite('frame.png', self.image)
         max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
-            # print max_val
         else:
             self.is_valid = False
             return
@@ -232,7 +228,6 @@ class Frame(object):
             A dict of all avatar icons fused
         """
         team_colors = self.get_team_colors()
-        # print team_colors
         avatars_left_ref = {}
         avatars_small_left_ref = {}
         avatars_right_ref = {}
@@ -279,8 +274,6 @@ class Frame(object):
             A dict of avatars.
         """
         all_avatars = {}
-        # print self.time
-        # 
         if self.game.team_colors is not None:
             all_avatars = self.game.avatars_ref
         else:
