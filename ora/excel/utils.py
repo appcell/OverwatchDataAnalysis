@@ -17,20 +17,18 @@ def time_format(seconds):
     return "%02d:%02d:%02d.%d" % (h, m, s, hm)
 
 
-def capitalize(s):
+def chara_capitalize(s):
     """
     将英雄名转换为首字母大写的形式
     :param s: str
     :return: Str
     """
-    if s == 'dva':
-        return 'D. Va'
-    elif s == 'meka':
-        return 'MEKA'
-    elif s == 'soldier76':
-        return 'Soldier: 76'
-    else:
-        return s.capitalize()
+    d = {
+        'dva': 'D. Va',
+        'meka': 'MEKA',
+        'soldier76': 'Soldier: 76'
+    }
+    return d.get(s, s.capitalize())
 
 
 def to_hex(array):

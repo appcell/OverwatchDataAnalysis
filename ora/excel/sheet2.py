@@ -3,7 +3,7 @@
 @Author: Komorebi 
 """
 from utils import (
-    capitalize,
+    chara_capitalize,
     upper,
 )
 from openpyxl.utils import get_column_letter
@@ -180,7 +180,7 @@ class Sheet:
                 cell = Config.LEFT[key]['chara{}'.format(i + 1)]
             else:
                 cell = Config.RIGHT[key]['chara{}'.format(i - 5)]
-            self.set_cell_value(cell, capitalize(player.chara), 1)
+            self.set_cell_value(cell, chara_capitalize(player.chara), 1)
 
     def _append_ult_number(self, players):
         for i, player in enumerate(players):

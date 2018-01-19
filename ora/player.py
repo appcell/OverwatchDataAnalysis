@@ -67,7 +67,7 @@ class Player:
         #     print "Ult: " + str(self.is_ult_ready)
         #     print "Dead: " + str(self.is_dead)
         #     print "Is observed: " + str(self.is_observed)
-            print "* * * * *"
+        #     print "* * * * *"
         self.free()
 
     def free(self):

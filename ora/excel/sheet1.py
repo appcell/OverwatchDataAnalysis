@@ -276,7 +276,7 @@ class Sheet:
         result = [''] * (len(Config.title) + 1)
         for k, v in format_spec.items():
             if k in ['object hero', 'subject hero'] and k in data:
-                data[k] = utils.capitalize(data[k])
+                data[k] = utils.chara_capitalize(data[k])
             if k in data:
                 result[v-1] = data[k]
 
@@ -331,7 +331,7 @@ class Sheet:
 
             for i, assist in enumerate(obj.assists):
                 d['a player {}'.format(i + 1)] = set_player_name(assist, i, self.player_and_chara)
-                d['a hero {}'.format(i + 1)] = utils.capitalize(assist['chara'])
+                d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
             self._append(**d)
@@ -383,7 +383,7 @@ class Sheet:
                             'action': 'Hero switch',
                             'subject player': player.name,
                             'subject hero': player.chara,
-                            'comments': 'Switch from {} to {}'.format(utils.capitalize(top_chara), utils.capitalize(player.chara)),
+                            'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
 
                             '_$color': {
                                 'subject player': Config.team_colors[player.team],
