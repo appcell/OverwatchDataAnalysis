@@ -187,7 +187,7 @@ class Game(object):
         of current frame must be the same, i.e. repeated. Remove repeated ones
         from last frame to the first.
 
-        2） For replay: Usually there's a gap of ~1s between replay effect and
+        2) For replay: Usually there's a gap of ~1s between replay effect and
         replay icon appears. Mark frames during this gap as invalid.
 
         3) Remove invalid frames.
