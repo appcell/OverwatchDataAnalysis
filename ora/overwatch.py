@@ -664,6 +664,11 @@ def get_replay_icon_pos():
         GAMETYPE_CUSTOM: [111, 64, 64, 74],
     }
 
+def get_replay_icon_preseason_pos():
+    return {
+        GAMETYPE_OWL: [109, 66, 23, 74],
+        GAMETYPE_CUSTOM: [111, 64, 40, 74],
+    }
 def get_replay_icon_ref():
     """Read in relay icon.
 

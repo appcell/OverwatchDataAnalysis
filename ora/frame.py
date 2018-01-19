@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from skimage import measure
+
 import overwatch as OW
 from utils import image as ImageUtils
 from player import Player
@@ -34,7 +36,7 @@ class Frame(object):
         Returns:
             None 
         """
-        self.is_valid = True
+        self.is_valid = False
         self.players = []
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, 1280, 720)
@@ -42,15 +44,14 @@ class Frame(object):
         self.game = game
 
         print self.time
-        cv2.imshow('t', self.image);
-        cv2.waitKey(0)
-        print "============================="
         self.get_players()
         self.get_killfeeds()
         self.validate()
 
-        # if self.time == 8.5:
-
+        cv2.imshow('t', self.image);
+        cv2.waitKey(0)
+        print self.is_valid
+        print "============================="
         self.free()
 
     def free(self):
@@ -158,6 +159,11 @@ class Frame(object):
             if player.is_dead is False:
                 flag = True
 
+        if flag == False:
+            self.is_valid = False
+            return
+        else:
+            self.is_valid = True
         validation_roi = ImageUtils.crop(self.image,
                                          OW.FRAME_VALIDATION_POS[self.game.game_type])
 
@@ -169,21 +175,38 @@ class Frame(object):
                 np.mean(validation_roi[:, :, 1]),
                 np.mean(validation_roi[:, :, 2])]
 
+
         if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
             self.is_valid = True
+            print mean
+        else:
+            self.is_valid = False
+            return
 
         replay_icon = ImageUtils.crop(
             self.image, OW.get_replay_icon_pos()[self.game.game_type])
+
+        replay_icon_preseason = ImageUtils.crop(
+            self.image, OW.get_replay_icon_preseason_pos()[self.game.game_type])
         # cv2.imshow('t', self.image)
         # cv2.waitKey(0)
+        print replay_icon_preseason.shape
+        max_val = measure.compare_ssim(
+                replay_icon, self.game.replay_icon_ref, multichannel=True)
+        max_val_preseason = measure.compare_ssim(
+                replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
+        
 
-        replay_match_result = cv2.matchTemplate(
-                replay_icon, self.game.replay_icon_ref, cv2.TM_CCOEFF_NORMED)
-        _, max_val, _, _ = cv2.minMaxLoc(replay_match_result)
+        # cv2.imwrite('frame.png', self.image)
+        max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
+            print max_val
+        else:
+            self.is_valid = False
+            return
 
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)

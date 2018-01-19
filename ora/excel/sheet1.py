@@ -236,6 +236,7 @@ class Sheet:
         self.sheet = wb['sheet1']
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
+        print self.game.team_colors
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 

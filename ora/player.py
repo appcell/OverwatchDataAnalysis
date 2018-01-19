@@ -147,7 +147,7 @@ class Player:
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index)[self.frame.game.game_type])
         avatar_small = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 0, avatar.shape[1]])
-        avatar_small_ssim = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 5, avatar.shape[1]-5])
+        # avatar_small_ssim = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 5, avatar.shape[1]-5])
 
         # If player is observed, not sure about this tho
         avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
@@ -175,7 +175,6 @@ class Player:
             s_final = s if s > s_small else s_small
             if s_final > score:
                 score = s_final
-                loc_final = loc[0]
                 self.chara = name
         if self.chara is None:
             self.chara = "empty"
