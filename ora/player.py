@@ -110,17 +110,24 @@ class Player:
         prob = cv2.matchTemplate(ult_icon, 
                                  ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
 
-        # print prob
-        # cv2.imshow('t', ult_icon)
-        # cv2.waitKey(0)
+        
+
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
+
         if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type]:
             prob = 1
 
         if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
             self.is_ult_ready = True
+
+        # if self.index == 4:
+        cv2.imshow('t', ult_icon)
+        cv2.waitKey(0)
+        print prob
+        print brightness
+        print self.is_ult_ready
 
     def get_chara(self):
         """Retrieves chara name for current player in current frame.

@@ -118,9 +118,9 @@ TEAM_COLOR_PICK_POS_RIGHT_CUSTOM = [0, 1279]
 # ==========================================================
 # **********************************************************
 
-ULT_ICON_X_MIN_LEFT_OWL = 30
-ULT_ICON_X_MIN_RIGHT_OWL = 827
-ULT_ICON_WIDTH_OWL = 30
+ULT_ICON_X_MIN_LEFT_OWL = 31
+ULT_ICON_X_MIN_RIGHT_OWL = 825
+ULT_ICON_WIDTH_OWL = 33
 ULT_ICON_Y_MIN_OWL = 47
 ULT_ICON_HEIGHT_OWL = 26
 ULT_ICON_GAP_OWL = 70
