@@ -110,6 +110,9 @@ class Player:
         prob = cv2.matchTemplate(ult_icon, 
                                  ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
 
+        # print prob
+        # cv2.imshow('t', ult_icon)
+        # cv2.waitKey(0)
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
