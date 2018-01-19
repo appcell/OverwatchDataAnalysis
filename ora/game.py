@@ -220,4 +220,16 @@ class Game(object):
             self.frames))
 
     def rematch_charas_and_players(self):
-        
+        """Rematch charas & players for killfeed
+
+        Sometimes in a killfeed, chara gets recognized but there's no
+        corresponding player info. Here we match them together with info from
+        earlier & later frames so that no "empty" shows up in player names.
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+        pass
