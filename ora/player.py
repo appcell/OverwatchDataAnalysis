@@ -62,12 +62,12 @@ class Player:
         self.get_ult_status()
         self.get_chara()
         # if self.is_observed:
-        #     print "Player" + str(self.index)
-        #     print "Chara: " + str(self.chara)
-        #     print "Ult: " + str(self.is_ult_ready)
-        #     print "Dead: " + str(self.is_dead)
-        #     print "Is observed: " + str(self.is_observed)
-        #     print "* * * * *"
+        # print "Player" + str(self.index)
+        # print "Chara: " + str(self.chara)
+        # print "Ult: " + str(self.is_ult_ready)
+        # print "Dead: " + str(self.is_dead)
+        # print "Is observed: " + str(self.is_observed)
+        # print "* * * * *"
         self.free()
 
     def free(self):
@@ -113,7 +113,6 @@ class Player:
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
-
         if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type]:
             prob = 1
 
@@ -141,13 +140,12 @@ class Player:
         avatars_ref = all_avatars["normal"]
         avatars_small_ref = all_avatars["small"]
 
-        team_color = avatars_ref['ana'][0,0]
+        team_color = avatars_ref['ana'][0, 0]
 
         # Crop avatar from frame
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index)[self.frame.game.game_type])
         avatar_small = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 0, avatar.shape[1]])
-        # avatar_small_ssim = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 5, avatar.shape[1]-5])
 
         # If player is observed, not sure about this tho
         avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
@@ -155,11 +153,11 @@ class Player:
         max_diff = 0
         for i in range(avatar_diff.shape[0]):
             for j in range(avatar_diff.shape[1]):
-                if ImageUtils.color_distance(avatar_diff[i, j],
-                    team_color) > max_diff:
-                    max_diff = ImageUtils.color_distance(avatar_diff[i, j],
-                    team_color)
-        if max_diff < 40 and self.is_ult_ready == False:
+                if ImageUtils.color_distance(
+                        avatar_diff[i, j], team_color) > max_diff:
+                    max_diff = ImageUtils.color_distance(
+                        avatar_diff[i, j], team_color)
+        if max_diff < 40 and self.is_ult_ready is False:
             self.is_observed = True
 
         score = 0

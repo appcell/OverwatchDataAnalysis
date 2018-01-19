@@ -234,11 +234,7 @@ class Killfeed:
             player['pos'], position)[self.game_type]
 
         color = self.image[color_pos[0], color_pos[1]]
-        colors_ref = {}
-        if self.frame.game.team_colors is not None:
-            colors_ref = self.frame.game.team_colors
-        else:
-            colors_ref = self.frame.get_team_colors()
+        colors_ref = self.frame.get_team_colors()
         dist_left = ImageUtils.color_distance(
             color, colors_ref['left'])
         dist_right = ImageUtils.color_distance(
@@ -247,9 +243,6 @@ class Killfeed:
         if dist_left > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type] \
             and dist_right > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type]:
             res['pos'] = -1
-            # cv2.imshow('t',self.image)
-            # cv2.waitKey(0)
-            # print [player['chara'], dist_left, dist_right, color, colors_ref['left'], colors_ref['right']]
             return res
 
         if dist_left < dist_right:
@@ -433,15 +426,24 @@ class Killfeed:
         if (distance - OW.ABILITY_GAP_NORMAL[self.game_type]) % OW.ASSIST_GAP[self.game_type] > 5:
             # Has ability icon
             max_prob = -10
+            filtered_icon = self._preprocess_ability_icon(ability_icon)
+
+
+
             for (ind, ability_index) in enumerate(ability_list):
-                filtered_icon = self._preprocess_ability_icon(ability_icon)
                 score = measure.compare_ssim(
                     filtered_icon, 
                     ability_icons_ref[ind], 
                     multichannel=True)
+                score = cv2.matchTemplate(filtered_icon, ability_icons_ref[ind],
+                                  cv2.TM_CCOEFF_NORMED)
+                _, score, _, _ = cv2.minMaxLoc(score)
+
+                # score = ImageUtils.similarity(filtered_icon, ability_icons_ref[ind])
                 if score > max_prob:
                     max_prob = score
                     self.ability = ability_index
+
 
             if max_prob < 0.1 and self.player1['chara'] == OW.GENJI:
                 self.ability = OW.ABILITY_E
@@ -456,6 +458,7 @@ class Killfeed:
                     8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type] \
                         + OW.KILLFEED_ICON_WIDTH[self.game_type],
                     OW.ASSIST_ICON_WIDTH[self.game_type]])
+
             assist = {
                 "chara": "empty",
                 "player": "empty",
@@ -465,6 +468,7 @@ class Killfeed:
             for (chara, icon) in self.frame.game.assist_icons_ref.iteritems():
                 score = measure.compare_ssim(assist_icon, 
                                              icon, multichannel=True)
+
                 if score > max_score:
                     max_score = score
                     assist['chara'] = chara
@@ -492,6 +496,7 @@ class Killfeed:
         color = self.image_with_gap[ability_pos[
             0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
         filtered_icon = np.zeros((icon.shape[0], icon.shape[1]))
+        # icon = ImageUtils.increase_contrast(icon)
         
         # TODO: Labelling needed here!!! Especially when background looks
         # similar to foreground.

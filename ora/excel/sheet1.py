@@ -298,7 +298,7 @@ class Sheet:
         for i, frame in enumerate(frames):
             self.player_and_chara = [(player.name, player.chara) for player in frame.players]
             self._killfeed_append(frame.killfeeds, frame.time)
-            # self._ultimate_append(frame.players, frame.time)
+            self._ultimate_append(frame.players, frame.time)
             # ultimate detection not working properly
             self._switch_hero_append(frame.players, frame.time, i)
         self.save()
