@@ -47,11 +47,6 @@ class Frame(object):
         self.get_players()
         self.get_killfeeds()
         self.validate()
-
-        cv2.imshow('t', self.image);
-        cv2.waitKey(0)
-        print self.is_valid
-        print "============================="
         self.free()
 
     def free(self):
