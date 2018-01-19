@@ -30,9 +30,9 @@
 
 ## 下载代码
 
-打开如下地址（注意是在dev分支上，请点击以下地址！！！）：
+打开如下地址（注意是在test分支上，请点击以下地址！！！）：
 
-https://github.com/appcell/OverwatchDataAnalysis/tree/dev
+https://github.com/appcell/OverwatchDataAnalysis/tree/test
 
 点击 Clone or Download， 选择 Download Zip
 
