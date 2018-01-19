@@ -61,13 +61,6 @@ class Player:
 
         self.get_ult_status()
         self.get_chara()
-        # if self.is_observed:
-        # print "Player" + str(self.index)
-        # print "Chara: " + str(self.chara)
-        # print "Ult: " + str(self.is_ult_ready)
-        # print "Dead: " + str(self.is_dead)
-        # print "Is observed: " + str(self.is_observed)
-        # print "* * * * *"
         self.free()
 
     def free(self):
@@ -109,9 +102,6 @@ class Player:
         # being similar
         prob = cv2.matchTemplate(ult_icon, 
                                  ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
-
-        
-
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
@@ -121,13 +111,6 @@ class Player:
 
         if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
             self.is_ult_ready = True
-
-        # if self.index == 4:
-        cv2.imshow('t', ult_icon)
-        cv2.waitKey(0)
-        print prob
-        print brightness
-        print self.is_ult_ready
 
     def get_chara(self):
         """Retrieves chara name for current player in current frame.
@@ -149,7 +132,6 @@ class Player:
         all_avatars = self.frame.get_avatars(self.index)
         avatars_ref = all_avatars["normal"]
         avatars_small_ref = all_avatars["small"]
-
         team_color = avatars_ref['ana'][0, 0]
 
         # Crop avatar from frame
@@ -169,9 +151,7 @@ class Player:
                         avatar_diff[i, j], team_color)
         if max_diff < 40 and self.is_ult_ready is False:
             self.is_observed = True
-
         score = 0
-
         for (name, avatar_ref) in avatars_ref.iteritems():
             s = cv2.matchTemplate(avatar, avatar_ref,
                                   cv2.TM_CCOEFF_NORMED)

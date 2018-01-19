@@ -4,6 +4,8 @@ from utils.video_loader import VideoLoader
 from excel import Excel
 import os
 import cv2
+
+
 class Game(object):
     """Class of a Game object.
 
@@ -115,7 +117,7 @@ class Game(object):
         else:
             self.name_players_team_right = ["7", "8", "9", "10", "11", "12"]
 
-    def analyze(self, start_time=0, end_time=0):
+    def analyze(self, start_time=0, end_time=0, is_test=False):
         """Main analysis process
 
         Capture frames with given video, retrieve info from each frame. All 
@@ -133,20 +135,25 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        frame_image_index = start_time * video.fps
         frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
-        while frame_image is not None and frame_image_index < end_time * video.fps:
-        # while frame_image is not None and frame_image_index < video.frame_number:
+
+        # For testing we specify start/end time.
+        # But for release version we don't.
+        frame_image_index = start_time * video.fps if is_test else 0
+        while frame_image is not None \
+            and (frame_image_index < video.frame_number and is_test is False) \
+            and (frame_image_index < end_time * video.fps and is_test is True):
 
             frame = Frame(frame_image,
-                          start_time + (1 / float(self.analyzer_fps)) * step_cnt,
+                          start_time +
+                          (1 / float(self.analyzer_fps)) * step_cnt,
                           self)
             self.frames.append(frame)
-
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
+
         video.close()
         self.clear_all_frames()
         self.output_to_excel()
@@ -161,7 +168,9 @@ class Game(object):
         #         print "Is headshot: " + str(killfeed.is_headshot)
 
     def output_to_excel(self):
-        """Output the full event list to an excel file.
+        """Output the full event list to an Excel file.
+
+        Author: KomorebiL
 
         Args:
             None
@@ -172,13 +181,30 @@ class Game(object):
         Excel(self).save()
 
     def clear_all_frames(self):
-        # There must be a better way for this
+        """Remove invalid frames & repeated killfeeds.
+
+        1) Remove repeated killfeeds: for each 2 neighboring frames, if both 
+        have recognized killfeeds, then the last of previous frame and first
+        of current frame must be the same, i.e. repeated. Remove repeated ones
+        from last frame to the first.
+
+        2) Remove invalid frames.
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+
+        # 1) Remove repeated killfeeds.
+        # TODO: There must be a better way for this.
         frame_num = len(self.frames)
         for i in range(frame_num-1, 0, -1):
             frame = self.frames[i]
             prev_frame = self.frames[i - 1]
             if frame.killfeeds and prev_frame.killfeeds \
-                and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
+                    and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
                 frame.killfeeds.pop(0)
             frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
                 self.game_type] / self.analyzer_fps))
@@ -188,14 +214,7 @@ class Game(object):
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
 
+        # 2) Remove invalid frames
         self.frames = list(filter(
-            lambda frame: frame.is_valid is True, 
+            lambda frame: frame.is_valid is True,
             self.frames))
-
-        for i in range(12):
-            for frame in self.frames:
-                player = frame.players[i]
-            #     print player.chara
-            #     print player.is_ult_ready
-            # print "========"
-
