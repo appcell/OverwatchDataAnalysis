@@ -218,3 +218,6 @@ class Game(object):
         self.frames = list(filter(
             lambda frame: frame.is_valid is True,
             self.frames))
+
+    def rematch_charas_and_players(self):
+        

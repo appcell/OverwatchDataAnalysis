@@ -124,7 +124,7 @@ class Killfeed:
             self.is_valid = False
             return
 
-        # Differentiate results from 2 sides first
+        # Differentiate results from 2 sides first, or it gets seriously wrong
         mean_pos = np.mean([i['pos'] for i in icons_weights])
         icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
         icons_weights_right = [i for i in icons_weights if i['pos'] > mean_pos]
@@ -171,7 +171,7 @@ class Killfeed:
         possible icon positions.
 
         Author:
-            Leavebody, Appcell
+            Leavebody
 
         Args:
             None
