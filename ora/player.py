@@ -122,13 +122,6 @@ class Player:
         if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
             self.is_ult_ready = True
 
-        # if self.index == 4:
-        cv2.imshow('t', ult_icon)
-        cv2.waitKey(0)
-        print prob
-        print brightness
-        print self.is_ult_ready
-
     def get_chara(self):
         """Retrieves chara name for current player in current frame.
 
