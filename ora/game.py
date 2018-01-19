@@ -60,7 +60,7 @@ class Game(object):
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
-        print self.output_path
+        # print self.output_path
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
 
@@ -73,7 +73,7 @@ class Game(object):
         Returns:
             None 
         """
-        self.team_colors = frame.get_team_colors()
+        self.team_colors = frame.get_team_colors_from_image()
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -187,7 +187,15 @@ class Game(object):
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
+
         self.frames = list(filter(
             lambda frame: frame.is_valid is True, 
             self.frames))
+
+        for i in range(12):
+            for frame in self.frames:
+                player = frame.players[i]
+            #     print player.chara
+            #     print player.is_ult_ready
+            # print "========"
 

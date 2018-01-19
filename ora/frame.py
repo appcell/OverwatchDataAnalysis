@@ -81,8 +81,8 @@ class Frame(object):
             player = Player(i, self)
             self.players.append(player)
 
-    def get_team_colors(self):
-        """Get team colors in this frame.
+    def get_team_colors_from_image(self):
+        """Get team colors from this frame.
 
         Author:
             Appcell
@@ -101,6 +101,12 @@ class Frame(object):
             "right": self.image[pos[1][0], pos[1][1]]
         }
 
+    def get_team_colors(self):
+        if self.game.team_colors is not None:
+            return self.game.team_colors
+        else:
+            return self.get_team_colors_from_image()
+             
     def get_killfeeds(self):
         """Get killfeed info in this frame.
 
@@ -175,7 +181,7 @@ class Frame(object):
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
             self.is_valid = True
-            print mean
+            # print mean
         else:
             self.is_valid = False
             return
@@ -185,9 +191,6 @@ class Frame(object):
 
         replay_icon_preseason = ImageUtils.crop(
             self.image, OW.get_replay_icon_preseason_pos()[self.game.game_type])
-        # cv2.imshow('t', self.image)
-        # cv2.waitKey(0)
-        print replay_icon_preseason.shape
         max_val = measure.compare_ssim(
                 replay_icon, self.game.replay_icon_ref, multichannel=True)
         max_val_preseason = measure.compare_ssim(
@@ -198,7 +201,7 @@ class Frame(object):
         max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
-            print max_val
+            # print max_val
         else:
             self.is_valid = False
             return
@@ -224,6 +227,7 @@ class Frame(object):
             A dict of all avatar icons fused
         """
         team_colors = self.get_team_colors()
+        # print team_colors
         avatars_left_ref = {}
         avatars_small_left_ref = {}
         avatars_right_ref = {}

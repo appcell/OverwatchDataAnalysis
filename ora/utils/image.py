@@ -20,6 +20,52 @@ def rgb_to_gray(img):
     """
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+def rgb_to_bw(img):
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.zeros((h, w))
+
+    for i in range(h):
+        for j in range(w):
+            if color_distance(img[i, j], np.array([255, 255, 255])) < 40:
+                res[i, j] = 255
+    return res
+
+def increase_contrast(img):
+    """
+    Increase contrast of an RGB image
+    @Author: Appcell
+    @param img: image to be processed
+    @return: a numpy.ndarray object of this image
+    """
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(4, 4))
+    cl = clahe.apply(l)
+    limg = cv2.merge((cl,a,b))
+    final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+    return final
+
+def similarity(img, img2):
+    """
+    Similarity between 2 BW images with same size.
+    """
+    bwimg = img
+    bwimg2 = img2
+    if len(img.shape) > 2 and img.shape[2] == 3:
+        bwimg = rgb_to_bw(img)
+    if len(img2.shape) > 2 and img2.shape[2] == 3:
+        bwimg2 = rgb_to_bw(img2)
+    w = bwimg.shape[1]
+    h = bwimg.shape[0]
+    s = 0
+    for i in range(h):
+        for j in range(w):
+            if bwimg[i, j] == bwimg2[i, j]:
+                s += 1
+
+    return float(s)/(w*h)
+
 def read(path):
     """
     Read RGB channels of an image with given path from file system.
