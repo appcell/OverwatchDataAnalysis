@@ -142,7 +142,7 @@ class Game(object):
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_test is False) \
-            and (frame_image_index < end_time * video.fps and is_test is True):
+            or (frame_image_index < end_time * video.fps and is_test is True):
 
             frame = Frame(frame_image,
                           start_time +
