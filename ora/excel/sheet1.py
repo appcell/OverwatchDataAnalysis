@@ -174,14 +174,31 @@ def set_comments(action):
     return table[action]
 
 
-def set_player_name(assist, index, charas):
-    name, chara = assist['player'], assist['chara']
+def get_player_name(obj, index, charas, charas2):
+    name, chara = obj['player'], obj['chara']
     if name != 'empty':
         return name
     team_charas = charas[:6] if index <= 5 else charas[6:]
     for n, c in team_charas:
         if chara == c:
             return n
+
+    team_charas2 = charas2[:6] if index <= 5 else charas2[6:]
+    for i, c in enumerate(team_charas2):
+        if chara == c:
+            return team_charas[i][0]
+
+
+def get_player_team_index(player_team, team_names):
+    """
+    获取玩家所在的队伍编号
+    :param player_team: 玩家所处的队伍名
+    :param team_names: 存储了主队客队队伍名的 dict，key 分别为'left', 'right'
+    :return: 0 or 6
+    """
+    for key in ['left', 'right']:
+        if team_names[key] == player_team:
+            return 0 if key == 'left' else 6
 
 
 class Config(object):
@@ -236,15 +253,14 @@ class Sheet:
         self.sheet = wb['sheet1']
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
-        print self.game.team_colors
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
         # 上一帧的大招状况
         self.ultimate_status = {i: False for i in range(1, 13)}
 
-        self.previous_chara = [player.chara for player in game.frames[0].players]
-        self.next_chara = [player.chara for player in game.frames[1].players]
+        self.previous_chara = [player.chara for player in self.game.frames[0].players]
+        self.next_chara = [player.chara for player in self.game.frames[1].players]
 
         self.player_and_chara = []
 
@@ -255,11 +271,11 @@ class Sheet:
         if '_$color' in data.keys():
             color = data.pop('_$color')
             for k, v in color.items():
-                cell = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
+                title = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
                 c, b = v
                 if b:
-                    Config.peculiar_cell.append(cell)
-                Config.cell_style['fill'][cell] = {
+                    Config.peculiar_cell.append(title)
+                Config.cell_style['fill'][title] = {
                     'fill_type': 'solid',
                     'fgColor': c,
                 }
@@ -297,10 +313,10 @@ class Sheet:
         frames = self.game.frames
         for i, frame in enumerate(frames):
             self.player_and_chara = [(player.name, player.chara) for player in frame.players]
-            self._killfeed_append(frame.killfeeds, frame.time)
-            self._ultimate_append(frame.players, frame.time)
             # ultimate detection not working properly
             self._switch_hero_append(frame.players, frame.time, i)
+            self._killfeed_append(frame.killfeeds, frame.time)
+            self._ultimate_append(frame.players, frame.time)
         self.save()
 
     def _killfeed_append(self, killfeeds, time):
@@ -311,27 +327,30 @@ class Sheet:
             d = {}
             player1, player2 = obj.player1, obj.player2
             d['time'] = time
-            # 这里先写死
             d['action'] = set_action(obj)
             d['comments'] = set_comments(d['action'])
             d['ability'] = Config.ability[obj.ability]
             d['subject hero'] = player1['chara']
-            d['subject player'] = player1['player']
+            d['subject player'] = (get_player_name(player1,
+                                                   get_player_team_index(player1['team'], self.game.team_names),
+                                                   self.player_and_chara, self.previous_chara))
             d['object hero'] = player2['chara']
-            d['object player'] = player2['player']
+            d['object player'] = (get_player_name(player2,
+                                                  get_player_team_index(player2['team'], self.game.team_names),
+                                                  self.player_and_chara, self.previous_chara))
             if obj.is_headshot:
                 d['critical kill'] = 'Y'
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
             for i, p in enumerate([player1, player2]):
-                if p['player'] != 'empty':
+                if p['chara'] != 'empty':
                     if i == 0:
                         d['_$color']['subject player'] = Config.team_colors[player1['team']]
                     else:
                         d['_$color']['object player'] = Config.team_colors[player2['team']]
 
             for i, assist in enumerate(obj.assists):
-                d['a player {}'.format(i + 1)] = set_player_name(assist, i, self.player_and_chara)
+                d['a player {}'.format(i + 1)] = get_player_name(assist, get_player_team_index(assist['team'], self.game.team_names), self.player_and_chara, self.previous_chara)
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
