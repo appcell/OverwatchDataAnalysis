@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from skimage import transform as tf
+
 
 def crop(img, pos_arr):
     """
@@ -11,6 +13,19 @@ def crop(img, pos_arr):
     """
     return img[pos_arr[0]:pos_arr[0]+pos_arr[1], pos_arr[2]:pos_arr[2]+pos_arr[3]]
 
+
+def shear(img, shear_rad):
+    """
+    Shear a image to a given radian.
+    @Author: Rigel
+    @param img: image to be sheared
+    @param shear_rad: radian to which the image will be sheared
+    @return: a numpy.ndarray object of this image
+    """
+    affine_tf = tf.AffineTransform(shear=shear_rad)
+    return tf.warp(img, inverse_map=affine_tf)
+
+
 def rgb_to_gray(img):
     """
     Transfer given RGB image to grayscale.
@@ -19,6 +34,7 @@ def rgb_to_gray(img):
     @return: a numpy.ndarray object of this image
     """
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
 
 def rgb_to_bw(img):
     w = img.shape[1]
@@ -30,6 +46,7 @@ def rgb_to_bw(img):
             if color_distance(img[i, j], np.array([255, 255, 255])) < 40:
                 res[i, j] = 255
     return res
+
 
 def increase_contrast(img):
     """
@@ -45,6 +62,7 @@ def increase_contrast(img):
     limg = cv2.merge((cl,a,b))
     final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     return final
+
 
 def similarity(img, img2):
     """
@@ -66,6 +84,7 @@ def similarity(img, img2):
 
     return float(s)/(w*h)
 
+
 def read(path):
     """
     Read RGB channels of an image with given path from file system.
@@ -75,6 +94,7 @@ def read(path):
     """
     return cv2.imread(path)
 
+
 def read_with_transparency(path):
     """
     Read RGBA channels of an image with given path from file system, 
@@ -83,6 +103,18 @@ def read_with_transparency(path):
     @return: a numpy.ndarray object of read image, with RGB + Alpha channels.
     """
     return cv2.imread(path, -1)
+
+
+def read_bw(path):
+    """
+    Read a B/W image with given path from file system.
+    @Author: Rigel
+    @param path: path of image file
+    @return: a numpy.ndarray object of read image, with boolean type pixels
+    """
+    img_gray = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    return img_gray > 127
+
 
 def resize(img, dest_width, dest_height):
     """
@@ -94,6 +126,7 @@ def resize(img, dest_width, dest_height):
     @return: a numpy.ndarray object of resized image.
     """
     return cv2.resize(img, (dest_width, dest_height))
+
 
 def create_bg_image(color, width, height):
     """
@@ -107,6 +140,7 @@ def create_bg_image(color, width, height):
     bg_image = np.zeros((height, width, 3))
     bg_image[:, :, 0], bg_image[:, :, 1], bg_image[:, :, 2] = color
     return bg_image
+
 
 def overlay(bg, fg):
     """
@@ -125,9 +159,11 @@ def overlay(bg, fg):
     res = (np.multiply(bg, (1 - alpha / 255)) + np.multiply(overlay_color, (alpha / 255))).astype('uint8')
     return res
 
+
 def color_distance_normalized(color1, color2):
     color_temp = np.abs(color1 - (color2 + np.mean(color1) - np.mean(color2)));
     return np.max(color_temp)
+
 
 def color_distance(color1, color2):
     return np.linalg.norm(color1.astype('double') - color2.astype('double'))
