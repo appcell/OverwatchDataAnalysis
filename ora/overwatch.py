@@ -1,24 +1,21 @@
 from utils import image as ImageUtils
-
 import os
+
 # **********************************************************
 # ==========================================================
 #                       Meta Macros
 # ==========================================================
 # **********************************************************
-
 GAMETYPE_OWL = 0
 GAMETYPE_CUSTOM = 1
 ANALYZER_FPS = 2
 DEFAULT_SCREEN_WIDTH = 1280
 DEFAULT_SCREEN_HEIGHT = 720
-
 # **********************************************************
 # ==========================================================
 #               Chara & Non-chara Objects List
 # ==========================================================
 # **********************************************************
-
 ANA = "ana"
 BASTION = "bastion"
 DOOMFIST = "doomfist"
@@ -100,24 +97,21 @@ def get_chara_name(name):
         return TORBJON
     return name
 
+
 # **********************************************************
 # ==========================================================
 #           Team Theme Color Pixel Position Defs
 # ==========================================================
 # **********************************************************
-
 TEAM_COLOR_PICK_POS_LEFT_OWL = [53, 40]
 TEAM_COLOR_PICK_POS_RIGHT_OWL = [54, 1183]
 TEAM_COLOR_PICK_POS_LEFT_CUSTOM = [0, 0]
 TEAM_COLOR_PICK_POS_RIGHT_CUSTOM = [0, 1279]
-
-
 # **********************************************************
 # ==========================================================
 #              Ultimate Icon Position Defs
 # ==========================================================
 # **********************************************************
-
 ULT_ICON_X_MIN_LEFT_OWL = 31
 ULT_ICON_X_MIN_RIGHT_OWL = 825
 ULT_ICON_WIDTH_OWL = 33
@@ -364,8 +358,8 @@ def get_avatars_ref():
         A dict of all reference avatar images
     """
     return {chara: ImageUtils.resize(
-        ImageUtils.read_with_transparency("./images/charas/" + chara + ".png"), 
-        AVATAR_WIDTH_REF, 
+        ImageUtils.read_with_transparency("./images/charas/" + chara + ".png"),
+        AVATAR_WIDTH_REF,
         AVATAR_HEIGHT_REF) for chara in CHARACTER_LIST}
 
 
@@ -445,6 +439,8 @@ def get_avatar_pos(index):
                               AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
                               AVATAR_WIDTH_CUSTOM]
         }
+
+
 def get_avatar_diff_pos(index):
     """Get position of an avatar in one frame, given player index.
 
@@ -481,6 +477,8 @@ def get_avatar_diff_pos(index):
                               AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
                               AVATAR_WIDTH_CUSTOM]
         }
+
+
 # **********************************************************
 # ==========================================================
 #                    Killfeed Row
@@ -529,14 +527,14 @@ def get_killfeed_icons_ref():
     return {
         GAMETYPE_OWL: {chara: ImageUtils.resize(
             ImageUtils.read("./images/icons/" + chara + ".png"),
-            KILLFEED_ICON_WIDTH[GAMETYPE_OWL], 
+            KILLFEED_ICON_WIDTH[GAMETYPE_OWL],
             KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) \
-                for chara in KILLFEED_OBJECT_LIST},
+            for chara in KILLFEED_OBJECT_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
             ImageUtils.read("./images/icons/" + chara + ".png"),
-            KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], 
+            KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM],
             KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
-                for chara in KILLFEED_OBJECT_LIST},
+            for chara in KILLFEED_OBJECT_LIST},
     }
 
 
@@ -556,12 +554,12 @@ def get_assist_icons_ref():
         GAMETYPE_OWL: {chara: ImageUtils.resize(
             ImageUtils.read("./images/assists/" + chara + ".png"),
             ASSIST_ICON_WIDTH[GAMETYPE_OWL], ASSIST_ICON_HEIGHT[GAMETYPE_OWL]) \
-                for chara in ASSIST_CHARACTER_LIST},
+            for chara in ASSIST_CHARACTER_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
             ImageUtils.read("./images/assists/" + chara + ".png"),
-            ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM], 
+            ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM],
             ASSIST_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
-                for chara in ASSIST_CHARACTER_LIST},
+            for chara in ASSIST_CHARACTER_LIST},
     }
 
 
@@ -581,13 +579,13 @@ def get_killfeed_team_color_pos(pos_x, position):
 
     if position == 'left':
         return {
-            GAMETYPE_OWL:  [2, pos_x - 10],
-            GAMETYPE_CUSTOM:  [2, pos_x - 10]
+            GAMETYPE_OWL: [2, pos_x - 10],
+            GAMETYPE_CUSTOM: [2, pos_x - 10]
         }
     else:
         return {
-            GAMETYPE_OWL:  [2, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 10],
-            GAMETYPE_CUSTOM:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 10]
+            GAMETYPE_OWL: [2, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 10],
+            GAMETYPE_CUSTOM: [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 10]
         }
 
 
@@ -640,6 +638,7 @@ def get_killfeed_with_gap_pos(index):
                           KILLFEED_X_MIN_CUSTOM,
                           KILLFEED_WIDTH_CUSTOM]
     }
+
 
 # **********************************************************
 # ==========================================================
@@ -767,14 +766,12 @@ def get_ability_icon_pos(pos_right):
         ],
     }
 
+
 # Not really sure about this
 ASSIST_GAP = {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 20}
 
-
 ASSIST_ICON_HEIGHT = {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 18}
 ASSIST_ICON_WIDTH = {GAMETYPE_OWL: 12, GAMETYPE_CUSTOM: 12}
-
-
 # **********************************************************
 # ==========================================================
 #                   Frame Validation
@@ -786,17 +783,22 @@ FRAME_VALIDATION_COLOR_MEAN = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
 FRAME_VALIDATION_COLOR_STD = {GAMETYPE_OWL: 3, GAMETYPE_CUSTOM: 3}
 FRAME_VALIDATION_EFFECT_TIME = {GAMETYPE_OWL: 2.0, GAMETYPE_CUSTOM: 2.0}
 FRAME_VALIDATION_REPLAY_PROB = {GAMETYPE_OWL: 0.5, GAMETYPE_CUSTOM: 0.5}
+
+
 def get_replay_icon_pos():
     return {
         GAMETYPE_OWL: [109, 66, 64, 74],
         GAMETYPE_CUSTOM: [111, 64, 64, 74],
     }
 
+
 def get_replay_icon_preseason_pos():
     return {
         GAMETYPE_OWL: [109, 66, 23, 74],
         GAMETYPE_CUSTOM: [111, 64, 40, 74],
     }
+
+
 def get_replay_icon_ref():
     """Read in relay icon.
 
