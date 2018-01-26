@@ -62,6 +62,7 @@ class Game(object):
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
         self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
+        self.ult_charge_icons_ref = OW.get_ult_charge_icons_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
     def set_team_colors(self, frame):

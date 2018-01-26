@@ -1,6 +1,6 @@
 from utils import image as ImageUtils
 import os
-from numpy import tan, arctan
+import numpy as np
 
 # **********************************************************
 # ==========================================================
@@ -166,12 +166,12 @@ def get_ult_icon_pos(index):
 def get_ult_icon_ref(index):
     if index < 6:
         return {
-            GAMETYPE_OWL: ImageUtils.read("./images/awayUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("./images/awayUlt.png")
+            GAMETYPE_OWL: ImageUtils.read("./images/ultimate/awayUlt.png"),
+            GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/awayUlt.png")
         }
     return {
-        GAMETYPE_OWL: ImageUtils.read("./images/homeUlt.png"),
-        GAMETYPE_CUSTOM: ImageUtils.read("./images/homeUlt.png")
+        GAMETYPE_OWL: ImageUtils.read("./images/ultimate/homeUlt.png"),
+        GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/homeUlt.png")
     }
 
 
@@ -323,6 +323,17 @@ def get_ult_charge_pos(index, number):
                                ULT_CHARGE_WIDTH_OWL],
                 GAMETYPE_CUSTOM: []
             }
+
+
+def get_ult_charge_icons_ref():
+    ult_charge_icons_ref_owl = np.empty([10, ULT_CHARGE_HEIGHT_OWL, ULT_CHARGE_WIDTH_OWL], dtype='bool')
+    ult_charge_icons_ref_custom = None
+    for i in range(0, 10):
+        ult_charge_icons_ref_owl[i] = ImageUtils.read_bw("./images/ultimate/owl/" + str(i) + ".png")
+    return {
+        GAMETYPE_OWL: ult_charge_icons_ref_owl,
+        GAMETYPE_CUSTOM: ult_charge_icons_ref_custom
+    }
 
 
 # **********************************************************
