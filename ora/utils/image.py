@@ -152,6 +152,7 @@ def binary_otsu(img):
     global_thresh = threshold_otsu(img)
     return img > global_thresh
 
+
 def create_bg_image(color, width, height):
     """
     Generate an image with one single color, given dimensions

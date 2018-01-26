@@ -124,16 +124,16 @@ class Frame(object):
             @ult_color: array of int, -1: white number, 1: black number
         """
         left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
-        left_pre_image = ImageUtils.crop(self.image, left_pre_pos)
-        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True))
+        left_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, left_pre_pos))
+        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True)[self.game.game_type])
         left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
         left_image = ImageUtils.crop(left_shear, left_pos)
         left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
         left_bin = ImageUtils.binary_otsu(left_image_g)
 
         right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
-        right_pre_image = ImageUtils.crop(self.image, right_pre_pos)
-        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False))
+        right_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, right_pre_pos))
+        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False)[self.game.game_type])
         right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
         right_image = ImageUtils.crop(right_shear, right_pos)
         right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
