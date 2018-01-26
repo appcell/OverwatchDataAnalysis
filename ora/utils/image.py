@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from skimage import transform as tf
+from skimage.exposure import adjust_log
 
 
 def crop(img, pos_arr):
@@ -127,6 +128,16 @@ def resize(img, dest_width, dest_height):
     """
     return cv2.resize(img, (dest_width, dest_height))
 
+
+def contrast_adjust_log(img, gain):
+    """
+    Perform logarithm correction to increase contrast
+    @Author: Rigel
+    @param img: the image to be corrected
+    @gain: constant multiplier
+    @return: a numpy.ndarray object of corrected image.
+    """
+    return adjust_log(img, gain)
 
 def create_bg_image(color, width, height):
     """
