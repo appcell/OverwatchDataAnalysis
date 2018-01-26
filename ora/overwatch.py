@@ -1,5 +1,6 @@
 from utils import image as ImageUtils
 import os
+from numpy import tan, arctan
 
 # **********************************************************
 # ==========================================================
@@ -179,8 +180,9 @@ def get_ult_icon_ref(index):
 #              Ultimate Charge Position Defs
 # ==========================================================
 # **********************************************************
-ULT_TF_SHAER_OWL = 0.26396
-
+ULT_TF_SHEAR_OWL = 0.26396
+ULT_TF_OBSERVED_RIGHT_SHEAR_OWL = 0.435
+ULT_ADJUST_LOG_INDEX = 4.0
 #  Region to determine the color of ultimate charge number, pre-shear
 ULT_CHARGE_COLOR_PRE_X_MIN_LEFT_OWL = 20
 ULT_CHARGE_COLOR_PRE_X_MIN_RIGHT_OWL = 1178
@@ -201,8 +203,15 @@ ULT_CHARGE_PRE_WIDTH_OWL = 65
 ULT_CHARGE_PRE_Y_MIN_OWL = 50
 ULT_CHARGE_PRE_HEIGHT_OWL = 50
 #  Very ugly! Maybe switch to 1080P?
-ULT_CHARGE_PRE_GAP_RIGHT_OWL = [70, 71, 71, 71, 71]
 ULT_CHARGE_PRE_GAP_LEFT_OWL = [70, 70, 70, 71, 71]
+ULT_CHARGE_PRE_GAP_RIGHT_OWL = [70, 71, 71, 71, 71]
+
+ULT_CHARGE_PRE_OBSERVED_X_MIN_LEFT_OWL = 20
+ULT_CHARGE_PRE_OBSERVED_X_MIN_RIGHT_OWL = 820
+ULT_CHARGE_PRE_OBSERVED_WIDTH_OWL = 76
+ULT_CHARGE_PRE_OBSERVED_HEIGHT_OWL = 57
+ULT_CHARGE_PRE_RESIZE_WIDTH_RATIO_OWL = 65.0/76.0
+ULT_CHARGE_PRE_RESIZE_HEIGHT_RATIO_OWL = 50.0/57.0
 
 #  Region to read ultimate charge number, post-shear, 1st and 2nd number
 ULT_CHARGE_0_X_MIN_LEFT_OWL = 22
@@ -213,18 +222,31 @@ ULT_CHARGE_WIDTH_OWL = 6
 ULT_CHARGE_Y_MIN_OWL = 5
 ULT_CHARGE_HEIGHT_OWL = 16
 
+ULT_CHARGE_OBSERVED_0_X_MIN_LEFT_OWL = 14
+ULT_CHARGE_OBSERVED_0_X_MIN_RIGHT_OWL = 9
+ULT_CHARGE_OBSERVED_1_X_MIN_LEFT_OWL = 22
+ULT_CHARGE_OBSERVED_1_X_MIN_RIGHT_OWL = 16
+ULT_CHARGE_OBSERVED_X_MIN_RIGHT_BIAS_OWL = []
+ULT_CHARGE_OBSERVED_Y_MIN_OWL = 2
 
 #  TODO: Custom game
+
+
+def get_tf_observed_right_shear():
+    return {
+        GAMETYPE_OWL: ULT_TF_OBSERVED_RIGHT_SHEAR_OWL,
+        GAMETYPE_CUSTOM: 0
+    }
 
 
 def get_tf_shear(is_positive):
     if is_positive:
         return {
-            GAMETYPE_OWL: ULT_TF_SHAER_OWL,
+            GAMETYPE_OWL: ULT_TF_SHEAR_OWL,
             GAMETYPE_CUSTOM: 0
         }
     return {
-        GAMETYPE_OWL: -1 * ULT_TF_SHAER_OWL,
+        GAMETYPE_OWL: -1 * ULT_TF_SHEAR_OWL,
         GAMETYPE_CUSTOM: 0
     }
 

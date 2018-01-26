@@ -100,7 +100,6 @@ class Frame(object):
         """
         pos = OW.get_team_color_pick_pos()[self.game.game_type]
 
-
         return {
             "left": self.image[pos[0][0], pos[0][1]],
             "right": self.image[pos[1][0], pos[1][1]]
@@ -111,7 +110,45 @@ class Frame(object):
             return self.game.team_colors
         else:
             return self.get_team_colors_from_image()
-             
+
+    def get_ult_colors_from_image(self):
+        """Get ultimate charge number colors from this frame.
+
+        Author:
+            Rigel
+
+        Args:
+            None
+
+        Returns:
+            @ult_color: array of int, -1: white number, 1: black number
+        """
+        left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
+        left_pre_image = ImageUtils.crop(self.image, left_pre_pos)
+        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True))
+        left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
+        left_image = ImageUtils.crop(left_shear, left_pos)
+        left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
+        left_bin = ImageUtils.binary_otsu(left_image_g)
+
+        right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
+        right_pre_image = ImageUtils.crop(self.image, right_pre_pos)
+        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False))
+        right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
+        right_image = ImageUtils.crop(right_shear, right_pos)
+        right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
+        right_bin = ImageUtils.binary_otsu(right_image_g)
+        return {
+            "left": np.sign(2 * np.sum(left_bin) - np.size(left_bin)),
+            "right": np.sign(2 * np.sum(right_bin) - np.size(right_bin))
+        }
+
+    def get_ult_colors(self):
+        if self.game.ult_colors is not None:
+            return self.game.ult_colors
+        else:
+            return self.get_ult_colors_from_image()
+
     def get_killfeeds(self):
         """Get killfeed info in this frame.
 
@@ -210,6 +247,8 @@ class Frame(object):
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
             self.game.avatars_ref = self._get_avatars_before_validation()
+        if self.is_valid is True and self.game.ult_colors is None:
+            self.game.set_ult_colors(self)
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.
