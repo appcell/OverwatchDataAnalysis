@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from skimage import transform as tf
 from skimage.exposure import adjust_log
+from skimage.filters import threshold_otsu
 
 
 def crop(img, pos_arr):
@@ -138,6 +139,18 @@ def contrast_adjust_log(img, gain):
     @return: a numpy.ndarray object of corrected image.
     """
     return adjust_log(img, gain)
+
+
+def binary_otsu(img):
+    """
+    Perform binarization with otsu algorithm
+    @Author: Rigel
+    @param img: the image to be corrected
+    @gain: constant multiplier
+    @return: a numpy.ndarray boolean object of binary image.
+    """
+    global_thresh = threshold_otsu(img)
+    return img > global_thresh
 
 def create_bg_image(color, width, height):
     """
