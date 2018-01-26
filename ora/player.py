@@ -73,7 +73,7 @@ class Player:
         Returns:
             None 
         """
-        del self.image
+        self.image = None
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.

@@ -68,7 +68,7 @@ class Frame(object):
         Returns:
             None 
         """
-        del self.image
+        self.image = None
 
     def get_players(self):
         """Get all players info in this frame.
