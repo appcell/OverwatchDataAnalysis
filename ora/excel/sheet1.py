@@ -215,8 +215,9 @@ class Config(object):
 
 
 class Save:
-    def __init__(self, sheet):
+    def __init__(self, sheet, data):
         self.sheet = sheet
+        self.data = data
 
     @staticmethod
     def _set_cell_style(cell, title):
@@ -242,44 +243,21 @@ class Save:
             if merge_config[key] is not None:
                 self.sheet.merge_cells(merge_config[key])
 
-    def save(self):
-        self._set_cells_style()
-        self._set_cells_merge()
-
-
-class Sheet:
-    def __init__(self, wb, game):
-        self.game = game
-        self.sheet = wb['sheet1']
-        self.sheet.append(Config.title_top)
-        self.sheet.append(Config.title)
-        Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
-        Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
-
-        # 上一帧的大招状况
-        self.ultimate_status = {i: False for i in range(1, 13)}
-
-        self.previous_chara = [player.chara for player in self.game.frames[0].players]
-        self.next_chara = [player.chara for player in self.game.frames[1].players]
-
-        self.player_and_chara = []
-
-    def _new_data(self, data):
-        """
-        从数据中提取出想要的信息，并加入到 Config 中
-        """
-        if '_$color' in data.keys():
-            color = data.pop('_$color')
-            for k, v in color.items():
-                title = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
-                c, b = v
-                if b:
-                    Config.peculiar_cell.append(title)
-                Config.cell_style['fill'][title] = {
-                    'fill_type': 'solid',
-                    'fgColor': c,
-                }
-        return data
+    def _append(self):
+        self.data.sort(key=lambda x: x['_time'])
+        for data in self.data:
+            if '_$color' in data.keys():
+                color = data.pop('_$color')
+                for k, v in color.items():
+                    title = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
+                    c, b = v
+                    if b:
+                        Config.peculiar_cell.append(title)
+                    Config.cell_style['fill'][title] = {
+                        'fill_type': 'solid',
+                        'fgColor': c,
+                    }
+            self.sheet.append(self._format(data))
 
     @staticmethod
     def _format(data):
@@ -302,12 +280,44 @@ class Sheet:
                 result[i] = ''
         return result
 
+    def save(self):
+        self._append()
+        self._set_cells_style()
+        self._set_cells_merge()
+
+
+class Sheet:
+    def __init__(self, wb, game):
+        self.game = game
+        self.sheet = wb['sheet1']
+        self.sheet.append(Config.title_top)
+        self.sheet.append(Config.title)
+        Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
+        Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
+
+        # 上一帧的大招状况
+        self.ultimate_status = {i: False for i in range(1, 13)}
+
+        self.previous_chara = [player.chara for player in self.game.frames[0].players]
+        self.next_chara = [player.chara for player in self.game.frames[1].players]
+
+        self.player_and_chara = []
+
+        self.data = []
+
+    def _new_data(self, data):
+        """
+        为字典添加 _time key，用来排序
+        """
+        data['_time'] = data['time']
+        return data
+
     def _append(self, **kwargs):
         """
-        将数据添加到 sheet 中
+        将所有数据添加到 self.data 中，以便后续处理
         """
-        kwargs = self._new_data(kwargs)
-        self.sheet.append(self._format(kwargs))
+        new_data = self._new_data(kwargs)
+        self.data.append(new_data)
 
     def new(self):
         frames = self.game.frames
@@ -399,7 +409,7 @@ class Sheet:
                         continue
                     elif player.chara == next_chara:
                         d = {
-                            'time': time,
+                            'time': time - 2,
                             'action': 'Hero switch',
                             'subject player': player.name,
                             'subject hero': player.chara,
@@ -418,4 +428,4 @@ class Sheet:
         对 sheet 中单元格应用样式并保存
         :return: None
         """
-        Save(self.sheet).save()
+        Save(self.sheet, self.data).save()
