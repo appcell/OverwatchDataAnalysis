@@ -52,15 +52,16 @@ class Player:
         self.chara = None
         self.is_ult_ready = False
         self.is_dead = False
-        self.is_observed = None 
+        self.is_observed = None
+        self.ult_charge = 0
 
         # TODO: future work
         self.health = None
-        self.ult_charge = None
         self.is_onfire = None
 
         self.get_ult_status()
         self.get_chara()
+        self.get_ult_charge()
         self.free()
 
     def free(self):
@@ -73,7 +74,7 @@ class Player:
         Returns:
             None 
         """
-        del self.image
+        self.image = None
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.
@@ -201,3 +202,49 @@ class Player:
         # TODO: write consts here into ow.py
         if abs(variation_ref - variation) > 45:
             self.is_dead = True
+
+    def get_ult_charge(self):
+        """Retrieves ultimate charge for current player.
+
+        Author:
+            Rigel
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.is_ult_ready:
+            self.ult_charge = 100
+            return
+        ult_charge_pre_pos = OW.get_ult_charge_pre_pos(self.index, self.is_observed)[self.frame.game.game_type]
+        ult_charge_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, ult_charge_pre_pos))
+        ult_charge_shear = ImageUtils.shear(ult_charge_pre_image, OW.get_tf_shear(True)[self.frame.game.game_type])
+        if self.is_observed:
+            ult_charge_shear = cv2.resize(ult_charge_shear,
+                                          OW.get_ult_charge_pre_resize_dimensions()[self.frame.game.game_type])
+        ult_charges = [0, 0]
+        if self.index < 6:
+            ult_color = self.frame.game.ult_colors['left']
+        else:
+            ult_color = self.frame.game.ult_colors['right']
+        for i in (0,1):
+            ult_charge_image = ImageUtils.crop(
+                ult_charge_shear, OW.get_ult_charge_pos(self.index, i, self.is_observed)[self.frame.game.game_type])
+            ult_charge_image_g = ImageUtils.contrast_adjust_log(ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
+            try:
+                ult_charge_image_binary = ImageUtils.binary_otsu(ult_charge_image_g)
+            except ValueError:
+                self.ult_charge = None
+                return
+            ult_charge_similarities = np.zeros(11)
+            for j in range(1-i, 11-i):
+                # 1st number can't be 0, 2nd number can't be empty
+                ult_charge_ref = self.frame.game.ult_charge_numbers_ref[j - i]
+                ult_charge_similarities[j] = ImageUtils.similarity(ult_charge_ref, ult_charge_image_binary)
+            ult_charges[i] = np.argmax(ult_charge_similarities)
+            if ult_charges[i] == 10:
+                ult_charges[i] = 0
+        self.ult_charge = ult_charges[0] * 10 + ult_charges[1]
+        return

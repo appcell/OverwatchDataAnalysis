@@ -23,6 +23,7 @@ class Game(object):
                          "left": None,
                          "right": None
                      }
+        ult_colors: ultimate charge number color of both teams. +1: black number, -1: white number
         video_path: video path
         output_path: output path
         frames: list of all analyzed frames of the game
@@ -53,6 +54,7 @@ class Game(object):
         self.name_players_team_left = []
         self.name_players_team_right = []
         self.team_colors = None
+        self.ult_colors = None
         self.video_path = ""
         self.output_path = ""
         self.frames = []
@@ -60,6 +62,7 @@ class Game(object):
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
         self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
+        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
     def set_team_colors(self, frame):
@@ -75,6 +78,20 @@ class Game(object):
             None 
         """
         self.team_colors = frame.get_team_colors_from_image()
+
+    def set_ult_colors(self, frame):
+        """Set ultimate charge number colors of both team in this game, using one frame.
+
+        Author:
+            Rigel
+
+        Args:
+            frame: from which colors are retrieved.
+
+        Returns:
+            None
+        """
+        self.ult_colors = frame.get_ult_colors_from_image()
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
