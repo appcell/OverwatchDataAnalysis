@@ -42,6 +42,8 @@ class Frame(object):
         self.image = ImageUtils.resize(frame_image, 1280, 720)
         self.time = frame_time
         self.game = game
+        if self.game.ult_colors is None:
+            self.game.set_ult_colors(self)
 
         print self.time
         self.get_players()
@@ -247,8 +249,6 @@ class Frame(object):
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
             self.game.avatars_ref = self._get_avatars_before_validation()
-        if self.is_valid is True and self.game.ult_colors is None:
-            self.game.set_ult_colors(self)
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.

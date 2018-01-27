@@ -209,8 +209,8 @@ ULT_CHARGE_PRE_OBSERVED_X_MIN_LEFT_OWL = 20
 ULT_CHARGE_PRE_OBSERVED_X_MIN_RIGHT_OWL = 820
 ULT_CHARGE_PRE_OBSERVED_WIDTH_OWL = 76
 ULT_CHARGE_PRE_OBSERVED_HEIGHT_OWL = 57
-ULT_CHARGE_PRE_RESIZE_WIDTH_RATIO_OWL = 65.0/76.0
-ULT_CHARGE_PRE_RESIZE_HEIGHT_RATIO_OWL = 50.0/57.0
+ULT_CHARGE_PRE_RESIZE_WIDTH_OWL = 65
+ULT_CHARGE_PRE_RESIZE_HEIGHT_OWL = 50
 
 #  Region to read ultimate charge number, post-shear, 1st and 2nd number
 ULT_CHARGE_0_X_MIN_LEFT_OWL = 22
@@ -317,6 +317,13 @@ def get_ult_charge_pre_pos(index, is_observed=False):
             }
 
 
+def get_ult_charge_pre_resize_dimensions():
+    return {
+        GAMETYPE_OWL: (ULT_CHARGE_PRE_RESIZE_WIDTH_OWL, ULT_CHARGE_PRE_RESIZE_HEIGHT_OWL),
+        GAMETYPE_CUSTOM: None
+    }
+
+
 def get_ult_charge_pos(index, number, is_observed=False):
     if is_observed:
         if number == 0:
@@ -394,10 +401,10 @@ def get_ult_charge_pos(index, number, is_observed=False):
                 }
 
 
-def get_ult_charge_icons_ref():
-    ult_charge_icons_ref_owl = np.empty([10, ULT_CHARGE_HEIGHT_OWL, ULT_CHARGE_WIDTH_OWL], dtype='bool')
+def get_ult_charge_numbers_ref():
+    ult_charge_icons_ref_owl = np.empty([11, ULT_CHARGE_HEIGHT_OWL, ULT_CHARGE_WIDTH_OWL], dtype='bool')
     ult_charge_icons_ref_custom = None
-    for i in range(0, 10):
+    for i in range(0, 11):
         ult_charge_icons_ref_owl[i] = ImageUtils.read_bw("./images/ultimate/owl/" + str(i) + ".png")
     return {
         GAMETYPE_OWL: ult_charge_icons_ref_owl,
