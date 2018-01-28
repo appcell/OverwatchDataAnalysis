@@ -30,7 +30,7 @@ def analyze(gui_info):
     """
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
-    game.analyze(214,218, is_test=False)
+    game.analyze(214, 218, is_test=False)
     game.output_to_excel()
 
 def log(*args):
@@ -49,14 +49,11 @@ class Gui(object):
 
         # path
         self.create_path()
-
         # player
         self.create_player()
-
         # run
         self.run_btn = Button(self.root, text="Analyze", command=self.run)
         self.run_btn.pack()
-
         # check for update
         self.t = threading.Thread(target=self.check_update)
         self.t.start()

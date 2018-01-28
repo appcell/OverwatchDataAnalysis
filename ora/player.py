@@ -64,18 +64,17 @@ class Player:
         self.get_ult_charge()
         self.free()
 
-        # print self.index
-        # print self.chara
-        # print self.is_dead
-        # print "==="
-
     def free(self):
         """Free RAM by removing images from the Frame instance.
+
         Done after analysis.
+
         Author:
             Appcell
+
         Args:
             None
+
         Returns:
             None 
         """

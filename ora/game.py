@@ -26,7 +26,7 @@ class Game(object):
         ult_colors: ultimate charge number color of both teams. +1: black number, -1: white number
         video_path: video path
         output_path: output path
-        us_test: if in test mode
+        is_test: if is in test mode
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -212,6 +212,8 @@ class Game(object):
 
         3) Remove invalid frames.
 
+        Author: Appcell
+
         Args:
             None
 
@@ -243,9 +245,6 @@ class Game(object):
             lambda frame: frame.is_valid is True,
             self.frames))
 
-        for frame in self.frames:
-            print frame.time
-            print frame.is_valid
     def rematch_charas_and_players(self):
         """Rematch charas & players for killfeed
 
