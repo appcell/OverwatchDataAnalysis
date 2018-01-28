@@ -331,7 +331,6 @@ class Sheet:
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
-        print Config.team_colors[self.game.team_names['left']]
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
         # 上一帧所有玩家的大招状况
@@ -409,7 +408,8 @@ class Sheet:
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
-            self._append(**d)
+            if None not in (d['object player'], d['subject player']):
+                self._append(**d)
 
     def _ultimate_append(self, players, time):
         """
