@@ -252,7 +252,6 @@ class Killfeed:
         else:
             res['player'] = next((item.name for item in self.frame.players[
                 6:12] if item.chara == chara), "empty")
-        print res['team']
         return res
 
     def _set_assist_info(self, assist):
