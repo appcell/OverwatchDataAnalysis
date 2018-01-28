@@ -4,6 +4,9 @@ from skimage import transform as tf
 from skimage.exposure import adjust_log
 from skimage.filters import threshold_otsu
 
+REMOVE_NUMBER_VERTICAL_EDGE_LEFT = 0
+REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 0
+REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 0
 
 def crop(img, pos_arr):
     """
@@ -27,6 +30,29 @@ def shear(img, shear_rad):
     affine_tf = tf.AffineTransform(shear=shear_rad)
     return tf.warp(img, inverse_map=affine_tf)
 
+def normalize_gray(img):
+    """
+    Normalize a grayscale img
+    @Author: Appcell
+    @param img: image to be normalized
+    @return: a numpy.ndarray object of this image
+    """
+    std = np.std(img)
+    mean = np.mean(img)
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.zeros((h, w))
+
+    for i in range(h):
+        for j in range(w):
+            res[i, j] = ((img[i, j] - mean) / std)
+    min_img = np.min(res)
+    max_img = np.max(res)
+    for i in range(h):
+        for j in range(w):
+            res[i, j] = (res[i, j] - min_img) / (max_img - min_img)
+
+    return res
 
 def rgb_to_gray(img):
     """
@@ -37,8 +63,13 @@ def rgb_to_gray(img):
     """
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+def inverse_gray(img):
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.ones((h, w)) - img
+    return res
 
-def rgb_to_bw(img):
+def rgb_to_bw(img, threshold):
     w = img.shape[1]
     h = img.shape[0]
     res = np.zeros((h, w))
@@ -49,6 +80,36 @@ def rgb_to_bw(img):
                 res[i, j] = 255
     return res
 
+def remove_digit_vertical_edge(img, deviation_limit, side):
+    width = img.shape[1]
+    height = img.shape[0]
+    edge_left = 0
+    edge_right = width - 1
+
+    res = []
+    # sometimes there's noise at bottom, thus we remove 5px first
+    img2 = crop(img, [0, height - 5, 0, width])
+    deviation = img2.max(axis=0) - img2.min(axis=0)
+
+    # Here we have to start searching from right, since there might be
+    # noise on left.
+    for i in range(width - 4, 1, -1):
+        if deviation[i + 3] - deviation[i] > deviation_limit:
+            edge_left = i
+            break
+    for i in range(width - 4, 1, -1):
+        if deviation[i] - deviation[i+3] > deviation_limit:
+            edge_right = i
+            break
+
+    if side == REMOVE_NUMBER_VERTICAL_EDGE_BOTH:
+        res = crop(img, [0, height, edge_left, edge_right - edge_left + 1])
+    elif side == REMOVE_NUMBER_VERTICAL_EDGE_LEFT:
+        res = crop(img, [0, height, edge_left, width - edge_left])
+    else:
+        res = crop(img, [0, height, 0, edge_right])
+
+    return res
 
 def increase_contrast(img):
     """
@@ -65,7 +126,6 @@ def increase_contrast(img):
     final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
     return final
 
-
 def similarity(img, img2):
     """
     Similarity between 2 BW images with same size.
@@ -73,9 +133,9 @@ def similarity(img, img2):
     bwimg = img
     bwimg2 = img2
     if len(img.shape) > 2 and img.shape[2] == 3:
-        bwimg = rgb_to_bw(img)
+        bwimg = rgb_to_bw(img, 40)
     if len(img2.shape) > 2 and img2.shape[2] == 3:
-        bwimg2 = rgb_to_bw(img2)
+        bwimg2 = rgb_to_bw(img2, 40)
     w = bwimg.shape[1]
     h = bwimg.shape[0]
     s = 0
@@ -85,7 +145,6 @@ def similarity(img, img2):
                 s += 1
 
     return float(s)/(w*h)
-
 
 def read(path):
     """

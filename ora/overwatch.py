@@ -180,8 +180,9 @@ def get_ult_icon_ref(index):
 #              Ultimate Charge Position Defs
 # ==========================================================
 # **********************************************************
-ULT_TF_SHEAR_OWL = 0.26396
-ULT_ADJUST_LOG_INDEX = 4.0
+ULT_TF_SHEAR_LEFT_OWL = 0.25396
+ULT_TF_SHEAR_RIGHT_OWL = 0.22
+ULT_ADJUST_LOG_INDEX = 1.2
 #  Region to determine the color of ultimate charge number, pre-shear
 ULT_CHARGE_COLOR_PRE_X_MIN_LEFT_OWL = 20
 ULT_CHARGE_COLOR_PRE_X_MIN_RIGHT_OWL = 1178
@@ -205,41 +206,49 @@ ULT_CHARGE_PRE_HEIGHT_OWL = 50
 ULT_CHARGE_PRE_GAP_LEFT_OWL = [70, 70, 70, 71, 71]
 ULT_CHARGE_PRE_GAP_RIGHT_OWL = [70, 71, 71, 71, 71]
 
-ULT_CHARGE_PRE_OBSERVED_X_MIN_LEFT_OWL = 20
-ULT_CHARGE_PRE_OBSERVED_X_MIN_RIGHT_OWL = 820
-ULT_CHARGE_PRE_OBSERVED_WIDTH_OWL = 76
-ULT_CHARGE_PRE_OBSERVED_HEIGHT_OWL = 57
 ULT_CHARGE_PRE_RESIZE_WIDTH_OWL = 65
 ULT_CHARGE_PRE_RESIZE_HEIGHT_OWL = 50
 
 #  Region to read ultimate charge number, post-shear, 1st and 2nd number
-ULT_CHARGE_0_X_MIN_LEFT_OWL = 22
-ULT_CHARGE_0_X_MIN_RIGHT_OWL = 11
-ULT_CHARGE_1_X_MIN_LEFT_OWL = 30
-ULT_CHARGE_1_X_MIN_RIGHT_OWL = 19
-ULT_CHARGE_WIDTH_OWL = 6
-ULT_CHARGE_Y_MIN_OWL = 5
-ULT_CHARGE_HEIGHT_OWL = 16
+ULT_CHARGE_X_MIN_LEFT_OWL = 15
+ULT_CHARGE_X_MIN_RIGHT_OWL = 4
+ULT_CHARGE_WIDTH = {
+            GAMETYPE_OWL: 23,
+            GAMETYPE_CUSTOM: 23
+        }
+ULT_CHARGE_NUMBER_WIDTH = {
+            GAMETYPE_OWL: 8,
+            GAMETYPE_CUSTOM: 8
+        }
+ULT_CHARGE_NUMBER_COLOR_THRESHOLD = {
+            GAMETYPE_OWL: 0.6,
+            GAMETYPE_CUSTOM: 0.6
+        }
+ULT_CHARGE_NUMBER_WIDTH_OBSERVED = {
+            GAMETYPE_OWL: 9,
+            GAMETYPE_CUSTOM: 9
+        }
+ULT_CHARGE_IMG_WIDTH_OWL = 6
+ULT_CHARGE_Y_MIN_OWL = 1
+ULT_CHARGE_IMG_HEIGHT_OWL = 16
+ULT_CHARGE_HEIGHT_OWL = 25
+ULT_GAP_DEVIATION_LIMIT = {
+            GAMETYPE_OWL: 0.20,
+            GAMETYPE_CUSTOM: 0.20
+        }
 
-ULT_CHARGE_OBSERVED_0_X_MIN_LEFT_OWL = 14
-ULT_CHARGE_OBSERVED_0_X_MIN_RIGHT_OWL = 9
-ULT_CHARGE_OBSERVED_1_X_MIN_LEFT_OWL = 22
-ULT_CHARGE_OBSERVED_1_X_MIN_RIGHT_OWL = 17
-ULT_CHARGE_OBSERVED_X_MIN_LEFT_BIAS_OWL = [0, 1, 1, 2, 2, -1]
-ULT_CHARGE_OBSERVED_X_MIN_RIGHT_BIAS_OWL = [0, 1, 0, 0, 0, 0]
-ULT_CHARGE_OBSERVED_Y_MIN_OWL = 2
 
 #  TODO: Custom game
 
 
-def get_tf_shear(is_positive):
-    if is_positive:
+def get_tf_shear(index):
+    if index < 6:
         return {
-            GAMETYPE_OWL: ULT_TF_SHEAR_OWL,
+            GAMETYPE_OWL: ULT_TF_SHEAR_LEFT_OWL,
             GAMETYPE_CUSTOM: 0
         }
     return {
-        GAMETYPE_OWL: -1 * ULT_TF_SHEAR_OWL,
+        GAMETYPE_OWL: ULT_TF_SHEAR_RIGHT_OWL,
         GAMETYPE_CUSTOM: 0
     }
 
@@ -280,41 +289,23 @@ def get_ult_charge_color_pos(is_left):
     }
 
 
-def get_ult_charge_pre_pos(index, is_observed=False):
-    if is_observed:
-        if index < 6:
-            return {
-                GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
-                               ULT_CHARGE_PRE_OBSERVED_HEIGHT_OWL,
-                               ULT_CHARGE_PRE_OBSERVED_X_MIN_LEFT_OWL + sum(ULT_CHARGE_PRE_GAP_LEFT_OWL[:index]),
-                               ULT_CHARGE_PRE_OBSERVED_WIDTH_OWL],
-                GAMETYPE_CUSTOM: []
-            }
-        else:
-            return {
-                GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
-                               ULT_CHARGE_PRE_OBSERVED_HEIGHT_OWL,
-                               ULT_CHARGE_PRE_OBSERVED_X_MIN_RIGHT_OWL + sum(ULT_CHARGE_PRE_GAP_RIGHT_OWL[:index - 6]),
-                               ULT_CHARGE_PRE_OBSERVED_WIDTH_OWL],
-                GAMETYPE_CUSTOM: []
-            }
+def get_ult_charge_pre_pos(index):
+    if index < 6:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
+                           ULT_CHARGE_PRE_HEIGHT_OWL,
+                           ULT_CHARGE_PRE_X_MIN_LEFT_OWL + sum(ULT_CHARGE_PRE_GAP_LEFT_OWL[:index]),
+                           ULT_CHARGE_PRE_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
     else:
-        if index < 6:
-            return {
-                GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
-                               ULT_CHARGE_PRE_HEIGHT_OWL,
-                               ULT_CHARGE_PRE_X_MIN_LEFT_OWL + sum(ULT_CHARGE_PRE_GAP_LEFT_OWL[:index]),
-                               ULT_CHARGE_PRE_WIDTH_OWL],
-                GAMETYPE_CUSTOM: []
-            }
-        else:
-            return {
-                GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
-                               ULT_CHARGE_PRE_HEIGHT_OWL,
-                               ULT_CHARGE_PRE_X_MIN_RIGHT_OWL + sum(ULT_CHARGE_PRE_GAP_RIGHT_OWL[:index - 6]),
-                               ULT_CHARGE_PRE_WIDTH_OWL],
-                GAMETYPE_CUSTOM: []
-            }
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
+                           ULT_CHARGE_PRE_HEIGHT_OWL,
+                           ULT_CHARGE_PRE_X_MIN_RIGHT_OWL + sum(ULT_CHARGE_PRE_GAP_RIGHT_OWL[:index - 6]),
+                           ULT_CHARGE_PRE_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
 
 
 def get_ult_charge_pre_resize_dimensions():
@@ -324,85 +315,27 @@ def get_ult_charge_pre_resize_dimensions():
     }
 
 
-def get_ult_charge_pos(index, number, is_observed=False):
-    if is_observed:
-        if number == 0:
-            if index < 6:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_OBSERVED_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_OBSERVED_0_X_MIN_LEFT_OWL +
-                                   ULT_CHARGE_OBSERVED_X_MIN_LEFT_BIAS_OWL[index],
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-            else:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_OBSERVED_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_OBSERVED_0_X_MIN_RIGHT_OWL +
-                                   ULT_CHARGE_OBSERVED_X_MIN_RIGHT_BIAS_OWL[index - 6],
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-        else:
-            if index < 6:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_OBSERVED_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_OBSERVED_1_X_MIN_LEFT_OWL +
-                                   ULT_CHARGE_OBSERVED_X_MIN_LEFT_BIAS_OWL[index],
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-            else:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_OBSERVED_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_OBSERVED_1_X_MIN_RIGHT_OWL +
-                                   ULT_CHARGE_OBSERVED_X_MIN_RIGHT_BIAS_OWL[index - 6],
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
+def get_ult_charge_pos(index):
+    if index < 6:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
+                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_X_MIN_LEFT_OWL,
+                           ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
+            GAMETYPE_CUSTOM: []
+        }
     else:
-        if number == 0:
-            if index < 6:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_0_X_MIN_LEFT_OWL,
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-            else:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_0_X_MIN_RIGHT_OWL,
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-        else:
-            if index < 6:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_1_X_MIN_LEFT_OWL,
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
-            else:
-                return {
-                    GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                                   ULT_CHARGE_HEIGHT_OWL,
-                                   ULT_CHARGE_1_X_MIN_RIGHT_OWL,
-                                   ULT_CHARGE_WIDTH_OWL],
-                    GAMETYPE_CUSTOM: []
-                }
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
+                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_X_MIN_RIGHT_OWL,
+                           ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
+            GAMETYPE_CUSTOM: []
+        }
 
 
 def get_ult_charge_numbers_ref():
-    ult_charge_icons_ref_owl = np.empty([11, ULT_CHARGE_HEIGHT_OWL, ULT_CHARGE_WIDTH_OWL], dtype='bool')
+    ult_charge_icons_ref_owl = np.empty([11, ULT_CHARGE_IMG_HEIGHT_OWL, ULT_CHARGE_IMG_WIDTH_OWL], dtype='bool')
     ult_charge_icons_ref_custom = None
     for i in range(0, 11):
         ult_charge_icons_ref_owl[i] = ImageUtils.read_bw("./images/ultimate/owl/" + str(i) + ".png")

@@ -207,7 +207,6 @@ class Player:
         """Retrieves ultimate charge for current player.
 
         Author:
-            Rigel
 
         Args:
             None
@@ -218,33 +217,155 @@ class Player:
         if self.is_ult_ready:
             self.ult_charge = 100
             return
-        ult_charge_pre_pos = OW.get_ult_charge_pre_pos(self.index, self.is_observed)[self.frame.game.game_type]
-        ult_charge_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, ult_charge_pre_pos))
-        ult_charge_shear = ImageUtils.shear(ult_charge_pre_image, OW.get_tf_shear(True)[self.frame.game.game_type])
-        if self.is_observed:
-            ult_charge_shear = cv2.resize(ult_charge_shear,
-                                          OW.get_ult_charge_pre_resize_dimensions()[self.frame.game.game_type])
+        if self.is_dead:
+            return
+
+        ult_charge_pre_pos = OW.get_ult_charge_pre_pos(
+            self.index)[self.frame.game.game_type]
+        ult_charge_pre_image = ImageUtils.rgb_to_gray(
+            ImageUtils.crop(self.image, ult_charge_pre_pos))
+
+        ult_charge_shear = ImageUtils.shear(
+            ult_charge_pre_image, OW.get_tf_shear(self.index)[self.frame.game.game_type])
+
         ult_charges = [0, 0]
-        if self.index < 6:
-            ult_color = self.frame.game.ult_colors['left']
+
+        # Here's another thought: we need to find the gap more intellectually,
+        # not relying only on fixed position.
+        # In detail, after shearing, find the gap by telling if there are more
+        # than 2 colors in same column.
+        ult_charge_image = ImageUtils.crop(
+            ult_charge_shear, 
+            OW.get_ult_charge_pos(self.index)[self.frame.game.game_type])
+
+        # TODO: I see there's no difference at all of brightness deviation!!
+        # Our contrast adjusting must be seriously problematic. For grayscale
+        # img, a simple normalization based on std would do.
+        # ult_charge_image_g = ImageUtils.contrast_adjust_log(
+        #     ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
+        ult_charge_image_g = ImageUtils.normalize_gray(ult_charge_image)
+
+        # tell if player is observed (more accurate than previous)
+        # Here I use another local variable flag_observed, since the global one
+        # might be inaccurate
+        flag_observed = False
+        deviation_row = ult_charge_image_g.max(axis=1) - ult_charge_image_g.min(axis=1)
+        if deviation_row[2] - deviation_row[0] > \
+            OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type]:
+            self.is_observed = True
+            flag_observed = True
+
+        # If current player is observed, there's a white dot on right side
+        # needs to be removed.
+        # TODO: write this into ow.py as well
+        if flag_observed is True:
+            ult_charge_image_g = ImageUtils.crop(
+                ult_charge_image_g,
+                [0, ult_charge_image_g.shape[0], 0, ult_charge_image_g.shape[1] - 5])
+        width = ult_charge_image_g.shape[1]
+        height = ult_charge_image_g.shape[0]
+
+        # Find the gap
+        deviation = ult_charge_image_g.max(axis=0) - ult_charge_image_g.min(axis=0)
+        gap = -1
+        for i in range(width - 4, 3, -1):
+            if deviation[i-3] - deviation[i] \
+                > OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type] \
+                and deviation[i+3] - deviation[i] \
+                > OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type]:
+                gap = i
+                break
+
+        bg_color = ult_charge_image_g[:, 0].mean()
+
+        print bg_color
+        if bg_color < 0.6:
+            # Dark background
+            ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
+        # No need to switch to BW here.
+
+
+        # cv2.imshow('t', ult_charge_image_g)
+        # cv2.waitKey(0)
+
+        if gap == -1:
+            # Only one digit
+            num = ImageUtils.remove_digit_vertical_edge(
+                ult_charge_image_g,
+                OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type],
+                ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_BOTH)
+            # if self.index >= 6:
+            #     cv2.imshow('t', ult_charge_image_g)
+            #     cv2.waitKey(0)
+            #     cv2.imshow('t1', num)
+            #     cv2.waitKey(0)
         else:
-            ult_color = self.frame.game.ult_colors['right']
-        for i in (0,1):
-            ult_charge_image = ImageUtils.crop(
-                ult_charge_shear, OW.get_ult_charge_pos(self.index, i, self.is_observed)[self.frame.game.game_type])
-            ult_charge_image_g = ImageUtils.contrast_adjust_log(ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
-            try:
-                ult_charge_image_binary = ImageUtils.binary_otsu(ult_charge_image_g)
-            except ValueError:
-                self.ult_charge = None
-                return
-            ult_charge_similarities = np.zeros(11)
-            for j in range(1-i, 11-i):
-                # 1st number can't be 0, 2nd number can't be empty
-                ult_charge_ref = self.frame.game.ult_charge_numbers_ref[j - i]
-                ult_charge_similarities[j] = ImageUtils.similarity(ult_charge_ref, ult_charge_image_binary)
-            ult_charges[i] = np.argmax(ult_charge_similarities)
-            if ult_charges[i] == 10:
-                ult_charges[i] = 0
+            # 2 digits
+            num_left = ImageUtils.crop(
+                ult_charge_image_g, 
+                [0, ult_charge_image_g.shape[0], 0, gap + 1])
+            num_right = ImageUtils.crop(
+                ult_charge_image_g, 
+                [0, ult_charge_image_g.shape[0], gap, ult_charge_image_g.shape[1] - gap])
+
+            if flag_observed is True:
+                num_left = ImageUtils.crop(
+                    num_left,
+                    [0, num_left.shape[0], num_left.shape[1] \
+                        - OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type] - 1, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
+                num_right = ImageUtils.crop(
+                    num_right,
+                    [0, num_left.shape[0], 0, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
+            else:
+                num_left = ImageUtils.crop(
+                    num_left,
+                    [0, num_left.shape[0], num_left.shape[1] \
+                        - OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type] - 1, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
+                num_right = ImageUtils.crop(
+                    num_right,
+                    [0, num_left.shape[0], 0, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
+
+            # if self.index == 5:
+                
+            #     cv2.imshow('t1', num_left)
+            #     cv2.waitKey(0)            
+            #     cv2.imshow('t2', num_right)
+            #     cv2.waitKey(0)
+            # Since when cropping img we also included the slope on left side,
+            # num_left could actually be empty
+            # Also we need another recognition method. Simple MSE wouldn't work due to error.
+            
+
+
+
+
+        # ult_charge_image_g = ImageUtils.contrast_adjust_log(
+        #     ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
+
+        # for i in (0,1):
+            
+
+        #     cv2.imshow('t', ult_charge_image)
+        #     cv2.waitKey(0)
+        #     try:
+        #         ult_charge_image_binary = ImageUtils.binary_otsu(ult_charge_image_g)
+
+        #     except ValueError:
+        #         self.ult_charge = None
+        #         return
+        #     ult_charge_similarities = np.zeros(11)
+        #     for j in range(1 - i, 11-i):
+        #         # 1st number can't be 0, 2nd number can't be empty
+        #         ult_charge_ref = self.frame.game.ult_charge_numbers_ref[j - i]
+        #         ult_charge_similarities[j] = ImageUtils.similarity(ult_charge_ref, ult_charge_image_binary)
+        #     ult_charges[i] = np.argmax(ult_charge_similarities)
+        #     print ult_charges[i]
+        #     if ult_charges[i] == 10:
+        #         ult_charges[i] = 0
+
         self.ult_charge = ult_charges[0] * 10 + ult_charges[1]
         return
