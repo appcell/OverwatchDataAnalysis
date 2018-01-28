@@ -293,6 +293,7 @@ class Sheet:
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
+        print Config.team_colors[self.game.team_names['left']]
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
         # 上一帧的大招状况

@@ -30,7 +30,7 @@ def analyze(gui_info):
     """
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
-    game.analyze(214, 218, is_test=False)
+    game.analyze(220, 270, is_test=True)
     game.output_to_excel()
 
 def log(*args):
