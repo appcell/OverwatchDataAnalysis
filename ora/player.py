@@ -71,10 +71,6 @@ class Player:
         #     print self.chara
         #     print self.is_dead
         #     print "==="
-        if self.index == 8:
-            print self.is_ult_ready
-            print self.index
-            print "==="
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
