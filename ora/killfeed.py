@@ -374,8 +374,34 @@ class Killfeed:
                         'prob': max_val2,
                         'pos': max_loc2[0]
                     })
+        min_pos = 1000
+        max_pos = 0
+        for chara in result:
+            if chara['pos'] < min_pos:
+                min_pos = chara['pos']
+            if chara['pos'] > max_pos:
+                max_pos = chara['pos']
 
-        return result
+        result_validation = [False] * len(result)
+        if max_pos - min_pos \
+            > OW.ABILITY_GAP_NORMAL[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type] - 10:
+            for ind1, chara1 in enumerate(result):
+                for ind2, chara2 in enumerate(result):
+                    if abs(chara1['pos'] - chara2['pos']) \
+                        > OW.ABILITY_GAP_NORMAL[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type] - 10 \
+                        or abs(chara1['pos'] - chara2['pos']) < 10:
+                        result_validation[ind1] = True
+                        result_validation[ind2] = True
+
+        # If there're 2 charas, choose the farthest pair
+        result_filtered = []
+        for ind, val in enumerate(result_validation):
+            if val is True and abs(result[ind]['pos'] - min_pos) < 15 \
+                or abs(result[ind]['pos'] - max_pos) < 15:
+                result_filtered.append(result[ind])
+
+        # print result_filtered
+        return result_filtered
 
 
     def get_ability_and_assists(self):

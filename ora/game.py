@@ -156,9 +156,10 @@ class Game(object):
         step_cnt = 0
         self.is_test = is_test
 
+        start_time = start_time if is_test else 0
         # For testing we specify start/end time.
         # But for release version we don't.
-        frame_image_index = start_time * video.fps if is_test else 0
+        frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_test is False) \
@@ -221,6 +222,7 @@ class Game(object):
 
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
+        print OW.FRAME_VALIDATION_EFFECT_TIME[self.game_type] * self.analyzer_fps
         frame_num = len(self.frames)
         for i in range(frame_num-1, 0, -1):
             frame = self.frames[i]
@@ -229,7 +231,8 @@ class Game(object):
                     and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
                 frame.killfeeds.pop(0)
             frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
-                self.game_type] / self.analyzer_fps))
+                self.game_type] * self.analyzer_fps) - 1)
+
             if frame_before_effect_ind >= 0:
                 frame_before_effect = self.frames[frame_before_effect_ind]
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
@@ -241,6 +244,9 @@ class Game(object):
             lambda frame: frame.is_valid is True,
             self.frames))
 
+        for frame in self.frames:
+            print frame.time
+            print frame.is_valid
     def rematch_charas_and_players(self):
         """Rematch charas & players for killfeed
 

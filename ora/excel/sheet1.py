@@ -353,7 +353,7 @@ class Sheet:
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
             for i, p in enumerate([player1, player2]):
-                if p['chara'] != 'empty':
+                if p['chara'] != 'empty' and player1['team'] != 'empty' and player2['team'] != 'empty':
                     if i == 0:
                         d['_$color']['subject player'] = Config.team_colors[player1['team']]
                     else:
@@ -372,6 +372,8 @@ class Sheet:
         """
         status = self.ultimate_status
         for player in players:
+            if player.is_dead:
+                continue
             d = {
                 'time': time,
                 'subject player': player.name,

@@ -59,10 +59,22 @@ class Player:
         self.health = None
         self.is_onfire = None
 
+
+
         self.get_ult_status()
         self.get_chara()
         self.get_ult_charge()
         self.free()
+
+        # if self.index == 3:
+        #     print self.index
+        #     print self.chara
+        #     print self.is_dead
+        #     print "==="
+        if self.index == 8:
+            print self.is_ult_ready
+            print self.index
+            print "==="
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -101,17 +113,28 @@ class Player:
 
         # Compare cropped icon with reference, get the probability of them
         # being similar
-        prob = cv2.matchTemplate(ult_icon, 
-                                 ult_icon_ref, cv2.TM_CCOEFF_NORMED).max()
+        prob_map = cv2.matchTemplate(ult_icon, 
+                                 ult_icon_ref, cv2.TM_CCOEFF_NORMED)
+        prob_map_cropped = prob_map[0:(ult_icon.shape[0] - ult_icon_ref.shape[0]), :]
+        _, prob, _, loc = cv2.minMaxLoc(prob_map_cropped)
+
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
 
         if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type]:
             prob = 1
+            self.is_ult_ready = True
+            return
 
         if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
-            self.is_ult_ready = True
+            temp_ult_icon = ImageUtils.crop(ult_icon, [loc[1], ult_icon_ref.shape[0], loc[0], ult_icon_ref.shape[1]])
+            prob_ssim = measure.compare_ssim(
+                            temp_ult_icon,
+                            ult_icon_ref,
+                            multichannel=False)
+            if prob_ssim > OW.ULT_ICON_MAX_PROB_SSIM[self.frame.game.game_type]:
+                self.is_ult_ready = True
 
     def get_chara(self):
         """Retrieves chara name for current player in current frame.
@@ -156,15 +179,28 @@ class Player:
         for (name, avatar_ref) in avatars_ref.iteritems():
             s = cv2.matchTemplate(avatar, avatar_ref,
                                   cv2.TM_CCOEFF_NORMED)
-            _, s, _, _ = cv2.minMaxLoc(s)
+            _, s, _, loc1 = cv2.minMaxLoc(s)
+            temp_avatar = ImageUtils.crop(avatar, [loc1[1], avatar_ref.shape[0], loc1[0], avatar_ref.shape[1]])
+            s_ssim1 = measure.compare_ssim(temp_avatar, avatar_ref, 
+                                          multichannel=True)
             s_small = cv2.matchTemplate(avatar_small, avatars_small_ref[
                                         name], cv2.TM_CCOEFF_NORMED)
-            _, s_small, _, _ = cv2.minMaxLoc(s_small)
-
+            _, s_small, _, loc2 = cv2.minMaxLoc(s_small)
+            temp_avatar2 = ImageUtils.crop(avatar_small, [loc2[1], avatars_small_ref[
+                                        name].shape[0], loc2[0], avatars_small_ref[
+                                        name].shape[1]])
+            s_ssim2 = measure.compare_ssim(
+                        temp_avatar2,
+                        avatars_small_ref[name],
+                        multichannel=True)
+            s_ssim = s_ssim1 if s > s_small else s_ssim2
             s_final = s if s > s_small else s_small
-            if s_final > score:
-                score = s_final
+            loc = loc1 if s > s_small else loc2
+
+            if s_final + s_ssim > score:
+                score = s_final + s_ssim
                 self.chara = name
+
         if self.chara is None:
             self.chara = "empty"
             self.is_dead = True
@@ -278,7 +314,6 @@ class Player:
 
         bg_color = ult_charge_image_g[:, 0].mean()
 
-        # print bg_color
         if bg_color < 0.6:
             # Dark background
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)

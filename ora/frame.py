@@ -239,6 +239,9 @@ class Frame(object):
         max_val_preseason = measure.compare_ssim(
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
         
+
+        # TODO: another situation: after replay effect there might be a blue
+        # rectangle remaining on screen.
         max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
