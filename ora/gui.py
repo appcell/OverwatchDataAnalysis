@@ -30,7 +30,7 @@ def analyze(gui_info):
     """
     game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
     game.set_game_info(gui_info)
-    game.analyze(220, 270, is_test=True)
+    game.analyze(255, 305, is_test=True)
     game.output_to_excel()
 
 def log(*args):
@@ -93,7 +93,7 @@ class Gui(object):
         left_frame = Frame(player)
         left_frame.pack(side=LEFT)
         left_team_name = Entry(left_frame, bg='pink', fg='black')
-        left_team_name.insert(0, 'A队')
+        left_team_name.insert(0, 'Team A')
         left_team_name.pack()
         for i in range(1, 7):
             e = Entry(left_frame, bg='red', fg='white')
@@ -104,7 +104,7 @@ class Gui(object):
         right_frame = Frame(player)
         right_frame.pack(side=RIGHT)
         right_team_name = Entry(right_frame, bg='lightBlue', fg='black')
-        right_team_name.insert(0, 'B队')
+        right_team_name.insert(0, 'Team B')
         right_team_name.pack()
         for i in range(7, 13):
             e = Entry(right_frame, bg='blue', fg='white')

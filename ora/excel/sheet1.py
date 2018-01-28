@@ -397,11 +397,13 @@ class Sheet:
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
             for i, p in enumerate([player1, player2]):
-                if p['chara'] != 'empty' and player1['team'] != 'empty' and player2['team'] != 'empty':
+                if p['chara'] != 'empty' and player2['team'] != 'empty':
                     if i == 0:
                         d['_$color']['subject player'] = Config.team_colors[player1['team']]
                     else:
                         d['_$color']['object player'] = Config.team_colors[player2['team']]
+                else:
+                    print [player1, player2]
 
             for i, assist in enumerate(obj.assists):
                 d['a player {}'.format(i + 1)] = get_player_name(assist, get_player_team_index(assist['team'], self.game.team_names), self.player_and_chara, self.previous_chara)
