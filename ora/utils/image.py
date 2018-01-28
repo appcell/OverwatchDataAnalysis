@@ -1,5 +1,12 @@
 import cv2
 import numpy as np
+from skimage import transform as tf
+from skimage.exposure import adjust_log
+from skimage.filters import threshold_otsu
+
+REMOVE_NUMBER_VERTICAL_EDGE_LEFT = 0
+REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 0
+REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 0
 
 def crop(img, pos_arr):
     """
@@ -11,6 +18,42 @@ def crop(img, pos_arr):
     """
     return img[pos_arr[0]:pos_arr[0]+pos_arr[1], pos_arr[2]:pos_arr[2]+pos_arr[3]]
 
+
+def shear(img, shear_rad):
+    """
+    Shear a image to a given radian.
+    @Author: Rigel
+    @param img: image to be sheared
+    @param shear_rad: radian to which the image will be sheared
+    @return: a numpy.ndarray object of this image
+    """
+    affine_tf = tf.AffineTransform(shear=shear_rad)
+    return tf.warp(img, inverse_map=affine_tf)
+
+def normalize_gray(img):
+    """
+    Normalize a grayscale img
+    @Author: Appcell
+    @param img: image to be normalized
+    @return: a numpy.ndarray object of this image
+    """
+    std = np.std(img)
+    mean = np.mean(img)
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.zeros((h, w))
+
+    for i in range(h):
+        for j in range(w):
+            res[i, j] = ((img[i, j] - mean) / std)
+    min_img = np.min(res)
+    max_img = np.max(res)
+    for i in range(h):
+        for j in range(w):
+            res[i, j] = (res[i, j] - min_img) / (max_img - min_img)
+
+    return res
+
 def rgb_to_gray(img):
     """
     Transfer given RGB image to grayscale.
@@ -20,7 +63,13 @@ def rgb_to_gray(img):
     """
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-def rgb_to_bw(img):
+def inverse_gray(img):
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.ones((h, w)) - img
+    return res
+
+def rgb_to_bw(img, threshold):
     w = img.shape[1]
     h = img.shape[0]
     res = np.zeros((h, w))
@@ -29,6 +78,37 @@ def rgb_to_bw(img):
         for j in range(w):
             if color_distance(img[i, j], np.array([255, 255, 255])) < 40:
                 res[i, j] = 255
+    return res
+
+def remove_digit_vertical_edge(img, deviation_limit, side):
+    width = img.shape[1]
+    height = img.shape[0]
+    edge_left = 0
+    edge_right = width - 1
+
+    res = []
+    # sometimes there's noise at bottom, thus we remove 5px first
+    img2 = crop(img, [0, height - 5, 0, width])
+    deviation = img2.max(axis=0) - img2.min(axis=0)
+
+    # Here we have to start searching from right, since there might be
+    # noise on left.
+    for i in range(width - 4, 1, -1):
+        if deviation[i + 3] - deviation[i] > deviation_limit:
+            edge_left = i
+            break
+    for i in range(width - 4, 1, -1):
+        if deviation[i] - deviation[i+3] > deviation_limit:
+            edge_right = i
+            break
+
+    if side == REMOVE_NUMBER_VERTICAL_EDGE_BOTH:
+        res = crop(img, [0, height, edge_left, edge_right - edge_left + 1])
+    elif side == REMOVE_NUMBER_VERTICAL_EDGE_LEFT:
+        res = crop(img, [0, height, edge_left, width - edge_left])
+    else:
+        res = crop(img, [0, height, 0, edge_right])
+
     return res
 
 def increase_contrast(img):
@@ -53,9 +133,9 @@ def similarity(img, img2):
     bwimg = img
     bwimg2 = img2
     if len(img.shape) > 2 and img.shape[2] == 3:
-        bwimg = rgb_to_bw(img)
+        bwimg = rgb_to_bw(img, 40)
     if len(img2.shape) > 2 and img2.shape[2] == 3:
-        bwimg2 = rgb_to_bw(img2)
+        bwimg2 = rgb_to_bw(img2, 40)
     w = bwimg.shape[1]
     h = bwimg.shape[0]
     s = 0
@@ -75,6 +155,7 @@ def read(path):
     """
     return cv2.imread(path)
 
+
 def read_with_transparency(path):
     """
     Read RGBA channels of an image with given path from file system, 
@@ -83,6 +164,18 @@ def read_with_transparency(path):
     @return: a numpy.ndarray object of read image, with RGB + Alpha channels.
     """
     return cv2.imread(path, -1)
+
+
+def read_bw(path):
+    """
+    Read a B/W image with given path from file system.
+    @Author: Rigel
+    @param path: path of image file
+    @return: a numpy.ndarray object of read image, with boolean type pixels
+    """
+    img_gray = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    return img_gray > 127
+
 
 def resize(img, dest_width, dest_height):
     """
@@ -94,6 +187,30 @@ def resize(img, dest_width, dest_height):
     @return: a numpy.ndarray object of resized image.
     """
     return cv2.resize(img, (dest_width, dest_height))
+
+
+def contrast_adjust_log(img, gain):
+    """
+    Perform logarithm correction to increase contrast
+    @Author: Rigel
+    @param img: the image to be corrected
+    @gain: constant multiplier
+    @return: a numpy.ndarray object of corrected image.
+    """
+    return adjust_log(img, gain)
+
+
+def binary_otsu(img):
+    """
+    Perform binarization with otsu algorithm
+    @Author: Rigel
+    @param img: the image to be corrected
+    @gain: constant multiplier
+    @return: a numpy.ndarray boolean object of binary image.
+    """
+    global_thresh = threshold_otsu(img)
+    return img > global_thresh
+
 
 def create_bg_image(color, width, height):
     """
@@ -107,6 +224,7 @@ def create_bg_image(color, width, height):
     bg_image = np.zeros((height, width, 3))
     bg_image[:, :, 0], bg_image[:, :, 1], bg_image[:, :, 2] = color
     return bg_image
+
 
 def overlay(bg, fg):
     """
@@ -125,9 +243,11 @@ def overlay(bg, fg):
     res = (np.multiply(bg, (1 - alpha / 255)) + np.multiply(overlay_color, (alpha / 255))).astype('uint8')
     return res
 
+
 def color_distance_normalized(color1, color2):
     color_temp = np.abs(color1 - (color2 + np.mean(color1) - np.mean(color2)));
     return np.max(color_temp)
+
 
 def color_distance(color1, color2):
     return np.linalg.norm(color1.astype('double') - color2.astype('double'))

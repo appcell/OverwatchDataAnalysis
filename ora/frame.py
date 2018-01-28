@@ -42,6 +42,8 @@ class Frame(object):
         self.image = ImageUtils.resize(frame_image, 1280, 720)
         self.time = frame_time
         self.game = game
+        if self.game.ult_colors is None:
+            self.game.set_ult_colors(self)
 
         print self.time
         self.get_players()
@@ -63,7 +65,7 @@ class Frame(object):
         Returns:
             None 
         """
-        del self.image
+        self.image = None
 
     def get_players(self):
         """Get all players info in this frame.
@@ -95,7 +97,6 @@ class Frame(object):
         """
         pos = OW.get_team_color_pick_pos()[self.game.game_type]
 
-
         return {
             "left": self.image[pos[0][0], pos[0][1]],
             "right": self.image[pos[1][0], pos[1][1]]
@@ -106,7 +107,45 @@ class Frame(object):
             return self.game.team_colors
         else:
             return self.get_team_colors_from_image()
-             
+
+    def get_ult_colors_from_image(self):
+        """Get ultimate charge number colors from this frame.
+
+        Author:
+            Rigel
+
+        Args:
+            None
+
+        Returns:
+            @ult_color: array of int, -1: white number, 1: black number
+        """
+        left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
+        left_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, left_pre_pos))
+        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True)[self.game.game_type])
+        left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
+        left_image = ImageUtils.crop(left_shear, left_pos)
+        left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
+        left_bin = ImageUtils.binary_otsu(left_image_g)
+
+        right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
+        right_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, right_pre_pos))
+        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False)[self.game.game_type])
+        right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
+        right_image = ImageUtils.crop(right_shear, right_pos)
+        right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
+        right_bin = ImageUtils.binary_otsu(right_image_g)
+        return {
+            "left": np.sign(2 * np.sum(left_bin) - np.size(left_bin)),
+            "right": np.sign(2 * np.sum(right_bin) - np.size(right_bin))
+        }
+
+    def get_ult_colors(self):
+        if self.game.ult_colors is not None:
+            return self.game.ult_colors
+        else:
+            return self.get_ult_colors_from_image()
+
     def get_killfeeds(self):
         """Get killfeed info in this frame.
 
@@ -181,7 +220,6 @@ class Frame(object):
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
             self.is_valid = True
-            # print mean
         else:
             self.is_valid = False
             return
@@ -197,11 +235,11 @@ class Frame(object):
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
         
 
-        # cv2.imwrite('frame.png', self.image)
+        # TODO: another situation: after replay effect there might be a blue
+        # rectangle remaining on screen.
         max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
-            # print max_val
         else:
             self.is_valid = False
             return
@@ -227,7 +265,6 @@ class Frame(object):
             A dict of all avatar icons fused
         """
         team_colors = self.get_team_colors()
-        # print team_colors
         avatars_left_ref = {}
         avatars_small_left_ref = {}
         avatars_right_ref = {}
@@ -274,8 +311,6 @@ class Frame(object):
             A dict of avatars.
         """
         all_avatars = {}
-        # print self.time
-        # 
         if self.game.team_colors is not None:
             all_avatars = self.game.avatars_ref
         else:

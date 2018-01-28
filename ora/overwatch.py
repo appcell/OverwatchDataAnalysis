@@ -1,24 +1,22 @@
 from utils import image as ImageUtils
-
 import os
+import numpy as np
+
 # **********************************************************
 # ==========================================================
 #                       Meta Macros
 # ==========================================================
 # **********************************************************
-
 GAMETYPE_OWL = 0
 GAMETYPE_CUSTOM = 1
 ANALYZER_FPS = 2
 DEFAULT_SCREEN_WIDTH = 1280
 DEFAULT_SCREEN_HEIGHT = 720
-
 # **********************************************************
 # ==========================================================
 #               Chara & Non-chara Objects List
 # ==========================================================
 # **********************************************************
-
 ANA = "ana"
 BASTION = "bastion"
 DOOMFIST = "doomfist"
@@ -100,24 +98,21 @@ def get_chara_name(name):
         return TORBJON
     return name
 
+
 # **********************************************************
 # ==========================================================
 #           Team Theme Color Pixel Position Defs
 # ==========================================================
 # **********************************************************
-
 TEAM_COLOR_PICK_POS_LEFT_OWL = [53, 40]
 TEAM_COLOR_PICK_POS_RIGHT_OWL = [54, 1183]
 TEAM_COLOR_PICK_POS_LEFT_CUSTOM = [0, 0]
 TEAM_COLOR_PICK_POS_RIGHT_CUSTOM = [0, 1279]
-
-
 # **********************************************************
 # ==========================================================
 #              Ultimate Icon Position Defs
 # ==========================================================
 # **********************************************************
-
 ULT_ICON_X_MIN_LEFT_OWL = 31
 ULT_ICON_X_MIN_RIGHT_OWL = 825
 ULT_ICON_WIDTH_OWL = 33
@@ -132,7 +127,8 @@ ULT_ICON_Y_MIN_CUSTOM = 51
 ULT_ICON_HEIGHT_CUSTOM = 26
 ULT_ICON_GAP_CUSTOM = 71
 
-ULT_ICON_MAX_PROB = {GAMETYPE_OWL: 0.8, GAMETYPE_CUSTOM: 0.8}
+ULT_ICON_MAX_PROB = {GAMETYPE_OWL: 0.5, GAMETYPE_CUSTOM: 0.5}
+ULT_ICON_MAX_PROB_SSIM = {GAMETYPE_OWL: 0.52, GAMETYPE_CUSTOM: 0.52}
 ULT_ICON_MAX_BRIGHTNESS = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 220}
 
 
@@ -171,12 +167,182 @@ def get_ult_icon_pos(index):
 def get_ult_icon_ref(index):
     if index < 6:
         return {
-            GAMETYPE_OWL: ImageUtils.read("./images/awayUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("./images/awayUlt.png")
+            GAMETYPE_OWL: ImageUtils.read("./images/ultimate/awayUlt.png"),
+            GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/awayUlt.png")
         }
     return {
-        GAMETYPE_OWL: ImageUtils.read("./images/homeUlt.png"),
-        GAMETYPE_CUSTOM: ImageUtils.read("./images/homeUlt.png")
+        GAMETYPE_OWL: ImageUtils.read("./images/ultimate/homeUlt.png"),
+        GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/homeUlt.png")
+    }
+
+
+# **********************************************************
+# ==========================================================
+#              Ultimate Charge Position Defs
+# ==========================================================
+# **********************************************************
+ULT_TF_SHEAR_LEFT_OWL = 0.25396
+ULT_TF_SHEAR_RIGHT_OWL = 0.22
+ULT_ADJUST_LOG_INDEX = 1.2
+#  Region to determine the color of ultimate charge number, pre-shear
+ULT_CHARGE_COLOR_PRE_X_MIN_LEFT_OWL = 20
+ULT_CHARGE_COLOR_PRE_X_MIN_RIGHT_OWL = 1178
+ULT_CHARGE_COLOR_PRE_WIDTH_OWL = 65
+ULT_CHARGE_COLOR_PRE_Y_MIN_OWL = 50
+ULT_CHARGE_COLOR_PRE_HEIGHT_OWL = 50
+#  Region to determine the color of ultimate charge number, post-shear
+ULT_CHARGE_COLOR_X_MIN_LEFT_OWL = 16
+ULT_CHARGE_COLOR_X_MIN_RIGHT_OWL = 0
+ULT_CHARGE_COLOR_WIDTH_OWL = 31
+ULT_CHARGE_COLOR_Y_MIN_OWL = 0
+ULT_CHARGE_COLOR_HEIGHT_OWL = 24
+
+#  Region to read ultimate charge number, pre-shear
+ULT_CHARGE_PRE_X_MIN_LEFT_OWL = 20
+ULT_CHARGE_PRE_X_MIN_RIGHT_OWL = 825
+ULT_CHARGE_PRE_WIDTH_OWL = 65
+ULT_CHARGE_PRE_Y_MIN_OWL = 50
+ULT_CHARGE_PRE_HEIGHT_OWL = 50
+#  Very ugly! Maybe switch to 1080P?
+ULT_CHARGE_PRE_GAP_LEFT_OWL = [70, 70, 70, 71, 71]
+ULT_CHARGE_PRE_GAP_RIGHT_OWL = [70, 71, 71, 71, 71]
+
+ULT_CHARGE_PRE_RESIZE_WIDTH_OWL = 65
+ULT_CHARGE_PRE_RESIZE_HEIGHT_OWL = 50
+
+#  Region to read ultimate charge number, post-shear, 1st and 2nd number
+ULT_CHARGE_X_MIN_LEFT_OWL = 15
+ULT_CHARGE_X_MIN_RIGHT_OWL = 4
+ULT_CHARGE_WIDTH = {
+            GAMETYPE_OWL: 23,
+            GAMETYPE_CUSTOM: 23
+        }
+ULT_CHARGE_NUMBER_WIDTH = {
+            GAMETYPE_OWL: 8,
+            GAMETYPE_CUSTOM: 8
+        }
+ULT_CHARGE_NUMBER_COLOR_THRESHOLD = {
+            GAMETYPE_OWL: 0.6,
+            GAMETYPE_CUSTOM: 0.6
+        }
+ULT_CHARGE_NUMBER_WIDTH_OBSERVED = {
+            GAMETYPE_OWL: 9,
+            GAMETYPE_CUSTOM: 9
+        }
+ULT_CHARGE_IMG_WIDTH_OWL = 6
+ULT_CHARGE_Y_MIN_OWL = 1
+ULT_CHARGE_IMG_HEIGHT_OWL = 16
+ULT_CHARGE_HEIGHT_OWL = 25
+ULT_GAP_DEVIATION_LIMIT = {
+            GAMETYPE_OWL: 0.20,
+            GAMETYPE_CUSTOM: 0.20
+        }
+
+
+#  TODO: Custom game
+
+
+def get_tf_shear(index):
+    if index < 6:
+        return {
+            GAMETYPE_OWL: ULT_TF_SHEAR_LEFT_OWL,
+            GAMETYPE_CUSTOM: 0
+        }
+    return {
+        GAMETYPE_OWL: ULT_TF_SHEAR_RIGHT_OWL,
+        GAMETYPE_CUSTOM: 0
+    }
+
+
+def get_ult_charge_color_pre_pos(is_left):
+    if is_left:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_COLOR_PRE_Y_MIN_OWL,
+                           ULT_CHARGE_COLOR_PRE_HEIGHT_OWL,
+                           ULT_CHARGE_COLOR_PRE_X_MIN_LEFT_OWL,
+                           ULT_CHARGE_COLOR_PRE_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
+    return {
+        GAMETYPE_OWL: [ULT_CHARGE_COLOR_PRE_Y_MIN_OWL,
+                       ULT_CHARGE_COLOR_PRE_HEIGHT_OWL,
+                       ULT_CHARGE_COLOR_PRE_X_MIN_RIGHT_OWL,
+                       ULT_CHARGE_COLOR_PRE_WIDTH_OWL],
+        GAMETYPE_CUSTOM: []
+    }
+
+
+def get_ult_charge_color_pos(is_left):
+    if is_left:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_COLOR_Y_MIN_OWL,
+                           ULT_CHARGE_COLOR_HEIGHT_OWL,
+                           ULT_CHARGE_COLOR_X_MIN_LEFT_OWL,
+                           ULT_CHARGE_COLOR_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
+    return {
+        GAMETYPE_OWL: [ULT_CHARGE_COLOR_Y_MIN_OWL,
+                       ULT_CHARGE_COLOR_HEIGHT_OWL,
+                       ULT_CHARGE_COLOR_X_MIN_RIGHT_OWL,
+                       ULT_CHARGE_COLOR_WIDTH_OWL],
+        GAMETYPE_CUSTOM: []
+    }
+
+
+def get_ult_charge_pre_pos(index):
+    if index < 6:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
+                           ULT_CHARGE_PRE_HEIGHT_OWL,
+                           ULT_CHARGE_PRE_X_MIN_LEFT_OWL + sum(ULT_CHARGE_PRE_GAP_LEFT_OWL[:index]),
+                           ULT_CHARGE_PRE_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
+    else:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_PRE_Y_MIN_OWL,
+                           ULT_CHARGE_PRE_HEIGHT_OWL,
+                           ULT_CHARGE_PRE_X_MIN_RIGHT_OWL + sum(ULT_CHARGE_PRE_GAP_RIGHT_OWL[:index - 6]),
+                           ULT_CHARGE_PRE_WIDTH_OWL],
+            GAMETYPE_CUSTOM: []
+        }
+
+
+def get_ult_charge_pre_resize_dimensions():
+    return {
+        GAMETYPE_OWL: (ULT_CHARGE_PRE_RESIZE_WIDTH_OWL, ULT_CHARGE_PRE_RESIZE_HEIGHT_OWL),
+        GAMETYPE_CUSTOM: None
+    }
+
+
+def get_ult_charge_pos(index):
+    if index < 6:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
+                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_X_MIN_LEFT_OWL,
+                           ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
+            GAMETYPE_CUSTOM: []
+        }
+    else:
+        return {
+            GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
+                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_X_MIN_RIGHT_OWL,
+                           ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
+            GAMETYPE_CUSTOM: []
+        }
+
+
+def get_ult_charge_numbers_ref():
+    ult_charge_icons_ref_owl = np.empty([11, ULT_CHARGE_IMG_HEIGHT_OWL, ULT_CHARGE_IMG_WIDTH_OWL], dtype='bool')
+    ult_charge_icons_ref_custom = None
+    for i in range(0, 11):
+        ult_charge_icons_ref_owl[i] = ImageUtils.read_bw("./images/ultimate/owl/" + str(i) + ".png")
+    return {
+        GAMETYPE_OWL: ult_charge_icons_ref_owl,
+        GAMETYPE_CUSTOM: ult_charge_icons_ref_custom
     }
 
 
@@ -185,7 +351,6 @@ def get_ult_icon_ref(index):
 #               Topbar Avatar Position Defs
 # ==========================================================
 # **********************************************************
-
 # Dimensions of referece avatar images
 AVATAR_WIDTH_REF = 38
 AVATAR_HEIGHT_REF = 30
@@ -236,8 +401,8 @@ def get_avatars_ref():
         A dict of all reference avatar images
     """
     return {chara: ImageUtils.resize(
-        ImageUtils.read_with_transparency("./images/charas/" + chara + ".png"), 
-        AVATAR_WIDTH_REF, 
+        ImageUtils.read_with_transparency("./images/charas/" + chara + ".png"),
+        AVATAR_WIDTH_REF,
         AVATAR_HEIGHT_REF) for chara in CHARACTER_LIST}
 
 
@@ -317,6 +482,8 @@ def get_avatar_pos(index):
                               AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
                               AVATAR_WIDTH_CUSTOM]
         }
+
+
 def get_avatar_diff_pos(index):
     """Get position of an avatar in one frame, given player index.
 
@@ -353,6 +520,8 @@ def get_avatar_diff_pos(index):
                               AVATAR_X_MIN_LEFT_CUSTOM + index * AVATAR_GAP_CUSTOM,
                               AVATAR_WIDTH_CUSTOM]
         }
+
+
 # **********************************************************
 # ==========================================================
 #                    Killfeed Row
@@ -382,7 +551,7 @@ KILLFEED_HEIGHT_CUSTOM = 35
 KILLFEED_GAP_CUSTOM = 35
 
 KILLFEED_MAX_PROB = {GAMETYPE_OWL: 0.6, GAMETYPE_CUSTOM: 0.6}
-
+KILLFEED_SSIM_THRESHOLD = {GAMETYPE_OWL: 0.35, GAMETYPE_CUSTOM: 0.35}
 KILLFEED_MAX_COLOR_DISTANCE = {GAMETYPE_OWL: 90, GAMETYPE_CUSTOM: 20}
 
 
@@ -401,14 +570,14 @@ def get_killfeed_icons_ref():
     return {
         GAMETYPE_OWL: {chara: ImageUtils.resize(
             ImageUtils.read("./images/icons/" + chara + ".png"),
-            KILLFEED_ICON_WIDTH[GAMETYPE_OWL], 
+            KILLFEED_ICON_WIDTH[GAMETYPE_OWL],
             KILLFEED_ICON_HEIGHT[GAMETYPE_OWL]) \
-                for chara in KILLFEED_OBJECT_LIST},
+            for chara in KILLFEED_OBJECT_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
             ImageUtils.read("./images/icons/" + chara + ".png"),
-            KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM], 
+            KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM],
             KILLFEED_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
-                for chara in KILLFEED_OBJECT_LIST},
+            for chara in KILLFEED_OBJECT_LIST},
     }
 
 
@@ -428,12 +597,12 @@ def get_assist_icons_ref():
         GAMETYPE_OWL: {chara: ImageUtils.resize(
             ImageUtils.read("./images/assists/" + chara + ".png"),
             ASSIST_ICON_WIDTH[GAMETYPE_OWL], ASSIST_ICON_HEIGHT[GAMETYPE_OWL]) \
-                for chara in ASSIST_CHARACTER_LIST},
+            for chara in ASSIST_CHARACTER_LIST},
         GAMETYPE_CUSTOM: {chara: ImageUtils.resize(
             ImageUtils.read("./images/assists/" + chara + ".png"),
-            ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM], 
+            ASSIST_ICON_WIDTH[GAMETYPE_CUSTOM],
             ASSIST_ICON_HEIGHT[GAMETYPE_CUSTOM]) \
-                for chara in ASSIST_CHARACTER_LIST},
+            for chara in ASSIST_CHARACTER_LIST},
     }
 
 
@@ -453,13 +622,13 @@ def get_killfeed_team_color_pos(pos_x, position):
 
     if position == 'left':
         return {
-            GAMETYPE_OWL:  [2, pos_x - 10],
-            GAMETYPE_CUSTOM:  [2, pos_x - 10]
+            GAMETYPE_OWL: [2, pos_x - 10],
+            GAMETYPE_CUSTOM: [2, pos_x - 10]
         }
     else:
         return {
-            GAMETYPE_OWL:  [2, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 10],
-            GAMETYPE_CUSTOM:  [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 10]
+            GAMETYPE_OWL: [2, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_OWL] + 10],
+            GAMETYPE_CUSTOM: [1, pos_x + KILLFEED_ICON_WIDTH[GAMETYPE_CUSTOM] + 10]
         }
 
 
@@ -512,6 +681,7 @@ def get_killfeed_with_gap_pos(index):
                           KILLFEED_X_MIN_CUSTOM,
                           KILLFEED_WIDTH_CUSTOM]
     }
+
 
 # **********************************************************
 # ==========================================================
@@ -639,14 +809,12 @@ def get_ability_icon_pos(pos_right):
         ],
     }
 
+
 # Not really sure about this
 ASSIST_GAP = {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 20}
 
-
 ASSIST_ICON_HEIGHT = {GAMETYPE_OWL: 18, GAMETYPE_CUSTOM: 18}
 ASSIST_ICON_WIDTH = {GAMETYPE_OWL: 12, GAMETYPE_CUSTOM: 12}
-
-
 # **********************************************************
 # ==========================================================
 #                   Frame Validation
@@ -658,17 +826,22 @@ FRAME_VALIDATION_COLOR_MEAN = {GAMETYPE_OWL: 230, GAMETYPE_CUSTOM: 230}
 FRAME_VALIDATION_COLOR_STD = {GAMETYPE_OWL: 3, GAMETYPE_CUSTOM: 3}
 FRAME_VALIDATION_EFFECT_TIME = {GAMETYPE_OWL: 2.0, GAMETYPE_CUSTOM: 2.0}
 FRAME_VALIDATION_REPLAY_PROB = {GAMETYPE_OWL: 0.5, GAMETYPE_CUSTOM: 0.5}
+
+
 def get_replay_icon_pos():
     return {
         GAMETYPE_OWL: [109, 66, 64, 74],
         GAMETYPE_CUSTOM: [111, 64, 64, 74],
     }
 
+
 def get_replay_icon_preseason_pos():
     return {
         GAMETYPE_OWL: [109, 66, 23, 74],
         GAMETYPE_CUSTOM: [111, 64, 40, 74],
     }
+
+
 def get_replay_icon_ref():
     """Read in relay icon.
 

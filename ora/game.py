@@ -4,6 +4,8 @@ from utils.video_loader import VideoLoader
 from excel import Excel
 import os
 import cv2
+
+
 class Game(object):
     """Class of a Game object.
 
@@ -21,8 +23,10 @@ class Game(object):
                          "left": None,
                          "right": None
                      }
+        ult_colors: ultimate charge number color of both teams. +1: black number, -1: white number
         video_path: video path
         output_path: output path
+        us_test: if in test mode
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -51,16 +55,18 @@ class Game(object):
         self.name_players_team_left = []
         self.name_players_team_right = []
         self.team_colors = None
+        self.ult_colors = None
         self.video_path = ""
         self.output_path = ""
+        self.is_test = False
         self.frames = []
         self.avatars_ref = {}
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
         self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
         self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
+        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref()[self.game_type]
         self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
 
-        # print self.output_path
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
 
@@ -74,6 +80,20 @@ class Game(object):
             None 
         """
         self.team_colors = frame.get_team_colors_from_image()
+
+    def set_ult_colors(self, frame):
+        """Set ultimate charge number colors of both team in this game, using one frame.
+
+        Author:
+            Rigel
+
+        Args:
+            frame: from which colors are retrieved.
+
+        Returns:
+            None
+        """
+        self.ult_colors = frame.get_ult_colors_from_image()
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -115,7 +135,7 @@ class Game(object):
         else:
             self.name_players_team_right = ["7", "8", "9", "10", "11", "12"]
 
-    def analyze(self, start_time=0, end_time=0):
+    def analyze(self, start_time=0, end_time=0, is_test=False):
         """Main analysis process
 
         Capture frames with given video, retrieve info from each frame. All 
@@ -133,20 +153,26 @@ class Game(object):
         """
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
-        frame_image_index = start_time * video.fps
-        frame_image = video.get_frame_image(frame_image_index)
         step_cnt = 0
-        # while frame_image is not None and frame_image_index < end_time * video.fps:
-        while frame_image is not None and frame_image_index < video.frame_number:
+        self.is_test = is_test
 
+        start_time = start_time if is_test else 0
+        # For testing we specify start/end time.
+        # But for release version we don't.
+        frame_image_index = start_time * video.fps 
+        frame_image = video.get_frame_image(frame_image_index)
+        while frame_image is not None \
+            and (frame_image_index < video.frame_number and is_test is False) \
+            or (frame_image_index < end_time * video.fps and is_test is True):
             frame = Frame(frame_image,
-                          start_time + (1 / float(self.analyzer_fps)) * step_cnt,
+                          start_time +
+                          (1 / float(self.analyzer_fps)) * step_cnt,
                           self)
             self.frames.append(frame)
-
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
+
         video.close()
         self.clear_all_frames()
         self.output_to_excel()
@@ -161,7 +187,9 @@ class Game(object):
         #         print "Is headshot: " + str(killfeed.is_headshot)
 
     def output_to_excel(self):
-        """Output the full event list to an excel file.
+        """Output the full event list to an Excel file.
+
+        Author: KomorebiL
 
         Args:
             None
@@ -172,30 +200,63 @@ class Game(object):
         Excel(self).save()
 
     def clear_all_frames(self):
-        # There must be a better way for this
+        """Remove invalid frames & repeated killfeeds.
+
+        1) Remove repeated killfeeds: for each 2 neighboring frames, if both 
+        have recognized killfeeds, then the last of previous frame and first
+        of current frame must be the same, i.e. repeated. Remove repeated ones
+        from last frame to the first.
+
+        2) For replay: Usually there's a gap of ~1s between replay effect and
+        replay icon appears. Mark frames during this gap as invalid.
+
+        3) Remove invalid frames.
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+
+        # 1) Remove repeated killfeeds.
+        # TODO: There must be a better way for this.
+        print OW.FRAME_VALIDATION_EFFECT_TIME[self.game_type] * self.analyzer_fps
         frame_num = len(self.frames)
         for i in range(frame_num-1, 0, -1):
             frame = self.frames[i]
             prev_frame = self.frames[i - 1]
             if frame.killfeeds and prev_frame.killfeeds \
-                and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
+                    and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
                 frame.killfeeds.pop(0)
             frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
-                self.game_type] / self.analyzer_fps))
+                self.game_type] * self.analyzer_fps) - 1)
+
             if frame_before_effect_ind >= 0:
                 frame_before_effect = self.frames[frame_before_effect_ind]
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
 
+        # 2) Remove invalid frames
         self.frames = list(filter(
-            lambda frame: frame.is_valid is True, 
+            lambda frame: frame.is_valid is True,
             self.frames))
 
-        for i in range(12):
-            for frame in self.frames:
-                player = frame.players[i]
-            #     print player.chara
-            #     print player.is_ult_ready
-            # print "========"
+        for frame in self.frames:
+            print frame.time
+            print frame.is_valid
+    def rematch_charas_and_players(self):
+        """Rematch charas & players for killfeed
 
+        Sometimes in a killfeed, chara gets recognized but there's no
+        corresponding player info. Here we match them together with info from
+        earlier & later frames so that no "empty" shows up in player names.
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+        pass
