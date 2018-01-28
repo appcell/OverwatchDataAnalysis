@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 @Author: Komorebi 
 """
@@ -23,7 +24,7 @@ class Excel(object):
         self.sheet2 = Sheet2(self._wb, game)
         self.sheet3 = Sheet3(self._wb, game)
 
-    def save(self, filename='text', postfix='xlsx'):
+    def save(self):
         self.sheet1.new()
         self.sheet2.new()
         self.sheet3.new()
