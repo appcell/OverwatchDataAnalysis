@@ -77,10 +77,6 @@ class Killfeed:
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
-
-        # if self.player1['team'] == "empty" and self.player1['chara'] != "empty":
-        #     cv2.imshow('t', self.image)
-        #     cv2.waitKey(0)
         self.free()
 
     def __eq__(self, other):
@@ -245,12 +241,6 @@ class Killfeed:
             color, colors_ref['left'])
         dist_right = ImageUtils.color_distance(
             color, colors_ref['right'])
-        # if dist_left > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type] \
-        #         and dist_right > OW.KILLFEED_MAX_COLOR_DISTANCE[self.game_type]:
-        #     print dist_left
-        #     print dist_right
-        #     res['pos'] = -1
-        #     return res
         if dist_left < dist_right:
             res['team'] = self.frame.game.team_names['left']
         else:
