@@ -131,6 +131,10 @@ ABILITY_FORMAT = {
 
 
 def _cell_style():
+    """
+    sheet1 中 cell 的样式
+    :return: None
+    """
     d = {
         'font1': {
             'name': 'Microsoft YaHei',
@@ -156,6 +160,11 @@ def _cell_style():
 
 
 def set_action(obj):
+    """
+    通过对 player1、player2 相关的判断来获取 action
+    :param obj: killfeed类
+    :return: action
+    """
     player1, player2 = obj.player1, obj.player2
     if player1['chara'] == 'mercy' and player1['team'] == player2['team']:
         return 'Resurrect'
@@ -166,6 +175,10 @@ def set_action(obj):
 
 
 def set_comments(action):
+    """
+    通过 action 来将相应的信息转换成 comment
+    :return: comment
+    """
     table = {
         'Resurrect': 'Resurrect',
         'Demech': 'MEKA destroyed',
@@ -175,6 +188,14 @@ def set_comments(action):
 
 
 def get_player_name(obj, index, charas, charas2):
+    """
+    通过英雄名以及队伍信息来查找玩家的名字。
+    :param obj: 玩家信息
+    :param index: 玩家队伍所处的位置， 1~6为左边的队伍, 7~12为右边的队伍。
+    :param charas: 存储了当前所有玩家 玩家名、英雄名信息的 list， 格式为 [(player, chara)...]
+    :param charas2: 存储了上一帧所有玩家 英雄名信息的list， 格式为[player1, ...] 
+    :return: playername
+    """
     name, chara = obj['player'], obj['chara']
     if name != 'empty':
         return name
@@ -187,6 +208,7 @@ def get_player_name(obj, index, charas, charas2):
     for i, c in enumerate(team_charas2):
         if chara == c:
             return team_charas[i][0]
+    return None
 
 
 def get_player_team_index(player_team, team_names):
@@ -221,6 +243,12 @@ class Save:
 
     @staticmethod
     def _set_cell_style(cell, title):
+        """
+        将样式应用到 cell 中
+        :param cell: sheet 中的 cell
+        :param title: cell 坐标， 如 A1、B2 ..
+        :return: None
+        """
         style = Config.cell_style
         cell.font = Font(**style['font2']) if title in Config.peculiar_cell else Font(**style['font1'])
         cell.alignment = Alignment(**style['alignment'])
@@ -228,6 +256,9 @@ class Save:
             cell.fill = PatternFill(**style['fill'][title])
 
     def _set_cells_style(self):
+        """
+        将样式应用到所有 cell 中 
+        """
         max_row, max_column = self.sheet.max_row + 1, self.sheet.max_column + 1
         for r in range(1, max_row):
             self.sheet.row_dimensions[r].height = Config.cell_height
@@ -238,12 +269,18 @@ class Save:
                 self.sheet.column_dimensions[letter].width = Config.cell_width[letter]
 
     def _set_cells_merge(self):
+        """
+        合并 cell 
+        """
         merge_config = Config.merge_cell
         for key in Config.title_top:
             if merge_config[key] is not None:
                 self.sheet.merge_cells(merge_config[key])
 
     def _append(self):
+        """
+        将 self.data 中的数据按照时间排序, 并导入到sheet中 
+        """
         self.data.sort(key=lambda x: x['_time'])
         for data in self.data:
             if '_$color' in data.keys():
@@ -290,18 +327,22 @@ class Sheet:
     def __init__(self, wb, game):
         self.game = game
         self.sheet = wb['sheet1']
+        # 初始化
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
         print Config.team_colors[self.game.team_names['left']]
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
-        # 上一帧的大招状况
+        # 上一帧所有玩家的大招状况
         self.ultimate_status = {i: False for i in range(1, 13)}
 
+        # 上一帧所有玩家的 chara
         self.previous_chara = [player.chara for player in self.game.frames[0].players]
+        # 下一帧所有玩家的 chara
         self.next_chara = [player.chara for player in self.game.frames[1].players]
 
+        # 当前所有玩家的 玩家名以及信息， 如[(player, chara), ...]
         self.player_and_chara = []
 
         self.data = []
@@ -321,6 +362,9 @@ class Sheet:
         self.data.append(new_data)
 
     def new(self):
+        """
+        遍历 frames， 提取相应的信息并保存
+        """
         frames = self.game.frames
         for i, frame in enumerate(frames):
             self.player_and_chara = [(player.name, player.chara) for player in frame.players]
@@ -332,7 +376,7 @@ class Sheet:
 
     def _killfeed_append(self, killfeeds, time):
         """
-        将 killfeed 中的属性替换成 change 中的，并添加到表中
+        往 sheet 加入击杀相关的信息。
         """
         for obj in killfeeds:
             d = {}
@@ -394,6 +438,18 @@ class Sheet:
                 self._append(**d)
 
     def _switch_hero_append(self, players, time, index):
+        """
+        通过跟 self.previous_chara 的比对来判定玩家是否更换英雄
+        同时这个函数维护着
+        self.previous_chara 以及 self.next_chara
+        作者目前没想到好的方法 把这个函数功能拆分成 
+        1. 维护上面2个 list
+        2. 通过上面2个 list以及当前英雄list 来判断英雄是否更换
+        
+        :param players: 12个player类构成的 list ， 对应12个玩家
+        :param time: 当前时间
+        :param index: frames 中的第n个 frame
+        """
         frames = self.game.frames
         length = len(frames)
         if index == 0:
