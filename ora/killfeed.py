@@ -400,7 +400,6 @@ class Killfeed:
                 or abs(result[ind]['pos'] - max_pos) < 15:
                 result_filtered.append(result[ind])
 
-        # print result_filtered
         return result_filtered
 
 

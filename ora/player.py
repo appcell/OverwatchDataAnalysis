@@ -59,18 +59,15 @@ class Player:
         self.health = None
         self.is_onfire = None
 
-
-
         self.get_ult_status()
         self.get_chara()
         self.get_ult_charge()
         self.free()
 
-        # if self.index == 3:
-        #     print self.index
-        #     print self.chara
-        #     print self.is_dead
-        #     print "==="
+        # print self.index
+        # print self.chara
+        # print self.is_dead
+        # print "==="
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -314,22 +311,13 @@ class Player:
             # Dark background
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
         # No need to switch to BW here.
-
-
-        # cv2.imshow('t', ult_charge_image_g)
-        # cv2.waitKey(0)
-
+        
         if gap == -1:
             # Only one digit
             num = ImageUtils.remove_digit_vertical_edge(
                 ult_charge_image_g,
                 OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type],
                 ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_BOTH)
-            # if self.index >= 6:
-            #     cv2.imshow('t', ult_charge_image_g)
-            #     cv2.waitKey(0)
-            #     cv2.imshow('t1', num)
-            #     cv2.waitKey(0)
         else:
             # 2 digits
             num_left = ImageUtils.crop(
