@@ -73,12 +73,15 @@ class Killfeed:
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
+        # self._has_two_players = False
 
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
+        # print [self.player1, self.player2]
+        # cv2.imshow('t', self.image)
+        # cv2.waitKey(0)
         self.free()
-
     def __eq__(self, other):
         if self.player1['chara'] == other.player1['chara'] \
                 and self.player2['chara'] == other.player2['chara'] \
@@ -190,18 +193,27 @@ class Killfeed:
             'float') / OW.KILLFEED_ICON_HEIGHT[self.game_type]
         edge_validation = [False, False]
 
+        valid_list = []
+
         for i in range(2, OW.KILLFEED_WIDTH[self.game_type] - 38):
             edge_scores_left = edge_sum[i-2: i+2]
             edge_scores_right = edge_sum[i+33: i+37]
 
             if max(edge_scores_left) \
-                    >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type] \
-                    and max(edge_scores_right) \
-                    >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type]:
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type] \
+                and max(edge_scores_right)\
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type]:
                 edge_validation.append(True)
+                valid_list.append(i)
             else:
                 edge_validation.append(False)
         edge_validation.extend([False]*6)
+        # Usually if edge_validation has a large range, we have 2 icons
+        # Then we rule out the recogs in the middle
+        # if valid_list:
+        #     if max(valid_list) - min(valid_list) \
+        #         > OW.ABILITY_GAP_NORMAL[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type] - 5:
+        #         self._has_two_players = True
 
         return edge_validation
 
@@ -320,24 +332,30 @@ class Killfeed:
         for (chara, icon) in self.frame.game.killfeed_icons_ref.iteritems():
             match_result = cv2.matchTemplate(
                 self.image, icon, cv2.TM_CCOEFF_NORMED)
-
             # Find two most possible location of this character's icon in the killfeed image.
             # Mask the pixels around the first location to find the second one.
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
 
             # Here we have to allow some error
-            if sum(edge_validation[max_loc[0]-2: max_loc[0]+2]) > 0 \
+            if sum(edge_validation[max_loc[0] - 2: max_loc[0] + 2]) > 0 \
                     and max_val > OW.KILLFEED_MAX_PROB[self.game_type]:
-                result.append({
-                    'chara': chara,
-                    'prob': max_val,
-                    'pos': max_loc[0]
-                })
+                temp_icon = ImageUtils.crop(self.image, [3, icon.shape[0], max_loc[0], OW.KILLFEED_ICON_WIDTH[self.game_type]])
+                score_ssim = measure.compare_ssim(
+                        temp_icon,
+                        icon,
+                        multichannel=True)
+                if score_ssim >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type]:
+                    result.append({
+                        'chara': chara,
+                        'prob': max_val,
+                        'pos': max_loc[0]
+                    })
             half_mask_width = 5
-            mask_index_left = max((max_loc[0] - half_mask_width, 0))
+            mask_index_left = max((max_loc[0] + half_mask_width - OW.ABILITY_GAP_NORMAL[self.game_type] - OW.KILLFEED_ICON_WIDTH[self.game_type], 0))
             mask_index_right = min((
-                max_loc[0] + half_mask_width + 1,
+                max_loc[0] - half_mask_width + 1 + OW.ABILITY_GAP_NORMAL[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type],
                 OW.KILLFEED_WIDTH[self.game_type] - OW.KILLFEED_ICON_WIDTH[self.game_type]))
+
             match_result_masked = np.matrix(match_result)
             match_result_masked[0:match_result_masked.shape[
                 0], mask_index_left: mask_index_right] = -1
@@ -345,12 +363,20 @@ class Killfeed:
 
             if sum(edge_validation[max_loc2[0]-2: max_loc2[0]+2]) > 0 \
                     and max_val2 > OW.KILLFEED_MAX_PROB[self.game_type]:
-                result.append({
-                    'chara': chara,
-                    'prob': max_val2,
-                    'pos': max_loc2[0]
-                })
+                temp_icon2 = ImageUtils.crop(self.image, [3, icon.shape[0], max_loc2[0], OW.KILLFEED_ICON_WIDTH[self.game_type]])
+                score_ssim2 = measure.compare_ssim(
+                        temp_icon2,
+                        icon,
+                        multichannel=True)
+                if score_ssim2 >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type]:
+                    result.append({
+                        'chara': chara,
+                        'prob': max_val2,
+                        'pos': max_loc2[0]
+                    })
+
         return result
+
 
     def get_ability_and_assists(self):
         """Retrieve info of ability and assisting players in a row

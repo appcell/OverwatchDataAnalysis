@@ -26,6 +26,7 @@ class Game(object):
         ult_colors: ultimate charge number color of both teams. +1: black number, -1: white number
         video_path: video path
         output_path: output path
+        us_test: if in test mode
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -57,6 +58,7 @@ class Game(object):
         self.ult_colors = None
         self.video_path = ""
         self.output_path = ""
+        self.is_test = False
         self.frames = []
         self.avatars_ref = {}
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
@@ -152,6 +154,7 @@ class Game(object):
         video = VideoLoader(self.video_path)
         step = int(round(video.fps/self.analyzer_fps))
         step_cnt = 0
+        self.is_test = is_test
 
         # For testing we specify start/end time.
         # But for release version we don't.

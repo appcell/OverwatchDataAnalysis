@@ -339,7 +339,7 @@ class Sheet:
             d['time'] = time
             d['action'] = set_action(obj)
             d['comments'] = set_comments(d['action'])
-            d['ability'] = Config.ability[obj.ability]
+            # d['ability'] = Config.ability[obj.ability]
             d['subject hero'] = player1['chara']
             d['subject player'] = (get_player_name(player1,
                                                    get_player_team_index(player1['team'], self.game.team_names),
