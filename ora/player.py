@@ -278,7 +278,7 @@ class Player:
 
         bg_color = ult_charge_image_g[:, 0].mean()
 
-        print bg_color
+        # print bg_color
         if bg_color < 0.6:
             # Dark background
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
@@ -330,7 +330,6 @@ class Player:
                      OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
 
             # if self.index == 5:
-                
             #     cv2.imshow('t1', num_left)
             #     cv2.waitKey(0)            
             #     cv2.imshow('t2', num_right)
