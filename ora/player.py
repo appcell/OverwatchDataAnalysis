@@ -121,15 +121,20 @@ class Player:
             self.is_ult_ready = True
             return
 
-        if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
-            temp_ult_icon = ImageUtils.crop(ult_icon, [loc[1], ult_icon_ref.shape[0], loc[0], ult_icon_ref.shape[1]])
-            prob_ssim = measure.compare_ssim(
+        temp_ult_icon = ImageUtils.crop(ult_icon, [loc[1], ult_icon_ref.shape[0], loc[0], ult_icon_ref.shape[1]])
+        prob_ssim = measure.compare_ssim(
                             temp_ult_icon,
                             ult_icon_ref,
                             multichannel=False)
+        # if self.index == 7:
+        #     print prob
+        #     print prob_ssim
 
+        if prob > OW.ULT_ICON_MAX_PROB[self.frame.game.game_type]:
             if prob_ssim > OW.ULT_ICON_MAX_PROB_SSIM[self.frame.game.game_type]:
                 self.is_ult_ready = True
+                # if self.index == 7:
+                #     print "True"
 
     def get_chara(self):
         """Retrieves chara name for current player in current frame.
