@@ -7,37 +7,19 @@ import time
 import tkMessageBox
 import tkFileDialog as filedialog
 from request import json_request
+import Tkinter
 from Tkinter import (Tk,
                      Frame, Message, Button, Entry,
-                     X, LEFT, RIGHT)
-
-from game import Game
+                     Label, Text, X, LEFT, RIGHT)
 import overwatch as OW
-
-def analyze(gui_info):
-    """Pre-analysis process
-
-    Write GUI input into Game instance, then start analysis in Game.
-
-    Author:
-        Appcell
-
-    Args:
-        None
-
-    Returns:
-        None 
-    """
-    game = Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
-    game.set_game_info(gui_info)
-    game.analyze(863, 870, is_test=False)
-    game.output_to_excel()
+import game
 
 def log(*args):
     print args
 
 class Gui(object):
     def __init__(self):
+        self.create_text()
         self.root = Tk()
         self.root.title('Overwatch Replay Analyzer')
         self.root.geometry('500x300+400+200')
@@ -46,7 +28,6 @@ class Gui(object):
         self.save_path = None
         self.left_frame = None
         self.right_frame = None
-
         # path
         self.create_path()
         # player
@@ -54,6 +35,7 @@ class Gui(object):
         # run
         self.run_btn = Button(self.root, text="Analyze", command=self.run)
         self.run_btn.pack()
+
         # check for update
         self.t = threading.Thread(target=self.check_update)
         self.t.start()
@@ -115,6 +97,25 @@ class Gui(object):
         self.left_frame = left_frame
         self.right_frame = right_frame
 
+    def create_text(self):
+        self.notice_window = Tk()
+        self.notice_window.title('Notice')
+        self.notice_window.geometry('400x400+300+100')
+        self.notice = Text(self.notice_window)
+        self.notice.insert(Tkinter.INSERT, 
+            """Overwatch Replay Analyzer, a data extractor of Overwatch game replays
+
+Copyright (C) 2017-2018 ORA developers
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+You can contact the author or report issues by: https://github.com/appcell/OverwatchDataAnalysis/issues""")
+        self.notice.pack()
+
     def click_save(self):
         filename = filedialog.askdirectory(initialdir='~/')
         self.save_path.config(text=filename)
@@ -163,7 +164,6 @@ class Gui(object):
 
         info['name_players_team_left'] = team_left
         info['name_players_team_right'] = team_right
-        #
         info['video_path'] = self.read_path['text']
         info['output_path'] = self.save_path['text']
 
@@ -172,7 +172,17 @@ class Gui(object):
     def show(self):
         self.root.mainloop()
 
-    def run(self):
-        gui_info = self.info()
-        analyze(gui_info)
+    def show_finish_msg(self):
         tkMessageBox.showinfo('一个微小的弹窗', '保存成功！')
+
+    def show_progress(self, progress):
+        self.notice.insert(Tkinter.INSERT, str(progress))
+
+    def run(self):
+        self.game_instance = game.Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
+        self.game_instance.set_game_info(self.info())
+        self.game_instance.analyze(863, 870, is_test=False)
+        self.game_instance.output_to_excel()
+        self.show_finish_msg()
+
+gui_instance = Gui()

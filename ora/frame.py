@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 from skimage import measure
-
 import overwatch as OW
+import gui as Gui
 from utils import image as ImageUtils
 from player import Player
 from killfeed import Killfeed
@@ -45,6 +45,7 @@ class Frame(object):
         if self.game.ult_colors is None:
             self.game.set_ult_colors(self)
 
+        # Gui.gui_instance.show_progress(self.time)
         print self.time
         self.get_players()
         self.get_killfeeds()
