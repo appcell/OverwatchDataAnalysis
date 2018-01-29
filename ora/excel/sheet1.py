@@ -249,15 +249,11 @@ class Save:
         :param title: cell 坐标， 如 A1、B2 ..
         :return: None
         """
-
         style = Config.cell_style
         cell.font = Font(**style['font2']) if title in Config.peculiar_cell else Font(**style['font1'])
         cell.alignment = Alignment(**style['alignment'])
         if title in style['fill'].keys():
-            try:
-                cell.fill = PatternFill(**style['fill'][title])
-            except ValueError:
-                print style['fill'][title]
+            cell.fill = PatternFill(**style['fill'][title])
 
     def _set_cells_style(self):
         """
