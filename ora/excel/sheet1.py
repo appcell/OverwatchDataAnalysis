@@ -249,11 +249,15 @@ class Save:
         :param title: cell 坐标， 如 A1、B2 ..
         :return: None
         """
+
         style = Config.cell_style
         cell.font = Font(**style['font2']) if title in Config.peculiar_cell else Font(**style['font1'])
         cell.alignment = Alignment(**style['alignment'])
         if title in style['fill'].keys():
-            cell.fill = PatternFill(**style['fill'][title])
+            try:
+                cell.fill = PatternFill(**style['fill'][title])
+            except ValueError:
+                print style['fill'][title]
 
     def _set_cells_style(self):
         """
@@ -330,6 +334,10 @@ class Sheet:
         # 初始化
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
+        print self.game.team_colors
+        if self.game.team_colors is None:
+            Config.team_colors[self.game.team_names['left']] = utils.to_hex([255, 255, 255])
+            Config.team_colors[self.game.team_names['right']] = utils.to_hex([70, 70, 70])
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
