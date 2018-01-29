@@ -170,6 +170,8 @@ def set_action(obj):
         return 'Resurrect'
     elif player2['chara'] == 'meka':
         return 'Demech'
+    elif player1['chara'] is 'empty' and player1['team'] is 'empty' and player2['chara'] is not None:
+        return "Suicide"
     else:
         return 'Eliminate'
 
@@ -183,6 +185,7 @@ def set_comments(action):
         'Resurrect': 'Resurrect',
         'Demech': 'MEKA destroyed',
         'Eliminate': '',
+        'Suicide': ''
     }
     return table[action]
 
@@ -313,7 +316,7 @@ class Save:
                 result[v-1] = data[k]
 
         for i, s in enumerate(result):
-            if s == 'empty':
+            if s == 'empty' or s == 'Empty':
                 result[i] = ''
         return result
 
@@ -400,9 +403,10 @@ class Sheet:
                 d['critical kill'] = 'Y'
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
+
             for i, p in enumerate([player1, player2]):
-                if p['chara'] != 'empty' and player2['team'] != 'empty':
-                    if i == 0:
+                if player2['chara'] != 'empty' and player2['team'] != 'empty':
+                    if i == 0 and player1['team'] != 'empty':
                         d['_$color']['subject player'] = Config.team_colors[player1['team']]
                     else:
                         d['_$color']['object player'] = Config.team_colors[player2['team']]
@@ -412,7 +416,7 @@ class Sheet:
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 if assist['player'] != 'empty':
                     d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
-            if None not in (d['object player'], d['subject player']):
+            if (d['object player']) is not None:
                 self._append(**d)
 
     def _ultimate_append(self, players, time):

@@ -27,7 +27,6 @@ def json_request():
 
 def main():
     data = client()
-    print data
 
 if __name__ == '__main__':
     main()

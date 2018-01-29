@@ -177,15 +177,6 @@ class Game(object):
         self.clear_all_frames()
         self.output_to_excel()
 
-        # for frame in self.frames:
-        #     print frame.time
-        #     for killfeed in frame.killfeeds:
-        #         print "Player1: " + str(killfeed.player1)
-        #         print "Player2: " + str(killfeed.player2)
-        #         print "Ability: " + str(killfeed.ability)
-        #         print "Assists: " + str(killfeed.assists)
-        #         print "Is headshot: " + str(killfeed.is_headshot)
-
     def output_to_excel(self):
         """Output the full event list to an Excel file.
 
@@ -223,7 +214,6 @@ class Game(object):
 
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
-        print OW.FRAME_VALIDATION_EFFECT_TIME[self.game_type] * self.analyzer_fps
         frame_num = len(self.frames)
         for i in range(frame_num-1, 0, -1):
             frame = self.frames[i]

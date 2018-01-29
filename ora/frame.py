@@ -166,7 +166,6 @@ class Frame(object):
                 if self.game.frames and self.game.frames[-1].killfeeds:
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
                     if killfeed == last_killfeed:
-                        # print i
                         self.killfeeds.append(killfeed)
                         break
                     else:
