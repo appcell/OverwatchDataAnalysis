@@ -268,7 +268,7 @@ class Save:
             self.sheet.row_dimensions[r].height = Config.cell_height
             for c in range(1, max_column):
                 letter = get_column_letter(c)
-                title = '{}{}'.format(letter, str(r))
+                title = letter + str(r)
                 self._set_cell_style(self.sheet[title], title)
                 self.sheet.column_dimensions[letter].width = Config.cell_width[letter]
 
@@ -290,7 +290,7 @@ class Save:
             if '_$color' in data.keys():
                 color = data.pop('_$color')
                 for k, v in color.items():
-                    title = '{}{}'.format(DIMENSIONS[k], self.sheet.max_row + 1)
+                    title = DIMENSIONS[k] + str(self.sheet.max_row + 1)
                     c, b = v
                     if b:
                         Config.peculiar_cell.append(title)
@@ -354,7 +354,8 @@ class Sheet:
 
         self.data = []
 
-    def _new_data(self, data):
+    @staticmethod
+    def _new_data(data):
         """
         为字典添加 _time key，用来排序
         """
@@ -490,9 +491,17 @@ class Sheet:
                         self.previous_chara[i] = player.chara
                         self.next_chara[i] = frames[index + 1].players[i].chara
 
+    def get_end_charas(self):
+        return [Chara(chara) for chara in self.previous_chara]
+
     def save(self):
         """
         对 sheet 中单元格应用样式并保存
         :return: None
         """
         Save(self.sheet, self.data).save()
+
+
+class Chara(object):
+    def __init__(self, chara):
+      self.chara = chara

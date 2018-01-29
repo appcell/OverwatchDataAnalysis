@@ -6,7 +6,6 @@ from utils import (
     chara_capitalize,
     upper,
 )
-from openpyxl.utils import get_column_letter
 from openpyxl.styles import (
     Alignment,
     Font,
@@ -85,10 +84,10 @@ def create_table(start):
     """
     col, row = start[0], int(start[1:])
     config = {
-        'player': {s: '{}{}'.format(col, row + i) for i, s in enumerate(PLAYER)},
-        'start_chara': {s: '{}{}'.format(f(col, 1), row + i) for i, s in enumerate(START_CHARA)},
-        'end_chara': {s: '{}{}'.format(f(col, 2), row + i) for i, s in enumerate(END_CHARA)},
-        'ult_number': {s: '{}{}'.format(f(col, 3), row + i) for i, s in enumerate(ULT_NUMBER)},
+        'player': {s: col + str(row + i) for i, s in enumerate(PLAYER)},
+        'start_chara': {s: f(col, 1) + str(row + i) for i, s in enumerate(START_CHARA)},
+        'end_chara': {s: f(col, 2) + str(row + i) for i, s in enumerate(END_CHARA)},
+        'ult_number': {s: f(col, 3) + str(row + i) for i, s in enumerate(ULT_NUMBER)},
     }
     return config
 
@@ -122,11 +121,11 @@ class Sheet:
         self.frames = game.frames
         self.sheet = wb['sheet2']
 
-    def new(self):
+    def new(self, end_charas):
         start, end = self.frames[0], self.frames[-1]
         self._append_player(start.players)
         self._append_chara(start.players, 'start')
-        self._append_chara(end.players, 'end')
+        self._append_chara(end_charas, 'end')
         self._append_ult_number(end.players)
         self._set_cell_team()
         self._set_cell_title()
