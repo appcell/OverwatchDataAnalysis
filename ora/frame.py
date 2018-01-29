@@ -51,6 +51,7 @@ class Frame(object):
         self.validate()
         self.free()
 
+
     def free(self):
         """Free RAM by removing images from the Frame instance.
 
@@ -65,7 +66,7 @@ class Frame(object):
         Returns:
             None 
         """
-        self.image = None
+        del self.image
 
     def get_players(self):
         """Get all players info in this frame.
