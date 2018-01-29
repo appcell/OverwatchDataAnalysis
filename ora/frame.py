@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
+from skimage import measure
 import overwatch as OW
+import gui as Gui
 from utils import image as ImageUtils
 from player import Player
 from killfeed import Killfeed
@@ -34,22 +36,22 @@ class Frame(object):
         Returns:
             None 
         """
-        self.is_valid = True
+        self.is_valid = False
         self.players = []
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, 1280, 720)
         self.time = frame_time
         self.game = game
+        if self.game.ult_colors is None:
+            self.game.set_ult_colors(self)
 
+        # Gui.gui_instance.show_progress(self.time)
         print self.time
-
         self.get_players()
         self.get_killfeeds()
         self.validate()
-
-        # if self.time == 8.5:
-
         self.free()
+
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -83,8 +85,8 @@ class Frame(object):
             player = Player(i, self)
             self.players.append(player)
 
-    def get_team_colors(self):
-        """Get team colors in this frame.
+    def get_team_colors_from_image(self):
+        """Get team colors from this frame.
 
         Author:
             Appcell
@@ -96,10 +98,55 @@ class Frame(object):
             None 
         """
         pos = OW.get_team_color_pick_pos()[self.game.game_type]
+
         return {
             "left": self.image[pos[0][0], pos[0][1]],
             "right": self.image[pos[1][0], pos[1][1]]
         }
+
+    def get_team_colors(self):
+        if self.game.team_colors is not None:
+            return self.game.team_colors
+        else:
+            return self.get_team_colors_from_image()
+
+    def get_ult_colors_from_image(self):
+        """Get ultimate charge number colors from this frame.
+
+        Author:
+            Rigel
+
+        Args:
+            None
+
+        Returns:
+            @ult_color: array of int, -1: white number, 1: black number
+        """
+        left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
+        left_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, left_pre_pos))
+        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True)[self.game.game_type])
+        left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
+        left_image = ImageUtils.crop(left_shear, left_pos)
+        left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
+        left_bin = ImageUtils.binary_otsu(left_image_g)
+
+        right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
+        right_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, right_pre_pos))
+        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False)[self.game.game_type])
+        right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
+        right_image = ImageUtils.crop(right_shear, right_pos)
+        right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
+        right_bin = ImageUtils.binary_otsu(right_image_g)
+        return {
+            "left": np.sign(2 * np.sum(left_bin) - np.size(left_bin)),
+            "right": np.sign(2 * np.sum(right_bin) - np.size(right_bin))
+        }
+
+    def get_ult_colors(self):
+        if self.game.ult_colors is not None:
+            return self.game.ult_colors
+        else:
+            return self.get_ult_colors_from_image()
 
     def get_killfeeds(self):
         """Get killfeed info in this frame.
@@ -154,6 +201,11 @@ class Frame(object):
             if player.is_dead is False:
                 flag = True
 
+        if flag == False:
+            self.is_valid = False
+            return
+        else:
+            self.is_valid = True
         validation_roi = ImageUtils.crop(self.image,
                                          OW.FRAME_VALIDATION_POS[self.game.game_type])
 
@@ -165,21 +217,34 @@ class Frame(object):
                 np.mean(validation_roi[:, :, 1]),
                 np.mean(validation_roi[:, :, 2])]
 
+
         if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
             self.is_valid = True
+        else:
+            self.is_valid = False
+            return
 
         replay_icon = ImageUtils.crop(
             self.image, OW.get_replay_icon_pos()[self.game.game_type])
-        # cv2.imshow('t', self.image)
-        # cv2.waitKey(0)
 
-        replay_match_result = cv2.matchTemplate(
-                replay_icon, self.game.replay_icon_ref, cv2.TM_CCOEFF_NORMED)
-        _, max_val, _, _ = cv2.minMaxLoc(replay_match_result)
+        replay_icon_preseason = ImageUtils.crop(
+            self.image, OW.get_replay_icon_preseason_pos()[self.game.game_type])
+        max_val = measure.compare_ssim(
+                replay_icon, self.game.replay_icon_ref, multichannel=True)
+        max_val_preseason = measure.compare_ssim(
+                replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
+        
+
+        # TODO: another situation: after replay effect there might be a blue
+        # rectangle remaining on screen.
+        max_val = max_val if max_val > max_val_preseason else max_val_preseason
         if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
             self.is_valid = True
+        else:
+            self.is_valid = False
+            return
 
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
@@ -248,8 +313,6 @@ class Frame(object):
             A dict of avatars.
         """
         all_avatars = {}
-        # print self.time
-        # 
         if self.game.team_colors is not None:
             all_avatars = self.game.avatars_ref
         else:
