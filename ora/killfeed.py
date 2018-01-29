@@ -101,7 +101,8 @@ class Killfeed:
         Returns:
             None 
         """
-        self.image = None
+        del self.image
+        del self.image_with_gap
 
     def get_players(self):
         """Get 1 (or 2) player(s) info in a killfeed row.
