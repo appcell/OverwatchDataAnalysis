@@ -131,14 +131,6 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             'current_version': 0.1,
         }
 
-        # time.sleep(1)
-        # #
-        # json_data = json_request()
-        # if version['current_version'] < json_data['current_version']:
-        #     tkMessageBox.showinfo('版本更新', '有新版本，请更新')
-        # else:
-        #     pass
-
     def info(self):
         info = {
             "name_team_left": "left",
