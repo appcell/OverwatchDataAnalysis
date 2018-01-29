@@ -42,7 +42,7 @@ def to_hex(array):
     for k, v in new_rgb.items():
         if len(v) == 1:
             new_rgb[k] = '0' + new_rgb[k]
-    return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:], is_deep
+    return (new_rgb['r'] + new_rgb['g'] + new_rgb['b']).upper(), is_deep
 
 
 def upper(name):
