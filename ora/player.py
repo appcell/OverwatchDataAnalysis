@@ -78,7 +78,7 @@ class Player:
         Returns:
             None 
         """
-        self.image = None
+        del self.image
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.
@@ -197,8 +197,8 @@ class Player:
             s_final = s if s > s_small else s_small
             loc = loc1 if s > s_small else loc2
 
-            if s_final + s_ssim > score:
-                score = s_final + s_ssim
+            if s_final*0.4 + s_ssim*0.6 > score:
+                score = s_final*0.4 + s_ssim*0.6
                 self.chara = name
 
         if self.chara is None:

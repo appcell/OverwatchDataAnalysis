@@ -359,7 +359,7 @@ AVATAR_HEIGHT_REF = 30
 # Dimensions & positions of topbar avatars in OWL (observed)
 AVATAR_X_MIN_LEFT_OWL = 62  # x of starting point from left side
 AVATAR_X_MIN_RIGHT_OWL = 854  # x of starting point from right side
-AVATAR_WIDTH_OWL = 38  # width of avatar
+AVATAR_WIDTH_OWL = 45  # width of avatar
 AVATAR_Y_MIN_OWL = 45  # y of starting point
 AVATAR_HEIGHT_OWL = 30  # height of avatar
 AVATAR_GAP_OWL = 70  # x-gap between 2 avatars
@@ -367,7 +367,7 @@ AVATAR_GAP_OWL = 70  # x-gap between 2 avatars
 # Dimensions & positions of topbar avatars in OWL (not observed)
 AVATAR_X_MIN_LEFT_SMALL_OWL = 62
 AVATAR_X_MIN_RIGHT_SMALL_OWL = 857
-AVATAR_WIDTH_SMALL_OWL = 34
+AVATAR_WIDTH_SMALL_OWL = 39
 AVATAR_Y_MIN_SMALL_OWL = 55
 AVATAR_HEIGHT_SMALL_OWL = 23
 AVATAR_GAP_SMALL_OWL = 71
@@ -375,7 +375,7 @@ AVATAR_GAP_SMALL_OWL = 71
 # Dimensions & positions of topbar avatars in custom games (observed)
 AVATAR_X_MIN_LEFT_CUSTOM = 34
 AVATAR_X_MIN_RIGHT_CUSTOM = 835
-AVATAR_WIDTH_CUSTOM = 30
+AVATAR_WIDTH_CUSTOM = 35
 AVATAR_Y_MIN_CUSTOM = 51
 AVATAR_HEIGHT_CUSTOM = 26
 AVATAR_GAP_CUSTOM = 71
