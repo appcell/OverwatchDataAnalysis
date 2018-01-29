@@ -9,7 +9,7 @@ import tkFileDialog as filedialog
 from request import json_request
 import Tkinter
 from Tkinter import (Tk,
-                     Frame, Message, Button, Entry,
+                     Frame, Message, Button, Entry, Toplevel,
                      Label, Text, X, LEFT, RIGHT)
 import overwatch as OW
 import game
@@ -19,7 +19,7 @@ def log(*args):
 
 class Gui(object):
     def __init__(self):
-        self.create_text()
+        
         self.root = Tk()
         self.root.title('Overwatch Replay Analyzer')
         self.root.geometry('500x300+400+200')
@@ -35,7 +35,7 @@ class Gui(object):
         # run
         self.run_btn = Button(self.root, text="Analyze", command=self.run)
         self.run_btn.pack()
-
+        self.create_text()
         # check for update
         self.t = threading.Thread(target=self.check_update)
         self.t.start()
@@ -98,7 +98,7 @@ class Gui(object):
         self.right_frame = right_frame
 
     def create_text(self):
-        self.notice_window = Tk()
+        self.notice_window = Toplevel(self.root)
         self.notice_window.title('Notice')
         self.notice_window.geometry('400x400+300+100')
         self.notice = Text(self.notice_window)
