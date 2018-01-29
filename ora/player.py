@@ -113,8 +113,10 @@ class Player:
         # To avoid possible explosion effect.
         # When ult gets ready, brightness of icon goes above limit.
         brightness = np.mean(ult_icon)
+        deviation = np.std(ult_icon)
 
-        if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type]:
+        if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.frame.game.game_type] \
+            and deviation < OW.ULT_ICON_MAX_DEVIATION[self.frame.game.game_type]:
             prob = 1
             self.is_ult_ready = True
             return
@@ -125,6 +127,7 @@ class Player:
                             temp_ult_icon,
                             ult_icon_ref,
                             multichannel=False)
+
             if prob_ssim > OW.ULT_ICON_MAX_PROB_SSIM[self.frame.game.game_type]:
                 self.is_ult_ready = True
 
