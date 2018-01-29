@@ -34,6 +34,14 @@ def chara_capitalize(s):
 def to_hex(array):
     b, g, r = array[0], array[1], array[2]
     is_deep = ((int(b) + int(g) + int(r)) / 3) < 95
+    new_rgb = {
+        'r': hex(r)[2:],
+        'g': hex(g)[2:],
+        'b': hex(b)[2:],
+    }
+    for k, v in new_rgb.items():
+        if len(v) == 1:
+            new_rgb[k] = '0' + new_rgb[k]
     return (hex(r) + hex(g)[2:] + hex(b)[2:]).upper()[2:], is_deep
 
 
