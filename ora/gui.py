@@ -173,7 +173,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
     def run(self):
         self.game_instance = game.Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
         self.game_instance.set_game_info(self.info())
-        self.game_instance.analyze(90, 92, is_test=False)
+        self.game_instance.analyze(289, 292, is_test=True)
         self.game_instance.output_to_excel()
         self.show_finish_msg()
 

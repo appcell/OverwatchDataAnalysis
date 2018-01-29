@@ -74,6 +74,7 @@ class Killfeed:
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
 
+
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
@@ -132,14 +133,23 @@ class Killfeed:
         # Differentiate results from 2 sides first, or it gets seriously wrong
         mean_pos = np.mean([i['pos'] for i in icons_weights])
         icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
-        icons_weights_right = [i for i in icons_weights if i['pos'] > mean_pos]
+        icons_weights_right = [i for i in icons_weights if i['pos'] >= mean_pos]
         mean_pos_left = np.mean([i['pos'] for i in icons_weights_left])
         mean_pos_right = np.mean([i['pos'] for i in icons_weights_right])
+
 
         if mean_pos_right < OW.KILLFEED_WIDTH[self.game_type] \
                 - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
             self.is_valid = False
             return
+        if len(icons_weights) == 1 and mean_pos_right \
+            >= OW.KILLFEED_WIDTH[self.game_type] \
+            - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+            # Only one icon exists
+            if icons_weights and icons_weights[0]['pos'] \
+                >= OW.KILLFEED_WIDTH[self.game_type] \
+                - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+                self.player2 = self._set_player_info(icons_weights[0], 'right')
 
         if abs(mean_pos_right - mean_pos_left) \
                 < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
@@ -370,7 +380,6 @@ class Killfeed:
         # Another possible error: tm takes assist icon as a full avatar. This
         # is a bit tricky and my solution is not really optimal. I directly
         # remove those far from left/right edges.
-
         min_pos = 1000
         max_pos = 0
         for chara in result:
@@ -378,6 +387,9 @@ class Killfeed:
                 min_pos = chara['pos']
             if chara['pos'] > max_pos:
                 max_pos = chara['pos']
+
+        if len(result) < 2:
+            return result
 
         # calculate distance between each pair of potential recogs, then
         # remove those which are never visited

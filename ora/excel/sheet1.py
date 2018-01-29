@@ -330,7 +330,6 @@ class Sheet:
         # 初始化
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
-        print self.game.team_colors
         if self.game.team_colors is None:
             Config.team_colors[self.game.team_names['left']] = utils.to_hex([255, 255, 255])
             Config.team_colors[self.game.team_names['right']] = utils.to_hex([70, 70, 70])
