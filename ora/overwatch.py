@@ -168,15 +168,25 @@ def get_ult_icon_pos(index):
 def get_ult_icon_ref(index):
     if index < 6:
         return {
-            GAMETYPE_OWL: ImageUtils.read("./images/ultimate/awayUlt.png"),
-            GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/awayUlt.png")
+            "normal": {
+              GAMETYPE_OWL: ImageUtils.read("./images/ultimate/awayUlt.png"),
+              GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/awayUlt.png")
+            },
+            "light": {
+              GAMETYPE_OWL: ImageUtils.read("./images/ultimate/awayUlt.png"),
+              GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/awayUlt.png")
+            }
         }
     return {
-        GAMETYPE_OWL: ImageUtils.read("./images/ultimate/homeUlt.png"),
-        GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/homeUlt.png")
+        "normal": {
+          GAMETYPE_OWL: ImageUtils.read("./images/ultimate/homeUlt.png"),
+          GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/homeUlt.png")
+        },
+        "light": {
+          GAMETYPE_OWL: ImageUtils.read("./images/ultimate/homeUlt_light.png"),
+          GAMETYPE_CUSTOM: ImageUtils.read("./images/ultimate/homeUlt_light.png")
+        }
     }
-
-
 # **********************************************************
 # ==========================================================
 #              Ultimate Charge Position Defs

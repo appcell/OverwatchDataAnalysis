@@ -64,6 +64,9 @@ class Player:
         self.get_chara()
         self.get_ult_charge()
         self.free()
+        if self.index == 8:
+            print self.is_ult_ready
+            print self.is_dead
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -98,8 +101,18 @@ class Player:
             self.index)[self.frame.game.game_type]
         ult_icon = ImageUtils.crop(self.image, ult_icon_pos)
         # Get reference icon image
-        ult_icon_ref = OW.get_ult_icon_ref(
-            self.index)[self.frame.game.game_type]
+        ult_icon_ref = OW.get_ult_icon_ref(self.index)["normal"][self.frame.game.game_type]
+
+        # if self.index > 100:
+        #     team_color = self.frame.get_team_colors()["right"]
+        #     print np.mean(team_color)
+        #     if np.mean(team_color) < 190:
+        #         ult_icon_ref = OW.get_ult_icon_ref(self.index)["normal"][self.frame.game.game_type]
+        #     else:
+        #         ult_icon_ref = OW.get_ult_icon_ref(self.index)["light"][self.frame.game.game_type]
+        # else:
+        #     ult_icon_ref = OW.get_ult_icon_ref(self.index)["normal"][self.frame.game.game_type]
+
         # Tranfer both to grayscale for comparison
         ult_icon_ref, ult_icon = ImageUtils.rgb_to_gray(
             ult_icon_ref), ImageUtils.rgb_to_gray(ult_icon)
