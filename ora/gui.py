@@ -99,22 +99,33 @@ class Gui(object):
         self.right_frame = right_frame
 
     def create_time_inputs(self):
-        self.time_label = Label(self.root, text="Input start & end time of video clip for analysis. If both are 0, full video will be analyzed.")
-        self.time_label.pack()
-
         time_inputs_frame = Frame(self.root)
         time_inputs_frame.pack(fill=X, expand=1)
-        start_time = Entry(time_inputs_frame, bg='pink', fg='black')
-        start_time.insert(0, 'Start time in seconds')
+
+        left_frame = Frame(time_inputs_frame)
+        left_frame.pack(side=LEFT)
+
+        label_start_time = Label(left_frame, text="Start time in seconds (0 = start from beginning):")
+        label_end_time = Label(left_frame, text="End time in seconds (0 = analyze till the end):")
+        label_fps = Label(left_frame, text='FPS of analyzer:')
+        label_start_time.pack()
+        label_end_time.pack()
+        label_fps.pack()
+
+        right_frame = Frame(time_inputs_frame)
+        right_frame.pack(side=RIGHT)
+
+        start_time = Entry(right_frame, bg='lightBlue', fg='black')
+        start_time.insert(0, '0')
         start_time.pack()
-        end_time = Entry(time_inputs_frame, bg='lightBlue', fg='black')
-        end_time.insert(0, 'End time in seconds')
+        end_time = Entry(right_frame, bg='lightBlue', fg='black')
+        end_time.insert(0, '0')
         end_time.pack()
-        fps = Entry(time_inputs_frame, bg='lightBlue', fg='black')
-        fps.insert(0, 'FPS for analysis')
+        fps = Entry(right_frame, bg='lightBlue', fg='black')
+        fps.insert(0, '2')
         fps.pack()
 
-        self.time_inputs_frame = time_inputs_frame
+        self.time_inputs_frame = right_frame
     def create_text(self):
         self.notice_window = Toplevel(self.root)
         self.notice_window.title('Notice')
