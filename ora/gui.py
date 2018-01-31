@@ -30,6 +30,7 @@ class Gui(object):
         self.right_frame = None
         # path
         self.create_path()
+        self.create_time_inputs()
         # player
         self.create_player()
         # run
@@ -97,6 +98,23 @@ class Gui(object):
         self.left_frame = left_frame
         self.right_frame = right_frame
 
+    def create_time_inputs(self):
+        self.time_label = Label(self.root, text="Input start & end time of video clip for analysis. If both are 0, full video will be analyzed.")
+        self.time_label.pack()
+
+        time_inputs_frame = Frame(self.root)
+        time_inputs_frame.pack(fill=X, expand=1)
+        start_time = Entry(time_inputs_frame, bg='pink', fg='black')
+        start_time.insert(0, 'Start time in seconds')
+        start_time.pack()
+        end_time = Entry(time_inputs_frame, bg='lightBlue', fg='black')
+        end_time.insert(0, 'End time in seconds')
+        end_time.pack()
+        fps = Entry(time_inputs_frame, bg='lightBlue', fg='black')
+        fps.insert(0, 'FPS for analysis')
+        fps.pack()
+
+        self.time_inputs_frame = time_inputs_frame
     def create_text(self):
         self.notice_window = Toplevel(self.root)
         self.notice_window.title('Notice')
@@ -132,6 +150,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         }
 
     def info(self):
+        valid = True
         info = {
             "name_team_left": "left",
             "name_team_right": "right",
@@ -139,13 +158,47 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             "name_players_team_right": [],
             "video_path": "/",
             "output_path": "/",
+            "start_time": 0,
+            "end_time": 0,
+            "fps": 0
         }
         frame_left = self.left_frame.pack_slaves()
         frame_right = self.right_frame.pack_slaves()
-
+        time_inputs_frame = self.time_inputs_frame.pack_slaves()
         info['name_team_left'] = frame_left[0].get()
         info['name_team_right'] = frame_right[0].get()
-        #
+        try:
+            info['start_time'] = int(time_inputs_frame[0].get())
+        except ValueError:
+            tkMessageBox.showinfo('Error', 'Invalid video start time!')
+            valid = False
+            return [info, valid]
+
+        try:
+            info['end_time'] = int(time_inputs_frame[1].get())
+        except ValueError:
+            tkMessageBox.showinfo('Error', 'Invalid video end time!')
+            valid = False
+            return [info, valid]
+
+        try:
+            info['fps'] = int(time_inputs_frame[2].get())
+        except ValueError:
+            tkMessageBox.showinfo('Error', 'Invalid analysis fps!')
+            valid = False
+            return [info, valid]
+
+        if not (info['end_time'] >= 0 and info['start_time'] >= 0 \
+            and info['end_time'] >= info['start_time']):
+            tkMessageBox.showinfo('Error', 'Invalid video end time!')
+            valid = False
+            return [info, valid]
+
+        if not (info['fps'] > 0):
+            tkMessageBox.showinfo('Error', 'Invalid analysis fps!')
+            valid = False
+            return [info, valid]
+
         team_left = []
         team_right = []
         for i in range(1, 7):
@@ -159,7 +212,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         info['video_path'] = self.read_path['text']
         info['output_path'] = self.save_path['text']
 
-        return info
+        return [info, valid]
 
     def show(self):
         self.root.mainloop()
@@ -171,10 +224,15 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.notice.insert(Tkinter.INSERT, str(progress))
 
     def run(self):
-        self.game_instance = game.Game(OW.GAMETYPE_OWL, OW.ANALYZER_FPS)
-        self.game_instance.set_game_info(self.info())
-        self.game_instance.analyze(324, 333, is_test=True)
-        self.game_instance.output_to_excel()
-        self.show_finish_msg()
+        self.game_instance = game.Game(OW.GAMETYPE_OWL)
+        info, valid = self.info()
+        if valid is True:
+            self.game_instance.set_game_info(info)
+            if info['start_time'] == 0 and info['end_time'] == 0:
+                self.game_instance.analyze(0, 0, is_test=False)
+            else:
+                self.game_instance.analyze(info['start_time'], info['end_time'], is_test=True)
+            self.game_instance.output_to_excel()
+            self.show_finish_msg()
 
 gui_instance = Gui()
