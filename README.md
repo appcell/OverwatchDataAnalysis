@@ -6,7 +6,7 @@ Overwatch Replay Analyzer (ORA) v0.1 Beta is a free software developed by a bunc
 
 1. Elimination(Killer, killed player, ability, assis players)
 2. Resurrection (Resurrector, resurrected player)
-3. Ult charged/Ult used
+3. Ult charged/ult used
 4. Chara switching
 
 The released binaries & source code of ORA are published under GPL v3 license. It's free for all to redistribute and modify under the terms of the GPL v3.
@@ -21,26 +21,26 @@ OS: Windows 7, 8 & 10
 2. Choose the video file to be analysed in `Video path`
 3. Choose the output path in `Save to`
 4. Input team names: team on left side in `Team A`, team on right side in `Team B`
-5. Input player names
+5. Input player names (1-6, 7-12 from left to right)
 6. Click on `Analyze` and wait
 
 ### Video file requirements
 
-The video has to be full-screened without any watermark during the match.
+_The video has to be full-screened without any watermark during the match._
 
-Resolution should be no less than 720p. 
+_Resolution should be no less than 720p._
 
-All events in the same video will be output to the same timeline. Thus it's strongly recommended not to include more than 1 matches in the same video.
+All events in the same video will be outputed to the same timeline. Thus _it's strongly recommended not to include more than 1 matches in one video_.
 
 ## Bug report
 
-If the programme doesn't run, or its output isn't what you expect, please submit a new issue in:
+If the program doesn't run, or its output isn't what you expect, please submit a new issue in:
 https://github.com/appcell/OverwatchDataAnalysis/issues
 
-A good issue includes:
-1. description of your problem
+An issue usually includes:
+1. problem description
 2. name & version of your operating system
-3. specify the match or the video file you're analyzing, and when the problem happens
+3. specify the match or the video file you analyze, and when the problem happens
 4. the outputed `.xlsx` file (if exists)
 5. contact info (if you don't check your email that often)
 
