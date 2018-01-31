@@ -52,6 +52,13 @@ class Frame(object):
         self.validate()
         self.free()
 
+        for player in self.players:
+            print "++++++++"
+            print player.index
+            print player.chara
+            print player.is_dead
+        print "==========="
+
 
     def free(self):
         """Free RAM by removing images from the Frame instance.

@@ -51,6 +51,7 @@ class Player:
             self.team = self.frame.game.team_names['right']
         self.chara = None
         self.is_ult_ready = False
+        self.is_ult_2_ready = False
         self.is_dead = False
         self.is_observed = None
         self.ult_charge = 0
