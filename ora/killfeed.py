@@ -305,7 +305,7 @@ class Killfeed:
         killfeed image.
 
         Author:
-            Leavebody
+            Leavebody, Appcell
 
         Args:
             edge_validation: A list of booleans. Should be the result of
