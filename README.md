@@ -1,3 +1,55 @@
+# Overwatch Replay Analyzer (ORA) v0.1 Beta
+
+## Introduction
+
+Overwatch Replay Analyzer (ORA) v0.1 Beta is a free software developed by a bunch of fans of competitive Overwatch games. ORA can extract a timeline of events from a third-person perspective replay video, and then output to an Excel file. Currenly our effort is limited to OWL videos only. In our latest version, a timeline includes:
+
+1. Elimination(Killer, killed player, ability, assis players)
+2. Resurrection (Resurrector, resurrected player)
+3. Ult charged/Ult used
+4. Chara switching
+
+The released binaries & source code of ORA are published under GPL v3 license. It's free for all to redistribute and modify under the terms of the GPL v3.
+
+## Environment requirements
+
+OS: Windows 7, 8 & 10
+
+## Usage
+
+1. Download & extract to a directory, then double click on `main.exe` to run
+2. Choose the video file to be analysed in `Video path`
+3. Choose the output path in `Save to`
+4. Input team names: team on left side in `Team A`, team on right side in `Team B`
+5. Input player names
+6. Click on `Analyze` and wait
+
+### Video file requirements
+
+The video has to be full-screened without any watermark during the match.
+
+Resolution should be no less than 720p. 
+
+All events in the same video will be output to the same timeline. Thus it's strongly recommended not to include more than 1 matches in the same video.
+
+## Bug report
+
+If the programme doesn't run, or its output isn't what you expect, please submit a new issue in:
+https://github.com/appcell/OverwatchDataAnalysis/issues
+
+A good issue includes:
+1. description of your problem
+2. name & version of your operating system
+3. specify the match or the video file you're analyzing, and when the problem happens
+4. the outputed `.xlsx` file (if exists)
+5. contact info (if you don't check your email that often)
+
+Thank you for your help & support!
+
+
+* * *
+
+
 # 守望先锋录像分析器 v0.1 公测版
 
 Overwatch Replay Analyzer (ORA) v0.1 Beta
@@ -14,8 +66,6 @@ Overwatch Replay Analyzer (ORA) v0.1 Beta
 ORA的发行版及其源码遵从 GPL v3 许可，免费供所有爱好者获取和使用。商业性使用请参阅源码中附带的 GPL v3 许可协议以获取法律信息。
 
 ## 运行环境
-
-### 运行环境
 
 GUI版本： Windows 8, Windows 10
 
