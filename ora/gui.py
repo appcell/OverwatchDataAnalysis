@@ -21,7 +21,7 @@ class Gui(object):
     def __init__(self):
         
         self.root = Tk()
-        self.root.title('Overwatch Replay Analyzer')
+        self.root.title('Overwatch Replay Analyzer v0.1 Beta')
         self.root.geometry('500x300+400+200')
 
         self.read_path = None
@@ -218,7 +218,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.root.mainloop()
 
     def show_finish_msg(self):
-        tkMessageBox.showinfo('一个微小的弹窗', '保存成功！')
+        tkMessageBox.showinfo('An alert box', 'Output file successfully saved!')
 
     def show_progress(self, progress):
         self.notice.insert(Tkinter.INSERT, str(progress))

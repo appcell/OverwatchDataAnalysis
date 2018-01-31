@@ -157,14 +157,14 @@ class Sheet:
         """
         left, right = Config.LEFT, Config.RIGHT
         for c in [left, right]:
-            self.set_cell_value(c['start_chara']['title'], '首发阵容')
+            self.set_cell_value(c['start_chara']['title'], 'Starting lineup')
             self.set_cell_value(c['start_chara']['empty'], '')
-            self.set_cell_value(c['end_chara']['title'], '最终阵容')
+            self.set_cell_value(c['end_chara']['title'], 'Final lineup')
             self.set_cell_value(c['end_chara']['empty'], '')
-            self.set_cell_value(c['ult_number']['title'], '最终能量')
+            self.set_cell_value(c['ult_number']['title'], 'Final ult charge')
             self.set_cell_value(c['ult_number']['empty'], '')
-        self.set_cell_value(left['player']['title'], '战队1 客场')
-        self.set_cell_value(right['player']['title'], '战队2 主场')
+        self.set_cell_value(left['player']['title'], 'Team A (away)')
+        self.set_cell_value(right['player']['title'], 'Team B (home)')
 
     def set_cell_value(self, cell, value, flag=0):
         """
