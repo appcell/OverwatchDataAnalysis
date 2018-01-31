@@ -34,7 +34,7 @@ class Game(object):
         ability_icons_ref: list of all killfeed reference ability icons
     """
 
-    def __init__(self, game_type, analyzer_fps):
+    def __init__(self, game_type):
         """Initialize a Game object.
 
         Author:
@@ -50,7 +50,7 @@ class Game(object):
             None 
         """
         self.game_type = game_type
-        self.analyzer_fps = analyzer_fps
+        self.analyzer_fps = OW.ANALYZER_FPS
         self.team_names = {"left": "", "right": ""}
         self.name_players_team_left = []
         self.name_players_team_right = []
@@ -115,6 +115,7 @@ class Game(object):
             + '/' \
             + filename[:filename.index('.')] + '.xlsx'
 
+        self.analyzer_fps = gui_info["fps"]
         if gui_info["name_team_left"]:
             self.team_names['left'] = gui_info["name_team_left"]
         else:
