@@ -170,7 +170,7 @@ def set_action(obj):
         return 'Resurrect'
     elif player2['chara'] == 'meka':
         return 'Demech'
-    elif player1['chara'] is 'empty' and player1['team'] is 'empty' and player2['chara'] is not None:
+    elif player1['chara'] == 'empty' and player1['team'] == 'empty' and player2['chara'] is not None:
         return "Suicide"
     else:
         return 'Eliminate'
@@ -399,7 +399,7 @@ class Sheet:
             d['object player'] = (get_player_name(player2,
                                                   get_player_team_index(player2['team'], self.game.team_names),
                                                   self.player_and_chara, self.previous_chara))
-            if obj.is_headshot:
+            if obj.is_headshot and d['action'] != 'Resurrect':
                 d['critical kill'] = 'Y'
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
@@ -436,6 +436,8 @@ class Sheet:
                 }
             }
             index = player.index + 1
+            # TODO 判断是否为小dva，小dva死的情况下把对应的大招状态清空
+            # 小dva活着的情况下判断is_ult_ready。
             if player.is_ult_ready and not status[index]:
                 status[index] = True
                 d['action'] = 'Ult ready'
@@ -503,4 +505,4 @@ class Sheet:
 
 class Chara(object):
     def __init__(self, chara):
-      self.chara = chara
+        self.chara = chara
