@@ -350,6 +350,9 @@ class Sheet:
         # 当前所有玩家的 玩家名以及信息， 如[(player, chara), ...]
         self.player_and_chara = []
 
+        # 当前所有玩家的大招能量值
+        self.ult_charge = []
+
         self.data = []
 
     @staticmethod
@@ -452,9 +455,10 @@ class Sheet:
         通过跟 self.previous_chara 的比对来判定玩家是否更换英雄
         同时这个函数维护着
         self.previous_chara 以及 self.next_chara
+        self.ult_charge
         作者目前没想到好的方法 把这个函数功能拆分成 
-        1. 维护上面2个 list
-        2. 通过上面2个 list以及当前英雄list 来判断英雄是否更换
+        1. 维护上面3个 list
+        2. 通过上面2个 list(self.previous_chara, self.next_chara)以及当前英雄list 来判断英雄是否更换
         
         :param players: 12个player类构成的 list ， 对应12个玩家
         :param time: 当前时间
@@ -472,28 +476,33 @@ class Sheet:
                 next_chara = self.next_chara[i]
                 if player.is_dead:
                     continue
-                elif top_chara != player.chara:
-                    if top_chara == next_chara:
-                        self.next_chara[i] = frames[index + 2].players[i].chara
-                        continue
-                    elif player.chara == next_chara:
-                        d = {
-                            'time': time - 2,
-                            'action': 'Hero switch',
-                            'subject player': player.name,
-                            'subject hero': player.chara,
-                            'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
+                else:
+                    self.ult_charge[i] = player.ult_charge
+                    if top_chara != player.chara:
+                        if top_chara == next_chara:
+                            self.next_chara[i] = frames[index + 2].players[i].chara
+                            continue
+                        elif player.chara == next_chara:
+                            d = {
+                                'time': time - 2,
+                                'action': 'Hero switch',
+                                'subject player': player.name,
+                                'subject hero': player.chara,
+                                'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
 
-                            '_$color': {
-                                'subject player': Config.team_colors[player.team],
+                                '_$color': {
+                                    'subject player': Config.team_colors[player.team],
+                                }
                             }
-                        }
-                        self._append(**d)
-                        self.previous_chara[i] = player.chara
-                        self.next_chara[i] = frames[index + 1].players[i].chara
+                            self._append(**d)
+                            self.previous_chara[i] = player.chara
+                            self.next_chara[i] = frames[index + 1].players[i].chara
 
     def get_end_charas(self):
         return [Chara(chara) for chara in self.previous_chara]
+
+    def get_end_ult_charge(self):
+        return self.ult_charge
 
     def save(self):
         """
