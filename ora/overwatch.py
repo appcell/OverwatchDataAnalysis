@@ -230,14 +230,36 @@ ULT_CHARGE_NUMBER_WIDTH_OBSERVED = {
             GAMETYPE_OWL: 9,
             GAMETYPE_CUSTOM: 9
         }
-ULT_CHARGE_IMG_WIDTH_OWL = 6
 ULT_CHARGE_Y_MIN_OWL = 1
-ULT_CHARGE_IMG_HEIGHT_OWL = 16
-ULT_CHARGE_HEIGHT_OWL = 25
+
+ULT_CHARGE_HEIGHT = {
+            GAMETYPE_OWL: 25,
+            GAMETYPE_CUSTOM: 25
+        }
 ULT_GAP_DEVIATION_LIMIT = {
             GAMETYPE_OWL: 0.20,
             GAMETYPE_CUSTOM: 0.20
         }
+
+# For img read-in
+ULT_CHARGE_IMG_WIDTH = {
+            GAMETYPE_OWL: 6,
+            GAMETYPE_CUSTOM: 6
+        }
+ULT_CHARGE_IMG_WIDTH_OBSERVED = {
+            GAMETYPE_OWL: 7,
+            GAMETYPE_CUSTOM: 7
+        }
+
+ULT_CHARGE_IMG_HEIGHT = {
+            GAMETYPE_OWL: 16,
+            GAMETYPE_CUSTOM: 16
+        }
+ULT_CHARGE_IMG_HEIGHT_OBSERVED = {
+            GAMETYPE_OWL: 18,
+            GAMETYPE_CUSTOM: 18
+        }
+
 
 
 #  TODO: Custom game
@@ -321,7 +343,7 @@ def get_ult_charge_pos(index):
     if index < 6:
         return {
             GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_HEIGHT[GAMETYPE_OWL],
                            ULT_CHARGE_X_MIN_LEFT_OWL,
                            ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
             GAMETYPE_CUSTOM: []
@@ -329,7 +351,7 @@ def get_ult_charge_pos(index):
     else:
         return {
             GAMETYPE_OWL: [ULT_CHARGE_Y_MIN_OWL,
-                           ULT_CHARGE_HEIGHT_OWL,
+                           ULT_CHARGE_HEIGHT[GAMETYPE_OWL],
                            ULT_CHARGE_X_MIN_RIGHT_OWL,
                            ULT_CHARGE_WIDTH[GAMETYPE_OWL]],
             GAMETYPE_CUSTOM: []
@@ -337,13 +359,29 @@ def get_ult_charge_pos(index):
 
 
 def get_ult_charge_numbers_ref():
-    ult_charge_icons_ref_owl = np.empty([11, ULT_CHARGE_IMG_HEIGHT_OWL, ULT_CHARGE_IMG_WIDTH_OWL], dtype='bool')
-    ult_charge_icons_ref_custom = None
-    for i in range(0, 11):
-        ult_charge_icons_ref_owl[i] = ImageUtils.read_bw("./images/ultimate/owl/" + str(i) + ".png")
+    ult_charge_icons_ref_owl = []
+    ult_charge_icons_ref_custom = []
+    ult_charge_icons_observed_ref_owl = []
+    ult_charge_icons_observed_ref_custom = []
+
+    for i in range(0, 10):
+        img = ImageUtils.rgb_to_gray(ImageUtils.read("./images/ultimate/owl/" + str(i) + ".png"))
+        ult_charge_icons_ref_owl.append(img)
+        ult_charge_icons_observed_ref_owl.append(ImageUtils.resize(
+            img,
+            int(img.shape[1] * ULT_CHARGE_IMG_HEIGHT_OBSERVED[GAMETYPE_OWL]/img.shape[0]),
+            ULT_CHARGE_IMG_HEIGHT_OBSERVED[GAMETYPE_OWL]
+            ))
+
     return {
-        GAMETYPE_OWL: ult_charge_icons_ref_owl,
-        GAMETYPE_CUSTOM: ult_charge_icons_ref_custom
+        GAMETYPE_OWL: {
+            "observed": ult_charge_icons_observed_ref_owl,
+            "normal": ult_charge_icons_ref_owl
+        },
+        GAMETYPE_CUSTOM: {
+            "observed": ult_charge_icons_observed_ref_custom,
+            "normal": ult_charge_icons_ref_custom
+        }       
     }
 
 

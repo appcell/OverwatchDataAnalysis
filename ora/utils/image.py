@@ -176,6 +176,8 @@ def read_bw(path):
     img_gray = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     return img_gray > 127
 
+def float_to_uint8(img):
+    return (img * 255).astype('uint8')
 
 def resize(img, dest_width, dest_height):
     """
