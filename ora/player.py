@@ -63,7 +63,6 @@ class Player:
         self.get_ult_status()
         self.get_chara()
         self.get_ult_charge()
-        print self.ult_charge
         self.free()
 
     def free(self):
@@ -240,7 +239,8 @@ class Player:
         """Retrieves ultimate charge for current player.
 
         Author:
-
+            Appcell
+            
         Args:
             None
 
