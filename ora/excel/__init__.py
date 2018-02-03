@@ -26,6 +26,6 @@ class Excel(object):
 
     def save(self):
         self.sheet1.new()
-        self.sheet2.new(self.sheet1.get_end_charas())
+        self.sheet2.new(self.sheet1.get_end_charas(), self.sheet1.get_end_ult_charge())
         self.sheet3.new()
         self._wb.save(self.game.output_path)
