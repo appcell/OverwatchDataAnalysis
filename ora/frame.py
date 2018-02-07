@@ -42,8 +42,6 @@ class Frame(object):
         self.image = ImageUtils.resize(frame_image, 1280, 720)
         self.time = frame_time
         self.game = game
-        if self.game.ult_colors is None:
-            self.game.set_ult_colors(self)
 
         # Gui.gui_instance.show_progress(self.time)
         print self.time
@@ -108,44 +106,6 @@ class Frame(object):
             return self.game.team_colors
         else:
             return self.get_team_colors_from_image()
-
-    def get_ult_colors_from_image(self):
-        """Get ultimate charge number colors from this frame.
-
-        Author:
-            Rigel
-
-        Args:
-            None
-
-        Returns:
-            @ult_color: array of int, -1: white number, 1: black number
-        """
-        left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
-        left_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, left_pre_pos))
-        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True)[self.game.game_type])
-        left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
-        left_image = ImageUtils.crop(left_shear, left_pos)
-        left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
-        left_bin = ImageUtils.binary_otsu(left_image_g)
-
-        right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
-        right_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, right_pre_pos))
-        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False)[self.game.game_type])
-        right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
-        right_image = ImageUtils.crop(right_shear, right_pos)
-        right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
-        right_bin = ImageUtils.binary_otsu(right_image_g)
-        return {
-            "left": np.sign(2 * np.sum(left_bin) - np.size(left_bin)),
-            "right": np.sign(2 * np.sum(right_bin) - np.size(right_bin))
-        }
-
-    def get_ult_colors(self):
-        if self.game.ult_colors is not None:
-            return self.game.ult_colors
-        else:
-            return self.get_ult_colors_from_image()
 
     def get_killfeeds(self):
         """Get killfeed info in this frame.
