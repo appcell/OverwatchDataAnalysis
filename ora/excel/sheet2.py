@@ -161,8 +161,8 @@ class Sheet:
             self.set_cell_value(c['start_chara']['empty'], '')
             self.set_cell_value(c['end_chara']['title'], 'Final lineup')
             self.set_cell_value(c['end_chara']['empty'], '')
-            self.set_cell_value(c['ult_number']['title'], 'Final ult charge')
-            self.set_cell_value(c['ult_number']['empty'], '')
+            self.set_cell_value(c['ult_charge']['title'], 'Final ult charge')
+            self.set_cell_value(c['ult_charge']['empty'], '')
         self.set_cell_value(left['player']['title'], 'Team A (away)')
         self.set_cell_value(right['player']['title'], 'Team B (home)')
 
@@ -223,4 +223,4 @@ class Sheet:
                 cell = Config.LEFT['ult_charge']['charge{}'.format(i + 1)]
             else:
                 cell = Config.RIGHT['ult_charge']['charge{}'.format(i - 5)]
-            self.set_cell_value(cell, charge, 2)
+            self.set_cell_value(cell, str(charge) + '%', 2)
