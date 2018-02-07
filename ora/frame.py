@@ -37,6 +37,7 @@ class Frame(object):
             None 
         """
         self.is_valid = False
+        self.is_replay = False
         self.players = []
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, 1280, 720)
@@ -166,16 +167,12 @@ class Frame(object):
             self.is_valid = True
         validation_roi = ImageUtils.crop(self.image,
                                          OW.FRAME_VALIDATION_POS[self.game.game_type])
-
         std = np.max([np.std(validation_roi[:, :, 0]),
                       np.std(validation_roi[:, :, 1]),
                       np.std(validation_roi[:, :, 2])])
-
         mean = [np.mean(validation_roi[:, :, 0]),
                 np.mean(validation_roi[:, :, 1]),
                 np.mean(validation_roi[:, :, 2])]
-
-
         if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
                 and flag is True:
@@ -193,7 +190,6 @@ class Frame(object):
                 replay_icon, self.game.replay_icon_ref, multichannel=True)
         max_val_preseason = measure.compare_ssim(
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
-        
 
         # TODO: another situation: after replay effect there might be a blue
         # rectangle remaining on screen.
@@ -202,6 +198,7 @@ class Frame(object):
             self.is_valid = True
         else:
             self.is_valid = False
+            self.is_replay = True
             return
 
         if self.is_valid is True and self.game.team_colors is None:
