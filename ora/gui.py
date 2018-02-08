@@ -22,7 +22,7 @@ class Gui(object):
         
         self.root = Tk()
         self.root.title('Overwatch Replay Analyzer v0.1 Beta')
-        self.root.geometry('500x300+400+200')
+        self.root.geometry('550x300+400+200')
 
         self.read_path = None
         self.save_path = None
@@ -239,10 +239,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         info, valid = self.info()
         if valid is True:
             self.game_instance.set_game_info(info)
-            if info['start_time'] == 0 and info['end_time'] == 0:
-                self.game_instance.analyze(0, 0, is_test=False)
-            else:
-                self.game_instance.analyze(info['start_time'], info['end_time'], is_test=True)
+            self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
             self.game_instance.output_to_excel()
             self.show_finish_msg()
 

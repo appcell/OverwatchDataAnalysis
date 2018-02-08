@@ -25,7 +25,8 @@ class Game(object):
                      }
         video_path: video path
         output_path: output path
-        is_test: if is in test mode
+        is_test: if is in test mode. If true, analysis result would be
+                 temporarily output to a .txt file.
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -131,7 +132,9 @@ class Game(object):
             Appcell
 
         Args:
-            None
+            start_time: timestamp since when the analysis starts
+            end_time: timestamp till when the analysis ends
+            is_test: tell if the Game instance is in test mode
 
         Returns:
             None 
@@ -140,15 +143,16 @@ class Game(object):
         step = int(round(video.fps/self.analyzer_fps))
         step_cnt = 0
         self.is_test = is_test
-
-        start_time = start_time if is_test else 0
-        # For testing we specify start/end time.
-        # But for release version we don't.
+        is_full_video = True if (start_time == end_time and end_time == 0) \
+                        else False
+        # For a video clip we specify start/end time.
+        # But for a full video we don't.
+        start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None \
-            and (frame_image_index < video.frame_number and is_test is False) \
-            or (frame_image_index < end_time * video.fps and is_test is True):
+            and (frame_image_index < video.frame_number and is_full_video is True) \
+            or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = Frame(frame_image,
                           start_time +
                           (1 / float(self.analyzer_fps)) * step_cnt,
