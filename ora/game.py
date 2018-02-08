@@ -218,7 +218,6 @@ class Game(object):
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
-
         # 2) Remove invalid frames
         self.frames = list(filter(
             lambda frame: frame.is_valid is True,
