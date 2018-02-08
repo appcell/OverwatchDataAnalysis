@@ -2,7 +2,7 @@
 """
 @Author: Komorebi 
 """
-from utils import (
+from .utils import (
     chara_capitalize,
     upper,
 )

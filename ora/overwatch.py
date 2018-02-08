@@ -1,4 +1,4 @@
-from utils import image as ImageUtils
+from .utils import image as ImageUtils
 import os
 import numpy as np
 
@@ -793,7 +793,7 @@ def get_ability_icons_ref():
     """
     res_owl = {}
     res_custom = {}
-    for (chara, ability_list) in ABILITY_LIST.iteritems():
+    for (chara, ability_list) in ABILITY_LIST.items():
         icons_list_owl = []
         icons_list_custom = []
         for i in ability_list:

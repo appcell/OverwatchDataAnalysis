@@ -3,9 +3,9 @@
 @Author: Komorebi 
 """
 from openpyxl import Workbook
-from sheet1 import Sheet as Sheet1
-from sheet2 import Sheet as Sheet2
-from sheet3 import Sheet as Sheet3
+from .sheet1 import Sheet as Sheet1
+from .sheet2 import Sheet as Sheet2
+from .sheet3 import Sheet as Sheet3
 
 
 def create_sheet():

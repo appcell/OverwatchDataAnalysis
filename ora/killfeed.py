@@ -3,8 +3,8 @@ import numpy as np
 from operator import itemgetter
 from skimage import measure
 
-import overwatch as OW
-from utils import image as ImageUtils
+from . import overwatch as OW
+from .utils import image as ImageUtils
 
 
 class Killfeed:
@@ -322,7 +322,7 @@ class Killfeed:
             }
         """
         result = []
-        for (chara, icon) in self.frame.game.killfeed_icons_ref.iteritems():
+        for (chara, icon) in self.frame.game.killfeed_icons_ref.items():
             match_result = cv2.matchTemplate(
                 self.image, icon, cv2.TM_CCOEFF_NORMED)
             # Find two most possible location of this character's icon in the killfeed image.
@@ -520,7 +520,7 @@ class Killfeed:
                 "team": self.player1['team']
             }
             max_score = -10
-            for (chara, icon) in self.frame.game.assist_icons_ref.iteritems():
+            for (chara, icon) in self.frame.game.assist_icons_ref.items():
                 score = measure.compare_ssim(assist_icon,
                                              icon, multichannel=True)
 
@@ -577,10 +577,14 @@ class Killfeed:
             None
 
         """
+        if self.player2['pos'] == -1:
+            return
         ability_pos = OW.get_ability_icon_pos(
             self.player2['pos'])[self.game_type]
-        color = self.image_with_gap[ability_pos[
-            0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
+        print(int(ability_pos[0] + ability_pos[1]/2), 
+                ability_pos[2] + ability_pos[3] + 6)
+        color = self.image_with_gap[int(ability_pos[0] + ability_pos[1]/2), 
+                ability_pos[2] + ability_pos[3] + 6]
 
         # TODO: Write consts here into ow.py
         if ImageUtils.color_distance(color, np.array([255, 255, 255])) > 40:

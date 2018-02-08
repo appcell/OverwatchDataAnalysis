@@ -1,7 +1,7 @@
-import overwatch as OW
-from frame import Frame
-from utils.video_loader import VideoLoader
-from excel import Excel
+from . import overwatch as OW
+from .frame import Frame
+from .utils.video_loader import VideoLoader
+from .excel import Excel
 import os
 import cv2
 
@@ -200,11 +200,16 @@ class Game(object):
         Returns:
             None 
         """
-
+        for frame in self.frames:
+            for kf in frame.killfeeds:
+                print(kf.player1)
+                print(kf.player2)
+                print("***")
+            print("=========")
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
-        for i in range(frame_num-1, 0, -1):
+        for i in range(frame_num - 1, 0, -1):
             frame = self.frames[i]
             prev_frame = self.frames[i - 1]
             if frame.killfeeds and prev_frame.killfeeds \
@@ -218,6 +223,8 @@ class Game(object):
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
+
+
         # 2) Remove invalid frames
         self.frames = list(filter(
             lambda frame: frame.is_valid is True,

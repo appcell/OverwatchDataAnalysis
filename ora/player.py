@@ -3,8 +3,8 @@ import numpy as np
 import skimage
 from skimage import measure
 
-import overwatch as OW
-from utils import image as ImageUtils
+from . import overwatch as OW
+from .utils import image as ImageUtils
 
 
 
@@ -172,7 +172,7 @@ class Player:
         if max_diff < 40 and self.is_ult_ready is False:
             self.is_observed = True
         score = 0
-        for (name, avatar_ref) in avatars_ref.iteritems():
+        for (name, avatar_ref) in avatars_ref.items():
             s = cv2.matchTemplate(avatar, avatar_ref,
                                   cv2.TM_CCOEFF_NORMED)
             _, s, _, loc1 = cv2.minMaxLoc(s)

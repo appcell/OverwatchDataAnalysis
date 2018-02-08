@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 from skimage import measure
-import overwatch as OW
-import gui as Gui
-from utils import image as ImageUtils
-from player import Player
-from killfeed import Killfeed
+from . import overwatch as OW
+from . import gui as Gui
+from .utils import image as ImageUtils
+from .player import Player
+from .killfeed import Killfeed
 
 
 class Frame(object):
@@ -45,7 +45,7 @@ class Frame(object):
         self.game = game
 
         # Gui.gui_instance.show_progress(self.time)
-        print self.time
+        print(self.time)
         self.get_players()
         self.get_killfeeds()
         self.validate()
@@ -235,7 +235,7 @@ class Frame(object):
         avatars_ref = OW.get_avatars_ref()
 
         # Overlay transparent reference avatar on background
-        for (name, avatar_ref) in avatars_ref.iteritems():
+        for (name, avatar_ref) in avatars_ref.items():
             avatars_left_ref[name] = ImageUtils.overlay(
                 bg_image_left, avatar_ref)
             avatars_small_left_ref[name] = ImageUtils.resize(
