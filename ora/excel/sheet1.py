@@ -351,7 +351,7 @@ class Sheet:
         self.player_and_chara = []
 
         # 当前所有玩家的大招能量值
-        self.ult_charge = []
+        self.ult_charge = [0] * 12
 
         self.data = []
 
