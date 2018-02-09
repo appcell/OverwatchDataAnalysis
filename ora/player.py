@@ -3,8 +3,8 @@ import numpy as np
 import skimage
 from skimage import measure
 
-import overwatch as OW
-from utils import image as ImageUtils
+from . import overwatch as OW
+from .utils import image as ImageUtils
 
 
 
@@ -172,7 +172,7 @@ class Player:
         if max_diff < 40 and self.is_ult_ready is False:
             self.is_observed = True
         score = 0
-        for (name, avatar_ref) in avatars_ref.iteritems():
+        for (name, avatar_ref) in avatars_ref.items():
             s = cv2.matchTemplate(avatar, avatar_ref,
                                   cv2.TM_CCOEFF_NORMED)
             _, s, _, loc1 = cv2.minMaxLoc(s)
@@ -239,7 +239,8 @@ class Player:
         """Retrieves ultimate charge for current player.
 
         Author:
-
+            Appcell
+            
         Args:
             None
 
@@ -269,24 +270,22 @@ class Player:
         ult_charge_image = ImageUtils.crop(
             ult_charge_shear, 
             OW.get_ult_charge_pos(self.index)[self.frame.game.game_type])
-
+        
         # TODO: I see there's no difference at all of brightness deviation!!
         # Our contrast adjusting must be seriously problematic. For grayscale
         # img, a simple normalization based on std would do.
-        # ult_charge_image_g = ImageUtils.contrast_adjust_log(
-        #     ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
         ult_charge_image_g = ImageUtils.normalize_gray(ult_charge_image)
 
         # tell if player is observed (more accurate than previous)
         # Here I use another local variable flag_observed, since the global one
         # might be inaccurate
-        flag_observed = False
         deviation_row = ult_charge_image_g.max(axis=1) - ult_charge_image_g.min(axis=1)
         if deviation_row[2] - deviation_row[0] > \
             OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type]:
             self.is_observed = True
-            flag_observed = True
-
+        else:
+            self.is_observed = False
+        flag_observed = "observed" if self.is_observed else "normal"
         # If current player is observed, there's a white dot on right side
         # needs to be removed.
         # TODO: write this into ow.py as well
@@ -308,11 +307,11 @@ class Player:
                 gap = i
                 break
 
-        bg_color = ult_charge_image_g[:, 0].mean()
-
+        bg_color = ult_charge_image_g[0, :].mean()
         if bg_color < 0.6:
             # Dark background
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
+
         # No need to switch to BW here.
         
         if gap == -1:
@@ -321,6 +320,15 @@ class Player:
                 ult_charge_image_g,
                 OW.ULT_GAP_DEVIATION_LIMIT[self.frame.game.game_type],
                 ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_BOTH)
+            if num.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type]:
+                padding = int(np.ceil((
+                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type] - num.shape[1])/2))
+                num = cv2.copyMakeBorder(
+                    num, 0, 0,
+                    padding, padding, cv2.BORDER_REPLICATE)
+            self.ult_charge = self._identify_ult_charge_digit(
+                num, 
+                self.frame.game.ult_charge_numbers_ref[flag_observed])
         else:
             # 2 digits
             num_left = ImageUtils.crop(
@@ -330,7 +338,7 @@ class Player:
                 ult_charge_image_g, 
                 [0, ult_charge_image_g.shape[0], gap, ult_charge_image_g.shape[1] - gap])
 
-            if flag_observed is True:
+            if self.is_observed:
                 num_left = ImageUtils.crop(
                     num_left,
                     [0, num_left.shape[0], num_left.shape[1] \
@@ -350,43 +358,54 @@ class Player:
                     num_right,
                     [0, num_left.shape[0], 0, 
                      OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.frame.game.game_type]])
+            if num_right.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type]:
+                num_right = cv2.copyMakeBorder(
+                    num_right, 0, 0, 0, 
+                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type] \
+                        - num_right.shape[1], cv2.BORDER_REPLICATE)
+            if num_left.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type]:
+                num_left = cv2.copyMakeBorder(
+                    num_left, 0, 0,
+                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.frame.game.game_type] \
+                        - num_left.shape[1], 0, cv2.BORDER_REPLICATE)
+            num_left_value = self._identify_ult_charge_digit(
+                num_left, 
+                self.frame.game.ult_charge_numbers_ref[flag_observed])
+            num_right_value = self._identify_ult_charge_digit(
+                num_right, 
+                self.frame.game.ult_charge_numbers_ref[flag_observed])
+            self.ult_charge = num_left_value * 10 + num_right_value
 
-            # if self.index == 5:
-            #     cv2.imshow('t1', num_left)
-            #     cv2.waitKey(0)            
-            #     cv2.imshow('t2', num_right)
-            #     cv2.waitKey(0)
-            # Since when cropping img we also included the slope on left side,
-            # num_left could actually be empty
-            # Also we need another recognition method. Simple MSE wouldn't work due to error.
+        return 
+
+    def _identify_ult_charge_digit(self, digit, digit_refs):
+        """Retrieves ultimate charge for current player.
+
+        Author:
+            Appcell
             
+        Args:
+            None
 
+        Returns:
+            None
+        """
+        score = 0
+        res = -1
+        digit = ImageUtils.float_to_uint8(digit)
+        scores = []
 
-
-
-        # ult_charge_image_g = ImageUtils.contrast_adjust_log(
-        #     ult_charge_image, OW.ULT_ADJUST_LOG_INDEX)
-
-        # for i in (0,1):
-            
-
-        #     cv2.imshow('t', ult_charge_image)
-        #     cv2.waitKey(0)
-        #     try:
-        #         ult_charge_image_binary = ImageUtils.binary_otsu(ult_charge_image_g)
-
-        #     except ValueError:
-        #         self.ult_charge = None
-        #         return
-        #     ult_charge_similarities = np.zeros(11)
-        #     for j in range(1 - i, 11-i):
-        #         # 1st number can't be 0, 2nd number can't be empty
-        #         ult_charge_ref = self.frame.game.ult_charge_numbers_ref[j - i]
-        #         ult_charge_similarities[j] = ImageUtils.similarity(ult_charge_ref, ult_charge_image_binary)
-        #     ult_charges[i] = np.argmax(ult_charge_similarities)
-        #     print ult_charges[i]
-        #     if ult_charges[i] == 10:
-        #         ult_charges[i] = 0
-
-        self.ult_charge = ult_charges[0] * 10 + ult_charges[1]
-        return
+        for i in range(10):
+            match_result = []
+            match_result = cv2.matchTemplate(
+                digit, digit_refs[i], cv2.TM_CCOEFF_NORMED)
+            _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
+            temp_digit = ImageUtils.crop(
+                digit, 
+                [max_loc[1], digit_refs[i].shape[0], max_loc[0], digit_refs[i].shape[1]])
+            score_ssim = measure.compare_ssim(temp_digit, digit_refs[i], multichannel=True)
+            scores.append(score_ssim + max_val)
+            if score_ssim + max_val > score:
+                score = score_ssim + max_val
+                res = i
+        return res

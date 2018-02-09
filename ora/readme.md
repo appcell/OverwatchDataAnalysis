@@ -1,36 +1,46 @@
-# ORA (Python) Structure Conventions
+# ORA (Python) Developer's Guide
 
-__If you desire to contribute to ORA or modify ORA code for your own usage, you might need to know about our code.__
+__If you desire to contribute to or modify ORA code for your own usage, please read this before any further development.__
 
 __CURRENTLY UNDER CONSTRUCTION!!!___
+
+
+## Code style
+
+ORA code follows [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html) combined with PEP8 standard. 
+
+For development, usage of [Pylint](https://www.pylint.org/) is recommended but not mandatory.
+
+Notice: Author of any code pieces should be specified _IN FUNCTION COMMENTS_, not at the head of a file.
 
 ## Directory & file structure
 
 ```
 .
-|-- ora                  # directory of all source codes
-|---- __init__.py        # entry point, with version info etc.
-|---- ora.py             # main process of video analysis, retrieves each frame then analyzes with a loop
-|---- chara.py           # analyzer for a player bar
-|---- frame.py           # analyzer for a frame of the gameplay
-|---- killfeed.py        # ananlyzer for a killfeed item
-|---- overwatchui.py     # class OverwatchUI
-|---- gamedata.py        # class GameData
-|---- overwatch.py       # info, data, and classes about the game itself
-|---- util.py
-|---- main.py            # the test code to analyze a full video
+|-- main.py              # entry point of ORA with GUI
+|-- ora/                 # directory of all source codes
+|---- __init__.py        # meta info of ORA package, with version info etc.
+|---- frame.py           # class Frame, info retriever of one given frame
+|---- game.py            # class Game
+|---- gui.py             # gui
+|---- killfeed.py        # class Killfeed, info retriever of a killfeed item
+|---- overwatch.py       # info and fixed data about the game itself
+|---- player.py          # class Player, info retriever from players bar
+|---- utils/             # utilities used in other .py codes
+|------ image.py         # image related util funcs
+|------ video_loader.py  # video loader & frame extractor
+|---- excel/             # code for outputting to Excel
 ```
 
-## Code structure
+## Code structure conventions
 
-### class `CharacterAnalyzer`
+### class `Player`
 
-Location: `ora/chara.py`
+Location: `ora/player.py`
 
-Class `CharacterAnalyzer` is for retrieving data from top player bar.
-It retrieves info of ONE player in ONE frame,
-and stores the info into a `overwatch.Chara` instance.
-The info includes:
+Class `Player` is for retrieving data from top players bar.
+It retrieves and stores info of ONE player in ONE frame, and stores in the `Player` instance itself.
+ Info includes:
 
 * Name of player
 * Name of character
@@ -39,67 +49,60 @@ The info includes:
 * Status of character (dead or alive)
 * (future work) Ultimate ability charging status
 * (future work) Character health point
-* Other info which can be extracted from top player bar
+* Other info extractable from top player bar
+
+For details, see comments in `ora/player.py`.
 
 ---
 
-### class `KillfeedAnalyzer`
+### class `Killfeed`
 
 Location: `ora/killfeed.py`
 
-Class `KillfeedAnalyzer` is for retrieving data from ONE killfeed (top-right corner of one frame)
+Class `Killfeed` is for retrieving data from ONE killfeed row (top-right corner of one frame)
  in ONE frame.
- It only contains NEW killfeeds in one frame. For each row,
- a new `overwatch.Killfeed` object is created, which contains:
+ It contains only one _NEW_ killfeed row in one frame. Each `Killfeed` instance contains:
 
 * Name of eliminator/resurrector character (if exists)
 * Name of eliminated/resurrected character
 * Name of the team of eliminator character (if exists)
 * Name of the team of eliminated character
-* List of names of assisting characters (if exists)
+* List of assisting characters with name of player & name of team(if exists)
 * Name of the ability used for elimination (if exists)
-
-A `KillfeedAnalyzer` object contains 0-6 `Killfeed` objects,
-with methods cutting off the loop of killfeed analysis when required
-(e.g. when current killfeed row was repeated in previous frame).
 
 ---
 
-### class `FrameAnalyzer`
+### class `Frame`
 
 Location: `ora/frame.py`
 
-Class `FrameAnalyzer` is for retrieving info in ONE FRAME,
-and storing the info into a `overwatch.Frame` instance,
-which contains:
+Class `Frame` is for retrieving and storing info in ONE FRAME. Info contains:
 
-* 12 Chara objects
-* 0-6 Killfeed object
-* A flag indicating if current frame is valid
-
-With get/set methods and another method for writing all info into a GameData object.
+* 12 Player objects (stored in `self.players`)
+* 0-6 Killfeed object (stored in `self.killfeeds`)
+* A flag `self.is_valid` indicating if current frame is valid
 
 ---
 
-### class `GameData`
+### class `Game`
 
-Location: `ora/gamedata.py`
+Location: `ora/game.py`
 
-Class `GameData` contains all info retrieved from the video and user input, including:
+Class `Game` contains all info retrieved from ONE video, including:
 
 * Names of both teams
 * Names of all 12 players
-* Output of all `Frame` objects generated during analysis
+* A list of all `Frame` instances generated during analysis
 
-And a method for outputting all info to JSON/Excel in file system.
+And a method for outputting all info with JSON/Excel formatting to file system.
 
 ---
 
-### class `OverwatchUI`
+### class `OW`
 
-Location: `ora/overwatchui.py`
+Location: `ora/overwatch.py`
 
-Class `OverwatchUI` contains all UI-related info needed for analysis.
+Class `OW` contains all UI-related info needed for analysis.
 It's hard to write the full list down, but in general,
 it records all pre-set coordinates and reference images of all supported Overwatch UI versions.
 Also, it has corresponding `get` methods for each piece of UI info ever needed in other classes.

@@ -1,7 +1,7 @@
-import overwatch as OW
-from frame import Frame
-from utils.video_loader import VideoLoader
-from excel import Excel
+from . import overwatch as OW
+from .frame import Frame
+from .utils.video_loader import VideoLoader
+from .excel import Excel
 import os
 import cv2
 
@@ -23,10 +23,10 @@ class Game(object):
                          "left": None,
                          "right": None
                      }
-        ult_colors: ultimate charge number color of both teams. +1: black number, -1: white number
         video_path: video path
         output_path: output path
-        is_test: if is in test mode
+        is_test: if is in test mode. If true, analysis result would be
+                 temporarily output to a .txt file.
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -55,7 +55,6 @@ class Game(object):
         self.name_players_team_left = []
         self.name_players_team_right = []
         self.team_colors = None
-        self.ult_colors = None
         self.video_path = ""
         self.output_path = ""
         self.is_test = False
@@ -80,20 +79,6 @@ class Game(object):
             None 
         """
         self.team_colors = frame.get_team_colors_from_image()
-
-    def set_ult_colors(self, frame):
-        """Set ultimate charge number colors of both team in this game, using one frame.
-
-        Author:
-            Rigel
-
-        Args:
-            frame: from which colors are retrieved.
-
-        Returns:
-            None
-        """
-        self.ult_colors = frame.get_ult_colors_from_image()
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -147,7 +132,9 @@ class Game(object):
             Appcell
 
         Args:
-            None
+            start_time: timestamp since when the analysis starts
+            end_time: timestamp till when the analysis ends
+            is_test: tell if the Game instance is in test mode
 
         Returns:
             None 
@@ -156,15 +143,16 @@ class Game(object):
         step = int(round(video.fps/self.analyzer_fps))
         step_cnt = 0
         self.is_test = is_test
-
-        start_time = start_time if is_test else 0
-        # For testing we specify start/end time.
-        # But for release version we don't.
+        is_full_video = True if (start_time == end_time and end_time == 0) \
+                        else False
+        # For a video clip we specify start/end time.
+        # But for a full video we don't.
+        start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
         while frame_image is not None \
-            and (frame_image_index < video.frame_number and is_test is False) \
-            or (frame_image_index < end_time * video.fps and is_test is True):
+            and (frame_image_index < video.frame_number and is_full_video is True) \
+            or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = Frame(frame_image,
                           start_time +
                           (1 / float(self.analyzer_fps)) * step_cnt,
@@ -212,11 +200,10 @@ class Game(object):
         Returns:
             None 
         """
-
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
-        for i in range(frame_num-1, 0, -1):
+        for i in range(frame_num - 1, 0, -1):
             frame = self.frames[i]
             prev_frame = self.frames[i - 1]
             if frame.killfeeds and prev_frame.killfeeds \
@@ -230,6 +217,7 @@ class Game(object):
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
                     for j in range(frame_before_effect_ind, i):
                         self.frames[j].is_valid = False
+
 
         # 2) Remove invalid frames
         self.frames = list(filter(

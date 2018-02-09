@@ -3,9 +3,9 @@
 @Author: Komorebi 
 """
 from openpyxl import Workbook
-from sheet1 import Sheet as Sheet1
-from sheet2 import Sheet as Sheet2
-from sheet3 import Sheet as Sheet3
+from .sheet1 import Sheet as Sheet1
+from .sheet2 import Sheet as Sheet2
+from .sheet3 import Sheet as Sheet3
 
 
 def create_sheet():
@@ -26,6 +26,6 @@ class Excel(object):
 
     def save(self):
         self.sheet1.new()
-        self.sheet2.new(self.sheet1.get_end_charas())
+        self.sheet2.new(self.sheet1.get_end_charas(), self.sheet1.get_end_ult_charge())
         self.sheet3.new()
         self._wb.save(self.game.output_path)
