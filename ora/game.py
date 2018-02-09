@@ -178,11 +178,8 @@ class Game(object):
         Returns:
             None 
         """
-        import pickle
-        with open('test.txt', 'rb') as f:
-            s = pickle.load(f)
-            data = NewData(s).update()
-            Excel(data).save()
+        data = NewData(self).update()
+        Excel(data).save()
 
     def clear_all_frames(self):
         """Remove invalid frames & repeated killfeeds.
