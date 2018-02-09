@@ -549,8 +549,8 @@ class Killfeed:
         """
         ability_pos = OW.get_ability_icon_pos(
             self.player2['pos'])[self.game_type]
-        color = self.image_with_gap[ability_pos[
-            0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
+        color = self.image_with_gap[int(ability_pos[
+                    0] + ability_pos[1]/2), ability_pos[2] + ability_pos[3] + 6]
         filtered_icon = np.zeros((icon.shape[0], icon.shape[1]))
 
         # TODO: Labelling needed here!!! Especially when background looks
@@ -581,8 +581,6 @@ class Killfeed:
             return
         ability_pos = OW.get_ability_icon_pos(
             self.player2['pos'])[self.game_type]
-        print(int(ability_pos[0] + ability_pos[1]/2), 
-                ability_pos[2] + ability_pos[3] + 6)
         color = self.image_with_gap[int(ability_pos[0] + ability_pos[1]/2), 
                 ability_pos[2] + ability_pos[3] + 6]
 

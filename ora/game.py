@@ -200,12 +200,6 @@ class Game(object):
         Returns:
             None 
         """
-        for frame in self.frames:
-            for kf in frame.killfeeds:
-                print(kf.player1)
-                print(kf.player2)
-                print("***")
-            print("=========")
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
