@@ -3,6 +3,7 @@ from .frame import Frame
 from .utils.video_loader import VideoLoader
 from .excel import Excel
 import os
+import copy
 import cv2
 
 
@@ -177,7 +178,8 @@ class Game(object):
         Returns:
             None 
         """
-        Excel(self).save()
+        data = NewData(self).update()
+        Excel(data).save()
 
     def clear_all_frames(self):
         """Remove invalid frames & repeated killfeeds.
@@ -200,6 +202,12 @@ class Game(object):
         Returns:
             None 
         """
+        for frame in self.frames:
+            for kf in frame.killfeeds:
+                print(kf.player1)
+                print(kf.player2)
+                print("***")
+            print("=========")
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
@@ -238,3 +246,85 @@ class Game(object):
             None 
         """
         pass
+
+
+class NewData:
+    def __init__(self, game):
+        self.game = copy.deepcopy(game)
+        self.team_left = game.team_names['left']
+        self.players = copy.copy(game.frames[0].players)
+
+    def update(self):
+        for idx, data in enumerate(self.game.frames):
+            self._update_players(data.players, idx)
+            self._update_killfeed(data.killfeeds, data.players, idx)
+        return self.game
+
+    def _update_players(self, players, index):
+        """
+        如果玩家阵亡，将他死之前的角色、大招能量覆盖到当前位置
+        大招状态太依赖于 is_dead，所以先剥离出来
+        换种说法，把玩家死之前的状态冻结。
+        玩家存活的话就更新玩家的状态到 self.players
+        """
+        previous_players = (self.game.frames[0].players if index == 0
+                            else self.game.frames[index - 1].players)
+        next_players = (self.game.frames[-1].players if index >= len(self.game.frames) - 1
+                        else self.game.frames[index + 1].players)
+        for idx, player in enumerate(players):
+            pre_player, next_player = previous_players[idx], next_players[idx]
+            # if pre_player.is_dead and next_player.is_dead:
+            #     player.is_dead = True
+
+            if player.is_dead:
+                player.chara = self.players[idx].chara
+                player.ult_charge = self.players[idx].ult_charge
+                player.is_ult_ready = self.players[idx].is_ult_ready
+            else:
+                if pre_player.chara == next_player.chara:
+                    player.chara = pre_player.chara
+                self.players[idx] = copy.copy(player)
+
+    def _update_killfeed(self, killfeeds, players, index):
+        """
+        遍历 killfeed，填充缺失的玩家姓名。
+        如果是天使，则修正爆头信息
+        """
+        for idx, killfeed in enumerate(killfeeds):
+            killfeed.player1['player'] = self._get_player_name(killfeed.player1,
+                                                               players,
+                                                               self.players,
+                                                               index,)
+            killfeed.player2['player'] = self._get_player_name(killfeed.player2,
+                                                               players,
+                                                               self.players,
+                                                               index,)
+            if killfeed.player1['team'] == killfeed.player2['team']:
+                if killfeed.player1['chara'] == 'mercy':
+                    killfeed.is_headshot = False
+
+            for assist in killfeed.assists:
+                assist['player'] = self._get_player_name(assist,
+                                                         players,
+                                                         self.players,
+                                                         index,
+                                                         )
+
+    def _get_player_name(self, player, current_player, previous_chara, index):
+        """
+        获取玩家姓名
+        :param player: 当前玩家的信息(killfeed中的player1或player2)
+        :param current_player: 包含了当前12个玩家信息的 list
+        :param index: 当前帧的下标
+        :return: player_name
+        """
+        if player['player'] != 'empty':
+            return player['player']
+        myslice = slice(0, 6) if player['team'] == self.team_left else slice(6, 12)
+        players = current_player[myslice] + previous_chara[myslice]
+        if index - 2 >= 0:
+            players += self.game.frames[index - 2].players[myslice]
+        for p in players:
+            if p.chara == player['chara']:
+                return p.name
+        return 'empty'
