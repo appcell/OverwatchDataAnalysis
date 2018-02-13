@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 """
 @Author: Komorebi 
 """
@@ -339,20 +338,6 @@ class Sheet:
         Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
         Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
 
-        # 上一帧所有玩家的大招状况
-        self.ultimate_status = {i: False for i in range(1, 13)}
-
-        # 上一帧所有玩家的 chara
-        self.previous_chara = [player.chara for player in self.game.frames[0].players]
-        # 下一帧所有玩家的 chara
-        self.next_chara = [player.chara for player in self.game.frames[1].players]
-
-        # 当前所有玩家的 玩家名以及信息， 如[(player, chara), ...]
-        self.player_and_chara = []
-
-        # 当前所有玩家的大招能量值
-        self.ult_charge = [0] * 12
-
         self.data = []
 
     @staticmethod
@@ -376,11 +361,10 @@ class Sheet:
         """
         frames = self.game.frames
         for i, frame in enumerate(frames):
-            self.player_and_chara = [(player.name, player.chara) for player in frame.players]
             # ultimate detection not working properly
             self._switch_hero_append(frame.players, frame.time, i)
             self._killfeed_append(frame.killfeeds, frame.time)
-            self._ultimate_append(frame.players, frame.time)
+            self._ultimate_append(frame.players, frame.time, i)
         self.save()
 
     def _killfeed_append(self, killfeeds, time):
@@ -395,41 +379,31 @@ class Sheet:
             d['comments'] = set_comments(d['action'])
             # d['ability'] = Config.ability[obj.ability]
             d['subject hero'] = player1['chara']
-            d['subject player'] = (get_player_name(player1,
-                                                   get_player_team_index(player1['team'], self.game.team_names),
-                                                   self.player_and_chara, self.previous_chara))
+            d['subject player'] = player1['player']
             d['object hero'] = player2['chara']
-            d['object player'] = (get_player_name(player2,
-                                                  get_player_team_index(player2['team'], self.game.team_names),
-                                                  self.player_and_chara, self.previous_chara))
-            if obj.is_headshot and d['action'] != 'Resurrect':
+            d['object player'] = player2['player']
+            if obj.is_headshot:
                 d['critical kill'] = 'Y'
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
 
-            for i, p in enumerate([player1, player2]):
-                if player2['chara'] != 'empty' and player2['team'] != 'empty':
-                    if i == 0 and player1['team'] != 'empty':
-                        d['_$color']['subject player'] = Config.team_colors[player1['team']]
-                    else:
-                        d['_$color']['object player'] = Config.team_colors[player2['team']]
+            if player1['player'] != 'empty':
+                d['_$color']['subject player'] = Config.team_colors[player1['team']]
+
+            if player2['player'] != 'empty':
+                d['_$color']['object player'] = Config.team_colors[player2['team']]
 
             for i, assist in enumerate(obj.assists):
-                d['a player {}'.format(i + 1)] = get_player_name(assist, get_player_team_index(assist['team'], self.game.team_names), self.player_and_chara, self.previous_chara)
+                d['a player {}'.format(i + 1)] = assist['player']
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
-                if assist['player'] != 'empty':
-                    d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
-            if (d['object player']) is not None:
-                self._append(**d)
+                d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
+            self._append(**d)
 
-    def _ultimate_append(self, players, time):
+    def _ultimate_append(self, players, time, idx):
         """
         判断此时的大招是否为刚充满/释放，并将刚充满/释放大招的选手名输出
         """
-        status = self.ultimate_status
-        for player in players:
-            if player.is_dead:
-                continue
+        for index, player in enumerate(players):
             d = {
                 'time': time,
                 'subject player': player.name,
@@ -438,71 +412,55 @@ class Sheet:
                     'subject player': Config.team_colors[player.team]
                 }
             }
-            index = player.index + 1
             # TODO 判断是否为小dva，小dva死的情况下把对应的大招状态清空
             # 小dva活着的情况下判断is_ult_ready。
-            if player.is_ult_ready and not status[index]:
-                status[index] = True
-                d['action'] = 'Ult ready'
-                self._append(**d)
-            elif not player.is_ult_ready and status[index]:
-                status[index] = False
-                d['action'] = 'Ult used'
-                self._append(**d)
+            previous_player = self.game.frames[idx - 1].players[index]
+            if idx > 0:
+                if not previous_player.is_ult_ready and player.is_ult_ready:
+                    d['action'] = 'Ult ready'
+                    self._append(**d)
+                elif previous_player.is_ult_ready and not player.is_ult_ready:
+                    d['action'] = 'Ult used'
+                    self._append(**d)
+            else:
+                if player.is_ult_ready:
+                    d['action'] = 'Ult ready'
+                    self._append(**d)
 
     def _switch_hero_append(self, players, time, index):
         """
-        通过跟 self.previous_chara 的比对来判定玩家是否更换英雄
-        同时这个函数维护着
-        self.previous_chara 以及 self.next_chara
-        self.ult_charge
-        作者目前没想到好的方法 把这个函数功能拆分成 
-        1. 维护上面3个 list
-        2. 通过上面2个 list(self.previous_chara, self.next_chara)以及当前英雄list 来判断英雄是否更换
-        
+        通过与上一帧的英雄和下一帧的英雄的比对来判定玩家是否更换英雄
+
         :param players: 12个player类构成的 list ， 对应12个玩家
         :param time: 当前时间
         :param index: frames 中的第n个 frame
         """
         frames = self.game.frames
-        length = len(frames)
         if index == 0:
             return
-        elif index >= length - 2:
+        elif index >= len(frames) - 1:
             return
-        else:
-            for i, player in enumerate(players):
-                top_chara = self.previous_chara[i]
-                next_chara = self.next_chara[i]
-                if player.is_dead:
+        previous_charas = frames[index - 1].players
+        next_charas = frames[index + 1].players
+        for i, player in enumerate(players):
+            top_chara = previous_charas[i].chara
+            next_chara = next_charas[i].chara
+            if top_chara != player.chara:
+                if top_chara == next_chara:
                     continue
-                else:
-                    self.ult_charge[i] = player.ult_charge
-                    if top_chara != player.chara:
-                        if top_chara == next_chara:
-                            self.next_chara[i] = frames[index + 2].players[i].chara
-                            continue
-                        elif player.chara == next_chara:
-                            d = {
-                                'time': time - 2,
-                                'action': 'Hero switch',
-                                'subject player': player.name,
-                                'subject hero': player.chara,
-                                'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
+                elif player.chara == next_chara:
+                    d = {
+                        'time': time - 1.5,
+                        'action': 'Hero switch',
+                        'subject player': player.name,
+                        'subject hero': player.chara,
+                        'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
 
-                                '_$color': {
-                                    'subject player': Config.team_colors[player.team],
-                                }
-                            }
-                            self._append(**d)
-                            self.previous_chara[i] = player.chara
-                            self.next_chara[i] = frames[index + 1].players[i].chara
-
-    def get_end_charas(self):
-        return [Chara(chara) for chara in self.previous_chara]
-
-    def get_end_ult_charge(self):
-        return self.ult_charge
+                        '_$color': {
+                            'subject player': Config.team_colors[player.team],
+                        }
+                    }
+                    self._append(**d)
 
     def save(self):
         """
@@ -510,8 +468,3 @@ class Sheet:
         :return: None
         """
         Save(self.sheet, self.data).save()
-
-
-class Chara(object):
-    def __init__(self, chara):
-        self.chara = chara

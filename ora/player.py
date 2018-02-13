@@ -25,7 +25,7 @@ class Player:
         is_observed: whether this chara is observe by cam
     """
 
-    def __init__(self, index, avatars, game_type, name, team, image, ult_charge_numbers_ref):
+    def __init__(self, index, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref):
         """Initialize a Player object.
 
         Author:
@@ -48,7 +48,6 @@ class Player:
         self.avatars = avatars
         self.name = name
         self.team = team
-        self.game_type = game_type
         self.ult_charge_numbers_ref = ult_charge_numbers_ref
         self.chara = None
         self.is_ult_ready = False
@@ -56,6 +55,9 @@ class Player:
         self.is_dead = False
         self.is_observed = None
         self.ult_charge = 0
+
+        self.game_type = game_type
+        self.game_version = game_version
 
         # TODO: future work
         self.health = None
@@ -96,14 +98,14 @@ class Player:
         """
         # Crop icon from current frame
         ult_icon_pos = OW.get_ult_icon_pos(
-            self.index)[self.game_type]
+            self.index, self.game_type, self.game_version)
         ult_icon = ImageUtils.crop(self.image, ult_icon_pos)
         # Get reference icon image
         ult_icon_ref = OW.get_ult_icon_ref(
-            self.index)[self.game_type]
+            self.index, self.game_type, self.game_version)
         # Tranfer both to grayscale for comparison
-        ult_icon_ref, ult_icon = ImageUtils.rgb_to_gray(
-            ult_icon_ref), ImageUtils.rgb_to_gray(ult_icon)
+        ult_icon_ref = ImageUtils.rgb_to_gray(ult_icon_ref)
+        ult_icon = ImageUtils.rgb_to_gray(ult_icon)
 
         # Compare cropped icon with reference, get the probability of them
         # being similar
@@ -117,8 +119,8 @@ class Player:
         brightness = np.mean(ult_icon)
         deviation = np.std(ult_icon)
 
-        if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.game_type] \
-            and deviation < OW.ULT_ICON_MAX_DEVIATION[self.game_type]:
+        if brightness > OW.ULT_ICON_MAX_BRIGHTNESS[self.game_type][self.game_version] \
+            and deviation < OW.ULT_ICON_MAX_DEVIATION[self.game_type][self.game_version]:
             prob = 1
             self.is_ult_ready = True
             return
@@ -129,8 +131,8 @@ class Player:
                             ult_icon_ref,
                             multichannel=False)
 
-        if prob > OW.ULT_ICON_MAX_PROB[self.game_type]:
-            if prob_ssim > OW.ULT_ICON_MAX_PROB_SSIM[self.game_type]:
+        if prob > OW.ULT_ICON_MAX_PROB[self.game_type][self.game_version]:
+            if prob_ssim > OW.ULT_ICON_MAX_PROB_SSIM[self.game_type][self.game_version]:
                 self.is_ult_ready = True
                 
     def get_chara(self):
@@ -151,18 +153,18 @@ class Player:
             None 
         """
         all_avatars = self.avatars
+        avatars_ref_observed = all_avatars["observed"]
         avatars_ref = all_avatars["normal"]
-        avatars_small_ref = all_avatars["small"]
-        team_color = avatars_ref['ana'][0, 0]
+        team_color = avatars_ref_observed['ana'][0, 0]
 
         # Crop avatar from frame
+        avatar_observed = ImageUtils.crop(self.image, OW.get_avatar_pos_observed(
+            self.index, self.game_type, self.game_version))
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
-            self.index)[self.game_type])
-        avatar_small = ImageUtils.crop(avatar, [4, avatar.shape[0] - 4, 0, avatar.shape[1]])
-
+            self.index, self.game_type, self.game_version))
         # If player is observed, not sure about this tho
         avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
-            self.index)[self.game_type])
+            self.index, self.game_type, self.game_version))
         max_diff = 0
         for i in range(avatar_diff.shape[0]):
             for j in range(avatar_diff.shape[1]):
@@ -173,29 +175,31 @@ class Player:
         if max_diff < 40 and self.is_ult_ready is False:
             self.is_observed = True
         score = 0
-        for (name, avatar_ref) in avatars_ref.items():
-            s = cv2.matchTemplate(avatar, avatar_ref,
+        for (name, avatar_ref_observed) in avatars_ref_observed.items():
+            s_observed = cv2.matchTemplate(avatar_observed, avatar_ref_observed,
                                   cv2.TM_CCOEFF_NORMED)
-            _, s, _, loc1 = cv2.minMaxLoc(s)
-            temp_avatar = ImageUtils.crop(avatar, [loc1[1], avatar_ref.shape[0], loc1[0], avatar_ref.shape[1]])
-            s_ssim1 = measure.compare_ssim(temp_avatar, avatar_ref, 
+            _, s_observed, _, loc_observed = cv2.minMaxLoc(s_observed)
+            temp_avatar_observed = ImageUtils.crop(
+                avatar_observed, 
+                [loc_observed[1], avatar_ref_observed.shape[0], loc_observed[0], avatar_ref_observed.shape[1]])
+            s_ssim_observed = measure.compare_ssim(temp_avatar_observed, avatar_ref_observed, 
                                           multichannel=True)
-            s_small = cv2.matchTemplate(avatar_small, avatars_small_ref[
+            s = cv2.matchTemplate(avatar, avatars_ref[
                                         name], cv2.TM_CCOEFF_NORMED)
-            _, s_small, _, loc2 = cv2.minMaxLoc(s_small)
-            temp_avatar2 = ImageUtils.crop(avatar_small, [loc2[1], avatars_small_ref[
-                                        name].shape[0], loc2[0], avatars_small_ref[
+            _, s, _, loc = cv2.minMaxLoc(s)
+            temp_avatar = ImageUtils.crop(avatar, [loc[1], avatars_ref[
+                                        name].shape[0], loc[0], avatars_ref[
                                         name].shape[1]])
-            s_ssim2 = measure.compare_ssim(
-                        temp_avatar2,
-                        avatars_small_ref[name],
+            s_ssim = measure.compare_ssim(
+                        temp_avatar,
+                        avatars_ref[name],
                         multichannel=True)
-            s_ssim = s_ssim1 if s > s_small else s_ssim2
-            s_final = s if s > s_small else s_small
-            loc = loc1 if s > s_small else loc2
+            s_ssim_final = s_ssim_observed if s_ssim_observed > s_ssim else s_ssim
+            s_final = s_observed if s_observed > s else s
+            loc_final = loc_observed if s_observed > s else loc
 
-            if s_final*0.4 + s_ssim*0.6 > score:
-                score = s_final*0.4 + s_ssim*0.6
+            if s_final*0.4 + s_ssim_final*0.6 > score:
+                score = s_final*0.4 + s_ssim_final*0.6
                 self.chara = name
 
         if self.chara is None:
@@ -203,7 +207,7 @@ class Player:
             self.is_dead = True
             return
             
-        self.get_living_status(avatars_ref[self.chara])
+        self.get_living_status(avatars_ref_observed[self.chara])
 
     def get_living_status(self, avatar_ref):
         """Retrieves chara living status for current player.
@@ -222,11 +226,11 @@ class Player:
         """
         avatar = []
         if self.is_observed:
-            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
-                self.index)[self.game_type])
+            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos_observed(
+                self.index, self.game_type, self.game_version))
         else:
-            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos_small(
-                self.index)[self.game_type])
+            avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
+                self.index, self.game_type, self.game_version))
         brightness = np.mean(avatar, 2)
         brightness_ref = np.mean(avatar_ref, 2)
         variation = brightness.max() - brightness.min()
@@ -255,12 +259,12 @@ class Player:
             return
 
         ult_charge_pre_pos = OW.get_ult_charge_pre_pos(
-            self.index)[self.game_type]
+            self.index, self.game_type, self.game_version)
         ult_charge_pre_image = ImageUtils.rgb_to_gray(
             ImageUtils.crop(self.image, ult_charge_pre_pos))
 
         ult_charge_shear = ImageUtils.shear(
-            ult_charge_pre_image, OW.get_tf_shear(self.index)[self.game_type])
+            ult_charge_pre_image, OW.get_tf_shear(self.index, self.game_type, self.game_version))
 
         ult_charges = [0, 0]
 
@@ -270,7 +274,7 @@ class Player:
         # than 2 colors in same column.
         ult_charge_image = ImageUtils.crop(
             ult_charge_shear, 
-            OW.get_ult_charge_pos(self.index)[self.game_type])
+            OW.get_ult_charge_pos(self.index, self.game_type, self.game_version))
         
         # TODO: I see there's no difference at all of brightness deviation!!
         # Our contrast adjusting must be seriously problematic. For grayscale
@@ -282,7 +286,7 @@ class Player:
         # might be inaccurate
         deviation_row = ult_charge_image_g.max(axis=1) - ult_charge_image_g.min(axis=1)
         if deviation_row[2] - deviation_row[0] > \
-            OW.ULT_GAP_DEVIATION_LIMIT[self.game_type]:
+            OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version]:
             self.is_observed = True
         else:
             self.is_observed = False
@@ -302,9 +306,9 @@ class Player:
         gap = -1
         for i in range(width - 4, 3, -1):
             if deviation[i-3] - deviation[i] \
-                > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type] \
+                > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version] \
                 and deviation[i+3] - deviation[i] \
-                > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type]:
+                > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version]:
                 gap = i
                 break
 
@@ -319,11 +323,11 @@ class Player:
             # Only one digit
             num = ImageUtils.remove_digit_vertical_edge(
                 ult_charge_image_g,
-                OW.ULT_GAP_DEVIATION_LIMIT[self.game_type],
+                OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version],
                 ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_BOTH)
-            if num.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type]:
+            if num.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version]:
                 padding = int(np.ceil((
-                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type] - num.shape[1])/2))
+                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version] - num.shape[1])/2))
                 num = cv2.copyMakeBorder(
                     num, 0, 0,
                     padding, padding, cv2.BORDER_REPLICATE)
@@ -343,31 +347,31 @@ class Player:
                 num_left = ImageUtils.crop(
                     num_left,
                     [0, num_left.shape[0], num_left.shape[1] \
-                        - OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type] - 1, 
-                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type]])
+                        - OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type][self.game_version] - 1, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type][self.game_version]])
                 num_right = ImageUtils.crop(
                     num_right,
                     [0, num_left.shape[0], 0, 
-                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type]])
+                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type][self.game_version]])
             else:
                 num_left = ImageUtils.crop(
                     num_left,
                     [0, num_left.shape[0], num_left.shape[1] \
-                        - OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type] - 1, 
-                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type]])
+                        - OW.ULT_CHARGE_NUMBER_WIDTH[self.game_type][self.game_version] - 1, 
+                     OW.ULT_CHARGE_NUMBER_WIDTH[self.game_type][self.game_version]])
                 num_right = ImageUtils.crop(
                     num_right,
                     [0, num_left.shape[0], 0, 
-                     OW.ULT_CHARGE_NUMBER_WIDTH_OBSERVED[self.game_type]])
-            if num_right.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type]:
+                     OW.ULT_CHARGE_NUMBER_WIDTH[self.game_type][self.game_version]])
+            if num_right.shape[1] < OW.ULT_CHARGE_IMG_WIDTH[self.game_type][self.game_version]:
                 num_right = cv2.copyMakeBorder(
                     num_right, 0, 0, 0, 
-                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type] \
+                    OW.ULT_CHARGE_IMG_WIDTH[self.game_type][self.game_version] \
                         - num_right.shape[1], cv2.BORDER_REPLICATE)
-            if num_left.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type]:
+            if num_left.shape[1] < OW.ULT_CHARGE_IMG_WIDTH[self.game_type][self.game_version]:
                 num_left = cv2.copyMakeBorder(
                     num_left, 0, 0,
-                    OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type] \
+                    OW.ULT_CHARGE_IMG_WIDTH[self.game_type][self.game_version] \
                         - num_left.shape[1], 0, cv2.BORDER_REPLICATE)
             num_left_value = self._identify_ult_charge_digit(
                 num_left, 

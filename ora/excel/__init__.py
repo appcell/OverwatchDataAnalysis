@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 """
 @Author: Komorebi 
 """
@@ -26,6 +25,6 @@ class Excel(object):
 
     def save(self):
         self.sheet1.new()
-        self.sheet2.new(self.sheet1.get_end_charas(), self.sheet1.get_end_ult_charge())
+        self.sheet2.new()
         self.sheet3.new()
         self._wb.save(self.game.output_path)

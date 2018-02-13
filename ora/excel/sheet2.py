@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 """
 @Author: Komorebi 
 """
@@ -121,12 +120,12 @@ class Sheet:
         self.frames = game.frames
         self.sheet = wb['sheet2']
 
-    def new(self, end_charas, end_charge):
+    def new(self):
         start, end = self.frames[0], self.frames[-1]
         self._append_player(start.players)
         self._append_chara(start.players, 'start')
-        self._append_chara(end_charas, 'end')
-        self._append_ult_charge(end_charge)
+        self._append_chara(end.players, 'end')
+        self._append_ult_charge(end.players)
         self._set_cell_team()
         self._set_cell_title()
         self._set_cell_width_and_height()
@@ -214,13 +213,13 @@ class Sheet:
                 cell = Config.RIGHT[key]['chara{}'.format(i - 5)]
             self.set_cell_value(cell, chara_capitalize(player.chara), 1)
 
-    def _append_ult_charge(self, charges):
+    def _append_ult_charge(self, players):
         """
         导入最终大招能量
         """
-        for i, charge in enumerate(charges):
+        for i, player in enumerate(players):
             if i < 6:
                 cell = Config.LEFT['ult_charge']['charge{}'.format(i + 1)]
             else:
                 cell = Config.RIGHT['ult_charge']['charge{}'.format(i - 5)]
-            self.set_cell_value(cell, str(charge) + '%', 2)
+            self.set_cell_value(cell, str(player.ult_charge) + '%', 2)
