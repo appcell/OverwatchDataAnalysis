@@ -7,6 +7,8 @@ from .utils import image as ImageUtils
 from .player import Player
 from .killfeed import Killfeed
 
+import multiprocessing
+from concurrent.futures import ProcessPoolExecutor
 
 class Frame(object):
     """Class of a Frame object.
@@ -71,7 +73,7 @@ class Frame(object):
         """Get all players info in this frame.
 
         Author:
-            Appcell
+            Appcell, GenesisX
 
         Args:
             None
@@ -79,9 +81,38 @@ class Frame(object):
         Returns:
             None 
         """
+        # Multiprocess players
+
+        n_cpus = multiprocessing.cpu_count()
+        pool = ProcessPoolExecutor(max_workers=n_cpus)
+
+        player_future = []
+
+        game_type = self.game.game_type
+        image = self.image
+        ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
+
         for i in range(0, 12):
-            player = Player(i, self)
-            self.players.append(player)
+            avatars = self.get_avatars(i)
+            team = ""
+            name = ""
+
+            if i < 6:
+                name = self.game.name_players_team_left[i]
+            else:
+                name = self.game.name_players_team_right[i - 6]
+            if i < 6:
+                team = self.game.team_names['left']
+            else:
+                team = self.game.team_names['right']
+
+            player = pool.submit(Player, 
+                i, avatars, game_type, name, team, image, ult_charge_numbers_ref)
+
+            player_future.append(player)
+        
+        for player in player_future:
+            self.players.append(player.result())
 
     def get_team_colors_from_image(self):
         """Get team colors from this frame.
@@ -112,7 +143,7 @@ class Frame(object):
         """Get killfeed info in this frame.
 
         Author:
-            Appcell
+            Appcell, GenesisX
 
         Args:
             None
@@ -123,15 +154,11 @@ class Frame(object):
         for i in range(6):
             killfeed = Killfeed(self, i)
             if killfeed.is_valid is True:
+                self.killfeeds.append(killfeed)
                 if self.game.frames and self.game.frames[-1].killfeeds:
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
                     if killfeed == last_killfeed:
-                        self.killfeeds.append(killfeed)
                         break
-                    else:
-                        self.killfeeds.append(killfeed)
-                else:
-                    self.killfeeds.append(killfeed)
             elif i >= 1:
                 break
 
