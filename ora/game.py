@@ -28,6 +28,9 @@ class Game(object):
         output_path: output path
         is_test: if is in test mode. If true, analysis result would be
                  temporarily output to a .txt file.
+        is_owl_version_setted: if game_type is OWL and OWL UI version is
+                               detected
+        owl_version: version of OWL game UI
         frames: list of all analyzed frames of the game
         avatars_ref: list of all topbar reference avatars fused
         killfeed_icons_ref: list of all killfeed reference icons
@@ -59,13 +62,18 @@ class Game(object):
         self.video_path = ""
         self.output_path = ""
         self.is_test = False
+
+        # For OWL games only
+        self.is_game_version_set = False
+        self.game_version = 0
+
         self.frames = []
         self.avatars_ref = {}
-        self.killfeed_icons_ref = OW.get_killfeed_icons_ref()[self.game_type]
-        self.assist_icons_ref = OW.get_assist_icons_ref()[self.game_type]
-        self.ability_icons_ref = OW.get_ability_icons_ref()[self.game_type]
-        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref()[self.game_type]
-        self.replay_icon_ref = OW.get_replay_icon_ref()[self.game_type]
+        self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
+        self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
+        self.ability_icons_ref = OW.get_ability_icons_ref(self.game_type, self.game_version)
+        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref(self.game_type, self.game_version)
+        self.replay_icon_ref = OW.get_replay_icon_ref(self.game_type, self.game_version)
 
     def set_team_colors(self, frame):
         """Set theme colors of both team in this game, using one frame.
@@ -154,10 +162,16 @@ class Game(object):
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_full_video is True) \
             or (frame_image_index < end_time * video.fps and is_full_video is False):
-            frame = Frame(frame_image,
-                          start_time +
-                          (1 / float(self.analyzer_fps)) * step_cnt,
-                          self)
+            frame = []
+            if self.is_game_version_set:
+                frame = Frame(frame_image,
+                              start_time +
+                              (1 / float(self.analyzer_fps)) * step_cnt,
+                              self, self.game_version)
+            else:
+                frame = self._set_game_version(
+                    frame_image,
+                    start_time +(1 / float(self.analyzer_fps)) * step_cnt)
             self.frames.append(frame)
             frame_image_index += step
             step_cnt += 1
@@ -167,20 +181,18 @@ class Game(object):
         self.clear_all_frames()
         self.output_to_excel()
 
-    def output_to_excel(self):
-        """Output the full event list to an Excel file.
+    def _set_game_version(self, frame_image, frame_time):
 
-        Author: KomorebiL
-
-        Args:
-            None
-
-        Returns:
-            None 
-        """
-        data = NewData(self).update()
-        Excel(data).save()
-
+        for i in range(OW.VERSION_NUM[self.game_type]):
+            test_frame = Frame(
+                frame_image,
+                frame_time,
+                self, i)
+            if test_frame.is_valid:
+                self.is_game_version_set = True
+                self.game_version = i
+                return test_frame
+        
     def clear_all_frames(self):
         """Remove invalid frames & repeated killfeeds.
 
@@ -202,12 +214,12 @@ class Game(object):
         Returns:
             None 
         """
-        for frame in self.frames:
-            for kf in frame.killfeeds:
-                print(kf.player1)
-                print(kf.player2)
-                print("***")
-            print("=========")
+        # for frame in self.frames:
+        #     for kf in frame.killfeeds:
+        #         print(kf.player1)
+        #         print(kf.player2)
+        #         print("***")
+        #     print("=========")
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
@@ -218,7 +230,7 @@ class Game(object):
                     and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
                 frame.killfeeds.pop(0)
             frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
-                self.game_type] * self.analyzer_fps) - 1)
+                self.game_type][self.game_version] * self.analyzer_fps) - 1)
 
             if frame_before_effect_ind >= 0:
                 frame_before_effect = self.frames[frame_before_effect_ind]
@@ -231,6 +243,20 @@ class Game(object):
         self.frames = list(filter(
             lambda frame: frame.is_valid is True,
             self.frames))
+
+    def output_to_excel(self):
+        """Output the full event list to an Excel file.
+
+        Author: KomorebiL
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+        data = NewData(self).update()
+        Excel(data).save()
 
     def rematch_charas_and_players(self):
         """Rematch charas & players for killfeed
