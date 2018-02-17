@@ -3,6 +3,8 @@
 /python/.idea
 /python/src/test.py
 /temp
+/credentials
+/gui
 .idea/
 *.DS_Store
 *.pyc
