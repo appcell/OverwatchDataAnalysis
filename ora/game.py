@@ -3,6 +3,7 @@ from .frame import Frame
 from .utils.video_loader import VideoLoader
 from .excel import Excel
 import os
+import time
 import copy
 import cv2
 
@@ -155,6 +156,7 @@ class Game(object):
                         else False
         # For a video clip we specify start/end time.
         # But for a full video we don't.
+        time1 = time.time()
         start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
@@ -162,26 +164,29 @@ class Game(object):
             and (frame_image_index < video.frame_number and is_full_video is True) \
             or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = []
+            time1 = time.time()
             if self.is_game_version_set:
                 frame = Frame(frame_image,
                               start_time +
                               (1 / float(self.analyzer_fps)) * step_cnt,
                               self, self.game_version)
             else:
+                print('hahah')
                 frame = self._set_game_version(
                     frame_image,
                     start_time +(1 / float(self.analyzer_fps)) * step_cnt)
             self.frames.append(frame)
+            time2 = time.time() - time1
+            print(time2)
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
 
         video.close()
-        self.clear_all_frames()
+        self.postprocess()
         self.output_to_excel()
 
     def _set_game_version(self, frame_image, frame_time):
-
         for i in range(OW.VERSION_NUM[self.game_type]):
             test_frame = Frame(
                 frame_image,
@@ -192,7 +197,48 @@ class Game(object):
                 self.game_version = i
                 return test_frame
         
-    def clear_all_frames(self):
+
+    def output_to_excel(self):
+        """Output the full event list to an Excel file.
+
+        Author: KomorebiL
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+        Excel(self).save()
+
+    def postprocess(self):
+        """ Postprocess player & killfeeds, remove incorrect info.
+        
+        Here why don't we directly override frame.players, but get a returned
+        list of players in every frame instead? The 1st postprocess of players
+        might be inaccurate, and overriding will cause loss of original info.
+        However for killfeeds it's another story -- we consider killfeed chara
+        identification as absolutely correct for now, and other info in kf
+        (e.g. player name, team name etc) are temporarily inaccurate. It's
+        totally fine to override killfeed info apart from chara name.
+
+        Author: KomorebiL, Appcell
+
+        Args:
+            None
+
+        Returns:
+            players_ref: a 2-D list of all (potentially) correct idents of
+                players in each frame.
+        """
+        self._clear_frames()
+        players_ref = self._postprocess_players()
+        self._rematch_killfeeds(players_ref)
+
+        for ind_frame, players in enumerate(players_ref):
+            self.frames[ind_frame].players = players
+
+    def _clear_frames(self):
         """Remove invalid frames & repeated killfeeds.
 
         1) Remove repeated killfeeds: for each 2 neighboring frames, if both 
@@ -243,19 +289,98 @@ class Game(object):
             lambda frame: frame.is_valid is True,
             self.frames))
 
-    def output_to_excel(self):
-        """Output the full event list to an Excel file.
+    def _postprocess_players(self):
+        """ Postprocess player status and remove outliers.
+        
+        1) When a chara dies, override his current chara/ult charge etc. with
+        status from previous frame. For now, ult charge relies on 
+        player.is_dead too much so we just leave it be.
+        In other words, we freeze the player when he dies.
 
-        Author: KomorebiL
+        2) Remove weird "chara switch" events. If identification res in one
+        frame differs with its prev & next frames, temporarily we identify it
+        as invalid chara switch event.
+
+        Here we do not override original players for a good reason. Our
+        postprocess might be inaccurate, thus it's only for reference.
+
+        Author: KomorebiL, Appcell
 
         Args:
             None
 
         Returns:
-            None 
+            players_ref: a 2-D list of all (potentially) correct idents of
+                players in each frame.
         """
-        data = NewData(self).update()
-        Excel(data).save()
+        # 1) Freeze player status when chara is dead
+        players_ref = [self.frames[0].players]
+        for ind_frame in range(1, len(self.frames)):
+            frame = self.frames[ind_frame]
+            temp_players = []
+            for ind_player, player in enumerate(frame.players):
+                if player.is_dead:
+                    temp_players.append(copy.copy(players_ref[ind_frame - 1][ind_player]))
+                else:
+                    temp_players.append(copy.copy(player))
+            players_ref.append(temp_players)
+
+        # 2) Remove invalid chara switch events
+        for ind in range(1, len(players_ref) - 1):
+            for ind_player in range(12):
+                if players_ref[ind - 1][ind_player] == players_ref[ind + 1][ind_player]:
+                    players_ref[ind][ind_player] = copy.copy(players_ref[ind - 1][ind_player])
+
+        return players_ref
+
+    def _rematch_killfeeds(self, players_ref):
+        """ Rematch charas in killfeeds with charas in players
+        
+        For all killfeeds without a proper player name recognition, we fill in
+        all the blanks here. Still, we do not write this into original results
+        for a reason.
+
+        Author: KomorebiL, Appcell
+
+        Args:
+            None
+
+        Returns:
+            killfeeds_ref: a 2-D list of all (potentially) correct idents of
+                killfeeds in each frame.
+        """
+        for ind_frame, frame in enumerate(self.frames):
+            for killfeed in frame.killfeeds:
+                if killfeed.player1['player'] == "empty":
+                    killfeed.player1['player'] = self._get_player_name(
+                        killfeed.player1, players_ref, ind_frame)
+                if killfeed.player2['player'] == "empty":
+                    killfeed.player2['player'] = self._get_player_name(
+                        killfeed.player2, players_ref, ind_frame)
+                for assist in killfeed.assists:
+                    if assist['player'] == "empty":
+                        assist['player'] = self._get_player_name(
+                            assist, players_ref, ind_frame)
+
+    def _get_player_name(self, data, players_ref, ind_frame):
+        """ Rematch player in kf with player in topbar
+
+        Author: KomorebiL, Appcell
+
+        Args:
+            None
+
+        Returns:
+            name of the player matched
+        """
+        ind = ind_frame
+        while ind >= 0:
+            players = players_ref[ind]
+            for player in players:
+                if data['chara'] == player.chara:
+                    return player.name
+            ind = ind - 1
+        return "empty"
 
     def rematch_charas_and_players(self):
         """Rematch charas & players for killfeed
@@ -271,85 +396,3 @@ class Game(object):
             None 
         """
         pass
-
-
-class NewData:
-    def __init__(self, game):
-        self.game = copy.deepcopy(game)
-        self.team_left = game.team_names['left']
-        self.players = copy.copy(game.frames[0].players)
-
-    def update(self):
-        for idx, data in enumerate(self.game.frames):
-            self._update_players(data.players, idx)
-            self._update_killfeed(data.killfeeds, data.players, idx)
-        return self.game
-
-    def _update_players(self, players, index):
-        """
-        如果玩家阵亡，将他死之前的角色、大招能量覆盖到当前位置
-        大招状态太依赖于 is_dead，所以先剥离出来
-        换种说法，把玩家死之前的状态冻结。
-        玩家存活的话就更新玩家的状态到 self.players
-        """
-        previous_players = (self.game.frames[0].players if index == 0
-                            else self.game.frames[index - 1].players)
-        next_players = (self.game.frames[-1].players if index >= len(self.game.frames) - 1
-                        else self.game.frames[index + 1].players)
-        for idx, player in enumerate(players):
-            pre_player, next_player = previous_players[idx], next_players[idx]
-            # if pre_player.is_dead and next_player.is_dead:
-            #     player.is_dead = True
-
-            if player.is_dead:
-                player.chara = self.players[idx].chara
-                player.ult_charge = self.players[idx].ult_charge
-                player.is_ult_ready = self.players[idx].is_ult_ready
-            else:
-                if pre_player.chara == next_player.chara:
-                    player.chara = pre_player.chara
-                self.players[idx] = copy.copy(player)
-
-    def _update_killfeed(self, killfeeds, players, index):
-        """
-        遍历 killfeed，填充缺失的玩家姓名。
-        如果是天使，则修正爆头信息
-        """
-        for idx, killfeed in enumerate(killfeeds):
-            killfeed.player1['player'] = self._get_player_name(killfeed.player1,
-                                                               players,
-                                                               self.players,
-                                                               index,)
-            killfeed.player2['player'] = self._get_player_name(killfeed.player2,
-                                                               players,
-                                                               self.players,
-                                                               index,)
-            if killfeed.player1['team'] == killfeed.player2['team']:
-                if killfeed.player1['chara'] == 'mercy':
-                    killfeed.is_headshot = False
-
-            for assist in killfeed.assists:
-                assist['player'] = self._get_player_name(assist,
-                                                         players,
-                                                         self.players,
-                                                         index,
-                                                         )
-
-    def _get_player_name(self, player, current_player, previous_chara, index):
-        """
-        获取玩家姓名
-        :param player: 当前玩家的信息(killfeed中的player1或player2)
-        :param current_player: 包含了当前12个玩家信息的 list
-        :param index: 当前帧的下标
-        :return: player_name
-        """
-        if player['player'] != 'empty':
-            return player['player']
-        myslice = slice(0, 6) if player['team'] == self.team_left else slice(6, 12)
-        players = current_player[myslice] + previous_chara[myslice]
-        if index - 2 >= 0:
-            players += self.game.frames[index - 2].players[myslice]
-        for p in players:
-            if p.chara == player['chara']:
-                return p.name
-        return 'empty'
