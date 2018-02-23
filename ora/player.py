@@ -95,6 +95,7 @@ class Player:
         ult_icon_pos = OW.get_ult_icon_pos(
             self.index, self.game_type, self.game_version)
         ult_icon = ImageUtils.crop(self.image, ult_icon_pos)
+
         # Get reference icon image
         ult_icon_ref = OW.get_ult_icon_ref(
             self.index, self.game_type, self.game_version)
@@ -157,6 +158,7 @@ class Player:
             self.index, self.game_type, self.game_version))
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index, self.game_type, self.game_version))
+
         # If player is observed, not sure about this tho
         avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
             self.index, self.game_type, self.game_version))
@@ -250,8 +252,8 @@ class Player:
         if self.is_ult_ready:
             self.ult_charge = 100
             return
-        if self.is_dead:
-            return
+        # if self.is_dead:
+        #     return
 
         ult_charge_pre_pos = OW.get_ult_charge_pre_pos(
             self.index, self.game_type, self.game_version)
@@ -270,7 +272,6 @@ class Player:
         ult_charge_image = ImageUtils.crop(
             ult_charge_shear, 
             OW.get_ult_charge_pos(self.index, self.game_type, self.game_version))
-        
         # TODO: I see there's no difference at all of brightness deviation!!
         # Our contrast adjusting must be seriously problematic. For grayscale
         # img, a simple normalization based on std would do.
