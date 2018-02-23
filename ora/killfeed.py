@@ -73,7 +73,6 @@ class Killfeed:
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
-
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
@@ -251,6 +250,7 @@ class Killfeed:
             color, colors_ref['left'])
         dist_right = ImageUtils.color_distance(
             color, colors_ref['right'])
+
         if dist_left < dist_right:
             res['team'] = self.frame.game.team_names['left']
         else:

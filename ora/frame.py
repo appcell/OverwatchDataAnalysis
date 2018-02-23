@@ -49,19 +49,12 @@ class Frame(object):
         self.game_type = game.game_type
         
         # Gui.gui_instance.show_progress(self.time)
-        st = time.time()
+
         print(self.time)
         self.get_players()
         self.get_killfeeds()
         self.validate()
         self.free()
-        # print(game_version)
-        # for kf in self.killfeeds:
-        #     print( kf.player1)
-        #     print(kf.player2)
-        #     print("========")
-        et = time.time()
-        print(et - st)
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -211,6 +204,7 @@ class Frame(object):
         mean = [np.mean(validation_roi[:, :, 0]),
                 np.mean(validation_roi[:, :, 1]),
                 np.mean(validation_roi[:, :, 2])]
+
         if std < OW.FRAME_VALIDATION_COLOR_STD[self.game_type][self.game_version] \
                 and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game_type][self.game_version] \
                 and flag is True:

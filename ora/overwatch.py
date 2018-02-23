@@ -157,7 +157,7 @@ def get_chara_name(name):
 TEAM_COLOR_PICK_POS_LEFT = {
     GAMETYPE_OWL: {
         0: [53, 40],
-        1: [53, 40]
+        1: [53 + 27, 40 + 1]
     },
     GAMETYPE_CUSTOM: {
         0: [0, 0]
@@ -166,7 +166,7 @@ TEAM_COLOR_PICK_POS_LEFT = {
 TEAM_COLOR_PICK_POS_RIGHT = {
     GAMETYPE_OWL: {
         0: [54, 1183],
-        1: [54, 1183]
+        1: [54 + 27, 1183 - 6]
     },
     GAMETYPE_CUSTOM: {
         0: [0, DEFAULT_SCREEN_WIDTH - 1]
@@ -180,7 +180,7 @@ TEAM_COLOR_PICK_POS_RIGHT = {
 ULT_ICON_X_MIN_LEFT = {
     GAMETYPE_OWL: {
         0: 31,
-        1: 31
+        1: 31 + 1
     },
     GAMETYPE_CUSTOM: {
         0: 31
@@ -189,7 +189,7 @@ ULT_ICON_X_MIN_LEFT = {
 ULT_ICON_X_MIN_RIGHT = {
     GAMETYPE_OWL: {
         0: 829,
-        1: 829
+        1: 829 - 6
     },
     GAMETYPE_CUSTOM: {
         0: 829
@@ -207,7 +207,7 @@ ULT_ICON_WIDTH = {
 ULT_ICON_Y_MIN = {
     GAMETYPE_OWL: {
         0: 47,
-        1: 47
+        1: 47 + 27
     },
     GAMETYPE_CUSTOM: {
         0: 47
@@ -333,7 +333,7 @@ ULT_ADJUST_LOG_INDEX = {
 ULT_CHARGE_PRE_X_MIN_LEFT = {
     GAMETYPE_OWL: {
         0: 20,
-        1: 20
+        1: 20 + 1
     },
     GAMETYPE_CUSTOM: {
         0: 20
@@ -342,7 +342,7 @@ ULT_CHARGE_PRE_X_MIN_LEFT = {
 ULT_CHARGE_PRE_X_MIN_RIGHT = {
     GAMETYPE_OWL: {
         0: 825,
-        1: 825
+        1: 825 - 3
     },
     GAMETYPE_CUSTOM: {
         0: 825
@@ -360,7 +360,7 @@ ULT_CHARGE_PRE_WIDTH = {
 ULT_CHARGE_PRE_Y_MIN = {
     GAMETYPE_OWL: {
         0: 50,
-        1: 50
+        1: 50 + 23
     },
     GAMETYPE_CUSTOM: {
         0: 50
@@ -426,7 +426,7 @@ ULT_CHARGE_X_MIN_RIGHT = {
 ULT_CHARGE_WIDTH = {
     GAMETYPE_OWL: {
         0: 23,
-        1: 23
+        1: 23 + 3
     },
     GAMETYPE_CUSTOM: {
         0: 23
@@ -542,7 +542,7 @@ def get_ult_charge_pre_pos(index, gametype, version):
     else:
         return [ULT_CHARGE_PRE_Y_MIN[gametype][version],
                 ULT_CHARGE_PRE_HEIGHT[gametype][version],
-                ULT_CHARGE_PRE_X_MIN_LEFT[gametype][version] + (index - 6) * ULT_CHARGE_PRE_GAP[gametype][version],
+                ULT_CHARGE_PRE_X_MIN_RIGHT[gametype][version] + (index - 6) * ULT_CHARGE_PRE_GAP[gametype][version],
                 ULT_CHARGE_PRE_WIDTH[gametype][version]]
 
 
@@ -614,7 +614,7 @@ AVATAR_HEIGHT_REF = {
 AVATAR_X_MIN_LEFT = {
     GAMETYPE_OWL: {
         0: 62,
-        1: 62
+        1: 62 + 1
     },
     GAMETYPE_CUSTOM: {
         0: 62
@@ -623,7 +623,7 @@ AVATAR_X_MIN_LEFT = {
 AVATAR_X_MIN_LEFT_OBSERVED = {
     GAMETYPE_OWL: {
         0: 62,
-        1: 62
+        1: 62 + 1
     },
     GAMETYPE_CUSTOM: {
         0: 62
@@ -632,7 +632,7 @@ AVATAR_X_MIN_LEFT_OBSERVED = {
 AVATAR_X_MIN_RIGHT = {
     GAMETYPE_OWL: {
         0: 857,
-        1: 857
+        1: 857 - 6
     },
     GAMETYPE_CUSTOM: {
         0: 857
@@ -641,7 +641,7 @@ AVATAR_X_MIN_RIGHT = {
 AVATAR_X_MIN_RIGHT_OBSERVED = {
     GAMETYPE_OWL: {
         0: 854,
-        1: 854
+        1: 854 - 6
     },
     GAMETYPE_CUSTOM: {
         0: 854
@@ -668,7 +668,7 @@ AVATAR_WIDTH_OBSERVED = {
 AVATAR_Y_MIN = {
     GAMETYPE_OWL: {
         0: 48,
-        1: 48
+        1: 48 + 27
     },
     GAMETYPE_CUSTOM: {
         0: 48
@@ -677,7 +677,7 @@ AVATAR_Y_MIN = {
 AVATAR_Y_MIN_OBSERVED = {
     GAMETYPE_OWL: {
         0: 45,
-        1: 45
+        1: 45 + 27
     },
     GAMETYPE_CUSTOM: {
         0: 45
@@ -724,7 +724,7 @@ AVATAR_GAP_OBSERVED = {
 AVATAR_DIFF_Y_MIN = {
     GAMETYPE_OWL: {
         0: 47,
-        1: 47
+        1: 47 + 27
     },
     GAMETYPE_CUSTOM: {
         0: 47
@@ -907,7 +907,7 @@ KILLFEED_RIGHT_WIDTH = {
 KILLFEED_X_MIN = {
     GAMETYPE_OWL: {
         0: 963,
-        1: 963
+        1: 963 - 10
     },
     GAMETYPE_CUSTOM: {
         0: 963
@@ -916,7 +916,7 @@ KILLFEED_X_MIN = {
 KILLFEED_Y_MIN = {
     GAMETYPE_OWL: {
         0: 114,
-        1: 114
+        1: 114 + 25
     },
     GAMETYPE_CUSTOM: {
         0: 114
@@ -981,7 +981,7 @@ KILLFEED_MAX_COLOR_DISTANCE = {
 KILLFEED_TEAM_COLOR_POS_Y = {
     GAMETYPE_OWL: {
         0: 2,
-        1: 2
+        1: 3
     },
     GAMETYPE_CUSTOM: {
         0: 2
@@ -1062,7 +1062,7 @@ def get_killfeed_team_color_pos(pos_x, position, gametype, version):
                 pos_x + KILLFEED_TEAM_COLOR_POS_X_LEFT[gametype][version]]
     else:
         return [KILLFEED_TEAM_COLOR_POS_Y[gametype][version], 
-                pos_x + KILLFEED_TEAM_COLOR_POS_X_RIGHT[gametype][version]]
+                pos_x + KILLFEED_TEAM_COLOR_POS_X_RIGHT[gametype][version] + KILLFEED_ICON_WIDTH[gametype][version]]
 
 
 def get_killfeed_pos(index, gametype, version):
@@ -1308,7 +1308,7 @@ def get_assist_icon_pos(pos_x, assist_index, gametype, version):
 FRAME_VALIDATION_POS = {
     GAMETYPE_OWL: {
         0: [0, 15, 0, 70],
-        1: [0, 15, 0, 70]
+        1: [37, 15, 0, 70]
     },
     GAMETYPE_CUSTOM: {
         0: [0, 15, 0, 70]
@@ -1329,8 +1329,8 @@ FRAME_VALIDATION_COLOR_MEAN = {
 }
 FRAME_VALIDATION_COLOR_STD = {
     GAMETYPE_OWL: {
-        0: 3,
-        1: 3
+        0: 10,
+        1: 10
     },
     GAMETYPE_CUSTOM: {
         0: 3
@@ -1358,7 +1358,7 @@ FRAME_VALIDATION_REPLAY_PROB = {
 REPLAY_ICON_POS = {
     GAMETYPE_OWL: {
         0: [109, 66, 64, 74],
-        1: [109, 66, 64, 74]
+        1: [149, 66, 64, 74]
     },
     GAMETYPE_CUSTOM: {
         0: [111, 64, 64, 74]

@@ -63,7 +63,6 @@ class Game(object):
         self.output_path = ""
         self.is_test = False
 
-        # For OWL games only
         self.is_game_version_set = False
         self.game_version = 0
 
@@ -171,17 +170,14 @@ class Game(object):
                               (1 / float(self.analyzer_fps)) * step_cnt,
                               self, self.game_version)
             else:
-                print('hahah')
                 frame = self._set_game_version(
                     frame_image,
                     start_time +(1 / float(self.analyzer_fps)) * step_cnt)
             self.frames.append(frame)
             time2 = time.time() - time1
-            print(time2)
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
-
         video.close()
         self.postprocess()
         self.output_to_excel()
@@ -259,12 +255,6 @@ class Game(object):
         Returns:
             None 
         """
-        # for frame in self.frames:
-        #     for kf in frame.killfeeds:
-        #         print(kf.player1)
-        #         print(kf.player2)
-        #         print("***")
-        #     print("=========")
         # 1) Remove repeated killfeeds.
         # TODO: There must be a better way for this.
         frame_num = len(self.frames)
