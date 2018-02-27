@@ -6,7 +6,9 @@ import gui as Gui
 from utils import image as ImageUtils
 from player import Player
 from killfeed import Killfeed
+import pool
 
+import time
 
 class Frame(object):
     """Class of a Frame object.
@@ -36,6 +38,7 @@ class Frame(object):
         Returns:
             None 
         """
+        t1 = time.time()
         self.is_valid = False
         self.players = []
         self.killfeeds = []
@@ -52,6 +55,8 @@ class Frame(object):
         self.validate()
         self.free()
 
+        t2 = time.time()
+        print(t2 - t1)
     def free(self):
         """Free RAM by removing images from the Frame instance.
 
@@ -72,7 +77,7 @@ class Frame(object):
         """Get all players info in this frame.
 
         Author:
-            Appcell
+            Appcell, GenesisX
 
         Args:
             None
@@ -80,9 +85,33 @@ class Frame(object):
         Returns:
             None 
         """
+        # Multiprocess players
+
+        game_type = self.game.game_type
+        image = self.image
+        ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
+
+        results = []
+
         for i in range(0, 12):
-            player = Player(i, self)
-            self.players.append(player)
+            avatars = self.get_avatars(i)
+            team = ""
+            name = ""
+
+            if i < 6:
+                name = self.game.name_players_team_left[i]
+            else:
+                name = self.game.name_players_team_right[i - 6]
+            if i < 6:
+                team = self.game.team_names['left']
+            else:
+                team = self.game.team_names['right']
+
+            results.append(pool.PROCESS_POOL.apply_async(Player, args=(
+                i, avatars, name, team, image, game_type, ult_charge_numbers_ref)))
+        
+        for res in results:
+            self.players.append(res.get())
 
     def get_team_colors_from_image(self):
         """Get team colors from this frame.
