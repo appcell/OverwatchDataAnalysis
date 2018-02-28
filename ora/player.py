@@ -252,8 +252,6 @@ class Player:
         if self.is_ult_ready:
             self.ult_charge = 100
             return
-        # if self.is_dead:
-        #     return
 
         ult_charge_pre_pos = OW.get_ult_charge_pre_pos(
             self.index, self.game_type, self.game_version)

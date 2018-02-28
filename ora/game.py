@@ -63,7 +63,6 @@ class Game(object):
         self.video_path = ""
         self.output_path = ""
         self.is_test = False
-
         self.is_game_version_set = False
         self.game_version = 0
 
@@ -192,6 +191,8 @@ class Game(object):
             if test_frame.is_valid:
                 self.is_game_version_set = True
                 self.game_version = i
+                print("Game version is set as:")
+                print(i)
                 return test_frame
         
 
@@ -229,11 +230,22 @@ class Game(object):
                 players in each frame.
         """
         self._clear_frames()
+
+        # 1) 1st rematching
         players_ref = self._postprocess_players()
+        self._rematch_killfeeds(players_ref)
+
+        # 2) 2nd rematching
+        self._reset_death_status(players_ref, self.frames)
         self._rematch_killfeeds(players_ref)
 
         for ind_frame, players in enumerate(players_ref):
             self.frames[ind_frame].players = players
+
+        # 3) 3rd rematching
+        players_ref_2 = self._postprocess_players()
+        for ind_frame, players in enumerate(players_ref):
+            self.frames[ind_frame].players = players        
 
     def _clear_frames(self):
         """Remove invalid frames & repeated killfeeds.
@@ -368,10 +380,34 @@ class Game(object):
         while ind >= 0:
             players = players_ref[ind]
             for player in players:
-                if data['chara'] == player.chara:
+                if data['chara'] == player.chara and player.is_dead == False:
                     return player.name
             ind = ind - 1
         return "empty"
+
+    def _reset_death_status(self, players_list, frames):
+        """ When a player is killed/resurrected in killfeed, set his/her death state.
+
+        Author: Appcell
+
+        Args:
+            players_list: a 2-D list of all (potentially) correct idents of
+                players in each frame, should be ouput of 1st rematching.
+            frames: list of all frames
+
+        Returns:
+            None
+        """
+        for ind_frame, frame in enumerate(frames):
+            for kf in frame.killfeeds:
+                if kf.player2['player'] != "empty":
+                    respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
+                    if kf.player1['chara'] == "mercy" and kf.player1['team'] == kf.player2['team']:
+                        for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
+                            players_list[ind_frame + i][kf.player2['player']].is_dead = False
+                    elif kf.player2['player'] != -1:
+                        for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
+                            players_list[ind_frame + i][kf.player2['player']].is_dead = True
 
     def rematch_charas_and_players(self):
         """Rematch charas & players for killfeed

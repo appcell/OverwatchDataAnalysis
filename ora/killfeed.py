@@ -238,8 +238,8 @@ class Killfeed:
         """
         res = {
             'chara': player['chara'],
-            'team': 'empty',
-            'player': 'empty',
+            'team': -1,
+            'player': -1,
             'pos': player['pos']}
         color_pos = OW.get_killfeed_team_color_pos(
             player['pos'], position, self.game_type, self.game_version)
@@ -252,16 +252,16 @@ class Killfeed:
             color, colors_ref['right'])
 
         if dist_left < dist_right:
-            res['team'] = self.frame.game.team_names['left']
+            res['team'] = OW.TEAM_LEFT
         else:
-            res['team'] = self.frame.game.team_names['right']
+            res['team'] = OW.TEAM_RIGHT
         chara = OW.get_chara_name(player['chara'])
         if res['team'] == self.frame.game.team_names['left']:
-            res['player'] = next((item.name for item in self.frame.players[
-                0:6] if item.chara == chara), "empty")
+            res['player'] = next((item.index for item in self.frame.players[
+                0:6] if item.chara == chara), -1)
         else:
-            res['player'] = next((item.name for item in self.frame.players[
-                6:12] if item.chara == chara), "empty")
+            res['player'] = next((item.index for item in self.frame.players[
+                6:12] if item.chara == chara), -1)
         return res
 
     def _set_assist_info(self, assist):
@@ -288,13 +288,11 @@ class Killfeed:
         }
 
         if assist['team'] == self.frame.game.team_names['left']:
-            for player in self.frame.players[0:6]:
-                if player.chara == assist['chara']:
-                    res['player'] = player.name
+            res['player'] = next((item.index for item in self.frame.players[
+                0:6] if item.chara == assist['chara']), -1)
         else:
-            for player in self.frame.players[6:12]:
-                if player.chara == assist['chara']:
-                    res['player'] = player.name
+            res['player'] = next((item.index for item in self.frame.players[
+                6:12] if item.chara == assist['chara']), -1)
         return res
 
     def _get_icons_weights(self, edge_validation):
@@ -511,7 +509,7 @@ class Killfeed:
 
             assist = {
                 "chara": "empty",
-                "player": "empty",
+                "player": -1,
                 "team": self.player1['team']
             }
             max_score = -10
