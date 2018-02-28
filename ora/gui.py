@@ -11,6 +11,7 @@ from tkinter import messagebox
 from .request import json_request
 from . import overwatch as OW
 from . import game
+from . import pool
 
 def log(*args):
     print(args)
@@ -235,9 +236,12 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
     def run(self):
         self.game_instance = game.Game(OW.GAMETYPE_OWL)
         info, valid = self.info()
+
         if valid is True:
             self.game_instance.set_game_info(info)
             self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
+            pool.PROCESS_POOL.close()
+            pool.PROCESS_POOL.join()
             self.game_instance.output_to_excel()
             self.show_finish_msg()
 
