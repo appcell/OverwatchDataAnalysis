@@ -40,7 +40,7 @@ class Frame(object):
         """
         self.is_valid = False
         self.is_replay = False
-        self.players = []
+        self.players = [None] * 12
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
         self.time = frame_time
@@ -110,11 +110,12 @@ class Frame(object):
             else:
                 team = self.game.team_names['right']
 
-            results.append(pool.PROCESS_POOL.apply_async(Player, args=(
-                i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref)))
+            results.append(pool.PROCESS_POOL.apply_async(Player, 
+                args=i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref)
+                callback=self.player_callback))
         
         for res in results:
-            self.players.append(res.get())
+            res.wait()
         
 
     def get_team_colors_from_image(self):
