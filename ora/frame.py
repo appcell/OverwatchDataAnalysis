@@ -111,7 +111,7 @@ class Frame(object):
                 team = self.game.team_names['right']
 
             results.append(pool.PROCESS_POOL.apply_async(Player, 
-                args=i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref)
+                args=(i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref),
                 callback=self.player_callback))
         
         for res in results:
