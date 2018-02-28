@@ -7,7 +7,6 @@ import time
 import copy
 import cv2
 
-
 class Game(object):
     """Class of a Game object.
 

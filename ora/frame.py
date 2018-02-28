@@ -6,9 +6,9 @@ from . import gui as Gui
 from .utils import image as ImageUtils
 from .player import Player
 from .killfeed import Killfeed
+from . import pool
 
-import multiprocessing
-from concurrent.futures import ProcessPoolExecutor
+import time
 
 class Frame(object):
     """Class of a Frame object.
@@ -40,13 +40,15 @@ class Frame(object):
         """
         self.is_valid = False
         self.is_replay = False
-        self.players = []
+        self.players = [None] * 12
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
         self.time = frame_time
         self.game = game
         self.game_version = game_version
         self.game_type = game.game_type
+        
+        # Gui.gui_instance.show_progress(self.time)
 
         print(self.time)
         self.get_players()
@@ -70,6 +72,9 @@ class Frame(object):
         """
         del self.image
 
+    def player_callback(self, result):
+        self.players[result.index] = result
+
     def get_players(self):
         """Get all players info in this frame.
 
@@ -84,15 +89,12 @@ class Frame(object):
         """
         # Multiprocess players
 
-        n_cpus = multiprocessing.cpu_count()
-        pool = ProcessPoolExecutor(max_workers=n_cpus)
-
-        player_future = []
-
         game_type = self.game_type
         game_version = self.game_version
         image = self.image
         ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
+
+        results = []
 
         for i in range(0, 12):
             avatars = self.get_avatars(i)
@@ -108,13 +110,13 @@ class Frame(object):
             else:
                 team = self.game.team_names['right']
 
-            player = pool.submit(Player, 
-                i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref)
-
-            player_future.append(player)
+            results.append(pool.PROCESS_POOL.apply_async(Player, 
+                args=(i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref),
+                callback=self.player_callback))
         
-        for player in player_future:
-            self.players.append(player.result())
+        for res in results:
+            res.wait()
+        
 
     def get_team_colors_from_image(self):
         """Get team colors from this frame.

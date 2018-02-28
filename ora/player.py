@@ -32,8 +32,13 @@ class Player:
             Appcell, GenesisX
 
         Args:
-            frame: the Frame obj current player is in
             index: row number of current player, ranges from 0 to 11.
+            avatars: all character avatars for reference
+            game_type: current game type
+            name: name of the current player
+            team: name of the current team
+            image: whole image of current frame
+            ult_charge_numbers_ref: reference of ult charge numbers
 
         Returns:
             None 
