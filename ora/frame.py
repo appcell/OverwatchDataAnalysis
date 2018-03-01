@@ -98,17 +98,14 @@ class Frame(object):
 
         for i in range(0, 12):
             avatars = self.get_avatars(i)
-            team = ""
-            name = ""
+            team = -1
+            name = -1
 
+            name = self.game.name_players[i]
             if i < 6:
-                name = self.game.name_players_team_left[i]
+                team = self.game.team_names[OW.LEFT]
             else:
-                name = self.game.name_players_team_right[i - 6]
-            if i < 6:
-                team = self.game.team_names['left']
-            else:
-                team = self.game.team_names['right']
+                team = self.game.team_names[OW.RIGHT]
 
             results.append(pool.PROCESS_POOL.apply_async(Player, 
                 args=(i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref),
@@ -132,10 +129,10 @@ class Frame(object):
         """
         pos = OW.get_team_color_pick_pos(self.game_type, self.game_version)
 
-        return {
-            "left": self.image[pos[0][0], pos[0][1]],
-            "right": self.image[pos[1][0], pos[1][1]]
-        }
+        return [
+            self.image[pos[0][0], pos[0][1]],
+            self.image[pos[1][0], pos[1][1]]
+        ]
 
     def get_team_colors(self):
         if self.game.team_colors is not None:
@@ -262,10 +259,10 @@ class Frame(object):
 
         # Create background image with team color
         bg_image_left = ImageUtils.create_bg_image(
-            team_colors["left"], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version],
+            team_colors[OW.LEFT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version],
             OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
         bg_image_right = ImageUtils.create_bg_image(
-            team_colors["right"], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version], 
+            team_colors[OW.RIGHT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version], 
             OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
         avatars_ref_observed = OW.get_avatars_ref_observed(self.game_type, self.game_version)
 

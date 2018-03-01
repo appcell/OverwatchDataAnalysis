@@ -21,8 +21,8 @@ class Killfeed:
         assists: list of assisting players, with the form of a dict:
                  {
                      "chara": "empty",
-                     "player": "empty",
-                     "team": "empty"
+                     "player": -1,
+                     "team": -1
                  }        
         index: row number of current killfeed, ranges from 0 to 5.
         is_valid: tell if the killfeed is valid, mostly for convenience only
@@ -49,14 +49,14 @@ class Killfeed:
         """
         self.player1 = {
             "chara": "empty",
-            "player": "empty",
-            "team": "empty",
+            "player": -1,
+            "team": -1,
             "pos": -1
         }
         self.player2 = {
             "chara": "empty",
-            "player": "empty",
-            "team": "empty",
+            "player": -1,
+            "team": -1,
             "pos": -1
         }
         self.ability = 0
@@ -147,7 +147,7 @@ class Killfeed:
             if icons_weights and icons_weights[0]['pos'] \
                 >= OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
                 - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
-                self.player2 = self._set_player_info(icons_weights[0], 'right')
+                self.player2 = self._set_player_info(icons_weights[0], OW.RIGHT)
 
         if abs(mean_pos_right - mean_pos_left) \
                 < OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version] - 7:
@@ -156,7 +156,7 @@ class Killfeed:
             if matched and matched[0]['pos'] \
                     >= OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
                     - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
-                self.player2 = self._set_player_info(matched[0], 'right')
+                self.player2 = self._set_player_info(matched[0], OW.RIGHT)
         else:
             # 2 icons got recognized
             icons_weights_left = sorted(
@@ -165,10 +165,10 @@ class Killfeed:
                 icons_weights_right, key=itemgetter('prob'), reverse=True)[0:2]
             if icons_weights_left:
                 self.player1 = self._set_player_info(
-                    icons_weights_left[0], 'left')
+                    icons_weights_left[0], OW.LEFT)
             if icons_weights_right:
                 self.player2 = self._set_player_info(
-                    icons_weights_right[0], 'right')
+                    icons_weights_right[0], OW.RIGHT)
 
         if self.player2['pos'] == -1:
             self.is_valid = False
@@ -230,8 +230,8 @@ class Killfeed:
             A dict of player info, with the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "player": "empty",  # name of player, or "empty"
-                "team": "empty",    # name of team, or "empty"
+                "player": -1,  # index of player, or -1
+                "team": -1,    # index of team, or -1
                 "pos": -1,          # x-axis position of icon in killfeed
                                       row image
             }
@@ -247,16 +247,16 @@ class Killfeed:
         color = self.image[color_pos[0], color_pos[1]]
         colors_ref = self.frame.get_team_colors()
         dist_left = ImageUtils.color_distance(
-            color, colors_ref['left'])
+            color, colors_ref[0])
         dist_right = ImageUtils.color_distance(
-            color, colors_ref['right'])
+            color, colors_ref[1])
 
         if dist_left < dist_right:
-            res['team'] = OW.TEAM_LEFT
+            res['team'] = OW.LEFT
         else:
-            res['team'] = OW.TEAM_RIGHT
+            res['team'] = OW.RIGHT
         chara = OW.get_chara_name(player['chara'])
-        if res['team'] == self.frame.game.team_names['left']:
+        if res['team'] == self.frame.game.team_names[OW.LEFT]:
             res['player'] = next((item.index for item in self.frame.players[
                 0:6] if item.chara == chara), -1)
         else:
@@ -265,7 +265,7 @@ class Killfeed:
         return res
 
     def _set_assist_info(self, assist):
-        """Set team & player name info for a assisting chara.
+        """Set team & player info for a assisting chara.
 
         Author:
             Appcell
@@ -277,17 +277,17 @@ class Killfeed:
             A dict of player info, with the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "player": "empty",  # name of player, or "empty"
-                "team": "empty",    # name of team, or "empty"
+                "player": -1,  # index of player, or -1
+                "team": -1,    # index of team, or -1
             }
         """
         res = {
             'chara': assist['chara'],
-            'player': 'empty',
+            'player': -1,
             'team': assist['team']
         }
 
-        if assist['team'] == self.frame.game.team_names['left']:
+        if assist['team'] == self.frame.game.team_names[OW.LEFT]:
             res['player'] = next((item.index for item in self.frame.players[
                 0:6] if item.chara == assist['chara']), -1)
         else:
@@ -313,8 +313,8 @@ class Killfeed:
             in this killfeed image. A matching result is in the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "prob": "empty",  # score from comparison
-                "pos": "empty",    # x-axis position of icon in killfeed
+                "prob": -1,  # score from comparison
+                "pos": -1,    # x-axis position of icon in killfeed
                                      row image
             }
         """
@@ -328,6 +328,7 @@ class Killfeed:
             # Here we have to allow some error, thus comes +/- 2
             if sum(edge_validation[max_loc[0] - 2: max_loc[0] + 2]) > 0 \
                     and max_val > OW.KILLFEED_MAX_PROB[self.game_type][self.game_version]:
+                    # TODO: write this into ow.py
                 temp_icon = ImageUtils.crop(
                     self.image, 
                     [3, icon.shape[0], max_loc[0], OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version]])

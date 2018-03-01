@@ -32,6 +32,8 @@ MIN_RESPAWN_TIME = 10
 # **********************************************************
 TEAM_LEFT = 0
 TEAM_RIGHT = 1
+LEFT = 0
+RIGHT = 1
 # **********************************************************
 # ==========================================================
 #               Chara & Non-chara Objects List
@@ -1059,13 +1061,13 @@ def get_killfeed_team_color_pos(pos_x, position, gametype, version):
 
     Args:
         pox_x: x-axis coordinate of killfeed avatar
-        position: on which side the avatar lies, 'left' or 'right'
+        position: on which side the avatar lies, LEFT or OW.RIGHT
 
     Returns:
         Pos array of this pixel
     """
 
-    if position == 'left':
+    if position == LEFT:
         return [KILLFEED_TEAM_COLOR_POS_Y[gametype][version], 
                 pos_x + KILLFEED_TEAM_COLOR_POS_X_LEFT[gametype][version]]
     else:

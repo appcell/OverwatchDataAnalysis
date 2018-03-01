@@ -20,10 +20,10 @@ class Game(object):
         name_players_team_left: names of players in left team
         name_players_team_right: names of players in right team
         team_colors: theme color of both teams. In form of:
-                     {
-                         "left": None,
-                         "right": None
-                     }
+                     [
+                         None,  # Left team
+                         None   # Right team
+                     ]
         video_path: video path
         output_path: output path
         is_test: if is in test mode. If true, analysis result would be
@@ -55,9 +55,8 @@ class Game(object):
         """
         self.game_type = game_type
         self.analyzer_fps = OW.ANALYZER_FPS
-        self.team_names = {"left": "", "right": ""}
-        self.name_players_team_left = []
-        self.name_players_team_right = []
+        self.team_names = [None, None]
+        self.name_players = [None, None, None, None, None, None, None, None, None, None, None, None]
         self.team_colors = None
         self.video_path = ""
         self.output_path = ""
@@ -109,24 +108,24 @@ class Game(object):
 
         self.analyzer_fps = gui_info["fps"]
         if gui_info["name_team_left"]:
-            self.team_names['left'] = gui_info["name_team_left"]
+            self.team_names[0] = gui_info["name_team_left"]
         else:
-            self.team_names['left'] = ["Team Left"]
+            self.team_names[0] = ["Team Left"]
 
         if gui_info["name_team_right"]:
-            self.team_names['right'] = gui_info["name_team_right"]
+            self.team_names[1] = gui_info["name_team_right"]
         else:
-            self.team_names['right'] = ["Team Right"]
+            self.team_names[1] = ["Team Right"]
 
         if len(gui_info["name_players_team_left"]) == 6:
-            self.name_players_team_left = gui_info["name_players_team_left"]
+            self.name_players[0:6] = gui_info["name_players_team_left"]
         else:
-            self.name_players_team_left = ["1", "2", "3", "4", "5", "6"]
+            self.name_players[0:6] = ["1", "2", "3", "4", "5", "6"]
 
         if len(gui_info["name_players_team_right"]) == 6:
-            self.name_players_team_right = gui_info["name_players_team_right"]
+            self.name_players[6:12] = gui_info["name_players_team_right"]
         else:
-            self.name_players_team_right = ["7", "8", "9", "10", "11", "12"]
+            self.name_players[6:12] = ["7", "8", "9", "10", "11", "12"]
 
     def analyze(self, start_time=0, end_time=0, is_test=False):
         """Main analysis process
@@ -179,7 +178,6 @@ class Game(object):
             frame_image = video.get_frame_image(frame_image_index)
         video.close()
         self.postprocess()
-        self.output_to_excel()
 
     def _set_game_version(self, frame_image, frame_time):
         for i in range(OW.VERSION_NUM[self.game_type]):
@@ -244,7 +242,14 @@ class Game(object):
         # 3) 3rd rematching
         players_ref_2 = self._postprocess_players()
         for ind_frame, players in enumerate(players_ref):
-            self.frames[ind_frame].players = players        
+            self.frames[ind_frame].players = players
+
+        for frame in self.frames:
+            print(frame.time)
+            for kf in frame.killfeeds:
+                print(kf.player1)
+                print(kf.player2)
+            print("==========")
 
     def _clear_frames(self):
         """Remove invalid frames & repeated killfeeds.
@@ -353,18 +358,18 @@ class Game(object):
         """
         for ind_frame, frame in enumerate(self.frames):
             for killfeed in frame.killfeeds:
-                if killfeed.player1['player'] == "empty":
-                    killfeed.player1['player'] = self._get_player_name(
+                if killfeed.player1['player'] == -1:
+                    killfeed.player1['player'] = self._get_player(
                         killfeed.player1, players_ref, ind_frame)
-                if killfeed.player2['player'] == "empty":
-                    killfeed.player2['player'] = self._get_player_name(
+                if killfeed.player2['player'] == -1:
+                    killfeed.player2['player'] = self._get_player(
                         killfeed.player2, players_ref, ind_frame)
                 for assist in killfeed.assists:
-                    if assist['player'] == "empty":
-                        assist['player'] = self._get_player_name(
+                    if assist['player'] == -1:
+                        assist['player'] = self._get_player(
                             assist, players_ref, ind_frame)
 
-    def _get_player_name(self, data, players_ref, ind_frame):
+    def _get_player(self, data, players_ref, ind_frame):
         """ Rematch player in kf with player in topbar
 
         Author: KomorebiL, Appcell
@@ -380,9 +385,9 @@ class Game(object):
             players = players_ref[ind]
             for player in players:
                 if data['chara'] == player.chara and player.is_dead == False:
-                    return player.name
+                    return player.index
             ind = ind - 1
-        return "empty"
+        return -1
 
     def _reset_death_status(self, players_list, frames):
         """ When a player is killed/resurrected in killfeed, set his/her death state.
@@ -399,7 +404,7 @@ class Game(object):
         """
         for ind_frame, frame in enumerate(frames):
             for kf in frame.killfeeds:
-                if kf.player2['player'] != "empty":
+                if kf.player2['player'] != -1:
                     respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
                     if kf.player1['chara'] == "mercy" and kf.player1['team'] == kf.player2['team']:
                         for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
