@@ -223,33 +223,38 @@ class Game(object):
             None
 
         Returns:
-            players_ref: a 2-D list of all (potentially) correct idents of
+            players_list: a 2-D list of all (potentially) correct idents of
                 players in each frame.
         """
         self._clear_frames()
 
+        players_list = self._get_players_list()
         # 1) 1st rematching
-        players_ref = self._postprocess_players()
-        self._rematch_killfeeds(players_ref)
+        self._clean_chara_switching(players_list)
+        self._rematch_killfeeds(players_list, False)
+        self._reset_death_status(players_list, self.frames)
+        self._freeze_death_status(players_list)
 
         # 2) 2nd rematching
-        self._reset_death_status(players_ref, self.frames)
-        self._rematch_killfeeds(players_ref)
+        self._rematch_killfeeds(players_list, True)
 
-        for ind_frame, players in enumerate(players_ref):
+        for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
 
         # 3) 3rd rematching
-        players_ref_2 = self._postprocess_players()
-        for ind_frame, players in enumerate(players_ref):
+        self._clean_chara_switching(players_list)
+        self._freeze_death_status(players_list)
+        self._correct_dva_status(players_list, self.frames)
+        self._correct_ult_charge(players_list)
+        for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
 
-        for frame in self.frames:
-            print(frame.time)
-            for kf in frame.killfeeds:
-                print(kf.player1)
-                print(kf.player2)
-            print("==========")
+        # for frame in self.frames:
+        #     print(frame.time)
+        #     for kf in frame.killfeeds:
+        #         print(kf.player1)
+        #         print(kf.player2)
+        #     print("==========")
 
     def _clear_frames(self):
         """Remove invalid frames & repeated killfeeds.
@@ -296,15 +301,17 @@ class Game(object):
             lambda frame: frame.is_valid is True,
             self.frames))
 
-    def _postprocess_players(self):
-        """ Postprocess player status and remove outliers.
-        
-        1) When a chara dies, override his current chara/ult charge etc. with
-        status from previous frame. For now, ult charge relies on 
-        player.is_dead too much so we just leave it be.
-        In other words, we freeze the player when he dies.
+    def _get_players_list(self):
+        players_list = []
+        for frame in self.frames:
+            players = frame.players
+            players_list.append(players)
+        return players_list
 
-        2) Remove weird "chara switch" events. If identification res in one
+    def _clean_chara_switching(self, players_list):
+        """ Remove invalid chara switch events.
+
+        1) Remove weird "chara switch" events. If identification res in one
         frame differs with its prev & next frames, temporarily we identify it
         as invalid chara switch event.
 
@@ -314,33 +321,44 @@ class Game(object):
         Author: KomorebiL, Appcell
 
         Args:
-            None
+            players_list: a 2-D list of all (potentially) correct idents of
+                players in each frame.
 
         Returns:
-            players_ref: a 2-D list of all (potentially) correct idents of
-                players in each frame.
+            None
         """
-        # 1) Freeze player status when chara is dead
-        players_ref = [self.frames[0].players]
-        for ind_frame in range(1, len(self.frames)):
-            frame = self.frames[ind_frame]
-            temp_players = []
-            for ind_player, player in enumerate(frame.players):
-                if player.is_dead:
-                    temp_players.append(copy.copy(players_ref[ind_frame - 1][ind_player]))
-                else:
-                    temp_players.append(copy.copy(player))
-            players_ref.append(temp_players)
-
-        # 2) Remove invalid chara switch events
-        for ind in range(1, len(players_ref) - 1):
+        for ind in range(1, len(players_list) - 1):
             for ind_player in range(12):
-                if players_ref[ind - 1][ind_player] == players_ref[ind + 1][ind_player]:
-                    players_ref[ind][ind_player] = copy.copy(players_ref[ind - 1][ind_player])
+                if players_list[ind - 1][ind_player] == players_list[ind + 1][ind_player]:
+                    players_list[ind][ind_player] = copy.copy(players_list[ind - 1][ind_player])
 
-        return players_ref
+    def _freeze_death_status(self, players_list):
+        """ Freeze player status when chara is dead
 
-    def _rematch_killfeeds(self, players_ref):
+        When a chara dies, override his current chara/ult charge etc. with
+        status from previous frame. For now, ult charge relies on 
+        player.is_dead too much so we just leave it be.
+        In other words, we freeze the player when he dies.
+
+        Here we do not override original players for a good reason. Our
+        postprocess might be inaccurate, thus it's only for reference.
+
+        Author: KomorebiL, Appcell
+
+        Args:
+            players_list: a 2-D list of all (potentially) correct idents of
+                players in each frame.
+
+        Returns:
+            None
+        """
+        for ind, players in enumerate(players_list):
+            if ind > 0:
+                for ind_player, player in enumerate(players):
+                    if player.is_dead:
+                        players_list[ind][ind_player] = copy.copy(players_list[ind-1][ind_player])
+
+    def _rematch_killfeeds(self, players_list, is_death_validated):
         """ Rematch charas in killfeeds with charas in players
         
         For all killfeeds without a proper player name recognition, we fill in
@@ -350,7 +368,8 @@ class Game(object):
         Author: KomorebiL, Appcell
 
         Args:
-            None
+            players_list: a 2-D list of all (potentially) correct idents of
+                players in each frame.
 
         Returns:
             killfeeds_ref: a 2-D list of all (potentially) correct idents of
@@ -358,18 +377,16 @@ class Game(object):
         """
         for ind_frame, frame in enumerate(self.frames):
             for killfeed in frame.killfeeds:
-                if killfeed.player1['player'] == -1:
+                if killfeed.player1['chara'] != "empty":
                     killfeed.player1['player'] = self._get_player(
-                        killfeed.player1, players_ref, ind_frame)
-                if killfeed.player2['player'] == -1:
-                    killfeed.player2['player'] = self._get_player(
-                        killfeed.player2, players_ref, ind_frame)
+                        killfeed.player1, players_list, ind_frame, is_death_validated)
+                killfeed.player2['player'] = self._get_player(
+                    killfeed.player2, players_list, ind_frame, is_death_validated)
                 for assist in killfeed.assists:
-                    if assist['player'] == -1:
-                        assist['player'] = self._get_player(
-                            assist, players_ref, ind_frame)
+                    assist['player'] = self._get_player(
+                        assist, players_list, ind_frame, is_death_validated)
 
-    def _get_player(self, data, players_ref, ind_frame):
+    def _get_player(self, data, players_list, ind_frame, is_death_validated):
         """ Rematch player in kf with player in topbar
 
         Author: KomorebiL, Appcell
@@ -382,10 +399,26 @@ class Game(object):
         """
         ind = ind_frame
         while ind >= 0:
-            players = players_ref[ind]
+            players = players_list[ind]
             for player in players:
-                if data['chara'] == player.chara and player.is_dead == False:
-                    return player.index
+                if data['team'] == 0:
+                    if is_death_validated:
+                        if OW.get_chara_name(data['chara']) == player.chara \
+                        and player.is_dead is False and player.index < 6:
+                            return player.index
+                    else:
+                        if OW.get_chara_name(data['chara']) == player.chara and player.index < 6:
+                            return player.index
+                elif data['team'] == 1:
+                    if is_death_validated:
+                        if OW.get_chara_name(data['chara']) == player.chara \
+                        and player.is_dead is False and player.index >= 6:
+                            return player.index
+                    else:
+                        if OW.get_chara_name(data['chara']) == player.chara and player.index >= 6:
+                            return player.index
+                else:
+                    return -1
             ind = ind - 1
         return -1
 
@@ -403,27 +436,151 @@ class Game(object):
             None
         """
         for ind_frame, frame in enumerate(frames):
-            for kf in frame.killfeeds:
-                if kf.player2['player'] != -1:
+            for killfeed in frame.killfeeds:
+                if killfeed.player2['player'] != -1:
                     respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
-                    if kf.player1['chara'] == "mercy" and kf.player1['team'] == kf.player2['team']:
+                    if killfeed.player1['chara'] == "mercy" \
+                    and killfeed.player1['team'] == killfeed.player2['team']:
                         for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
-                            players_list[ind_frame + i][kf.player2['player']].is_dead = False
-                    elif kf.player2['player'] != -1:
+                            players_list[ind_frame + i][killfeed.player2['player']].is_dead = False
+                    elif killfeed.player2['player'] != -1:
                         for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
-                            players_list[ind_frame + i][kf.player2['player']].is_dead = True
+                            players_list[ind_frame + i][killfeed.player2['player']].is_dead = True
 
-    def rematch_charas_and_players(self):
-        """Rematch charas & players for killfeed
+    def _correct_ult_charge(self, players_list):
+        """ Postprocess player ult charge.
+        
+        In general, ult charge goes down when:
+        1) ult ability is used
+        2) player switches chara
+        3) For D.Va it's a bit more complicated -- a player with his
+        meka down can always go back to spawn room and get his meka again by
+        switching chara. In this case, theoretically we should sense a chara
+        switching event, thus it's usually same as condition 2). But what if
+        that chara switching event isn't detected? Buh-oh. However when a
+        player does this, it's only for when he has a mini-D.Va (i.e. with a
+        meka down event beforehand). Since now we don't have D.Va status
+        detector, we leave this one for later.
 
-        Sometimes in a killfeed, chara gets recognized but there's no
-        corresponding player info. Here we match them together with info from
-        earlier & later frames so that no "empty" shows up in player names.
+        Author: Appcell
 
         Args:
-            None
+            players_list: a 2-D list of all (potentially) correct idents of
+                players in each frame, should be ouput of 1st rematching.
 
         Returns:
-            None 
+            None
         """
-        pass
+        searched_frame_num = OW.MIN_SEARCH_TIME_FRAME * self.analyzer_fps
+
+        # Remove unnatually large charge percentages
+        players_list_len = len(players_list)
+        for ind_frame in range(1, players_list_len - 1):
+            for ind in range(12):
+                # print(players_list[ind_frame - 1][ind])
+                if players_list[ind_frame][ind].ult_charge \
+                > players_list[ind_frame - 1][ind].ult_charge \
+                and players_list[ind_frame][ind].ult_charge \
+                > players_list[ind_frame + 1][ind].ult_charge:
+                    players_list[ind_frame][ind].ult_charge \
+                        = players_list[ind_frame + 1][ind].ult_charge
+
+        for ind_frame in range(1, players_list_len - 1):
+            for ind in range(12):
+                if players_list[ind_frame][ind].ult_charge \
+                < players_list[ind_frame - 1][ind].ult_charge:
+                    if ind_frame < searched_frame_num:
+                        players_list[ind_frame][ind].ult_charge \
+                            = players_list[ind_frame - 1][ind].ult_charge
+                        continue
+                    # 1) Is there an ult ability used?
+                    flag_ult_used = False
+                    for ind_frame_tmp in range(
+                            ind_frame - searched_frame_num + 1, ind_frame + 1):
+                        if players_list[ind_frame_tmp][ind].is_ult_ready is False\
+                        and players_list[ind_frame_tmp - 1][ind].is_ult_ready is True:
+                            flag_ult_used = True
+                    # 2) Is there a chara switching event?
+                    flag_player_switched = False
+                    for ind_frame_tmp in range(
+                            ind_frame - searched_frame_num + 1, ind_frame + 1):
+                        if players_list[ind_frame_tmp][ind].chara \
+                        != players_list[ind_frame_tmp - 1][ind].chara:
+                            flag_player_switched = True
+                    # 3) For D.Va, is there a status change?
+                    flag_dva_status_change = False
+                    if players_list[ind_frame_tmp][ind].chara == OW.DVA \
+                    and players_list[ind_frame_tmp][ind].dva_status \
+                    != players_list[ind_frame_tmp - 1][ind].dva_status:
+                        flag_dva_status_change = True
+                    if (flag_ult_used or flag_player_switched or flag_dva_status_change) is False:
+                        players_list[ind_frame][ind].ult_charge \
+                            = players_list[ind_frame - 1][ind].ult_charge
+
+    def _correct_dva_status(self, players_list, frames):
+        """ Tell if a D.Va is with meka or not.
+
+        We assume this D.Va is with her MEKA at first. Then when we see a MEKA
+        DOWN event, or when she uses her primary ult, she loses her meka.
+        A mini-D.Va gets her meka when she dies, and when she uses her 2nd ult,
+        also when she does chara switching. 
+        For the last situation, since we cannot tell if she truly switched
+        chara (it's too fast), it's dealt by ult charge detection. When player
+        does this, his ult charge goes to 0.
+
+
+        Author: Appcell
+
+        Args:
+            players_list: a 2-D list to be corrected of all idents of players 
+                          in each frame
+
+        Returns:
+            None
+        """
+        for ind_frame in range(1, len(frames)):
+            frame = frames[ind_frame]
+            players = players_list[ind_frame]
+            for ind_player in range(12):
+                if players[ind_player].chara == OW.DVA:
+                    # 1) detect MEKA DOWN event
+                    flag_meka_down = False
+                    for killfeed in frame.killfeeds:
+                        if killfeed.player2['chara'] == OW.MEKA\
+                        and killfeed.player2['team'] == players[ind_player].team:
+                            flag_meka_down = True
+                    # 2) detect ult usage
+                    flag_ult_used = False
+                    searched_frame_num = OW.MIN_SEARCH_TIME_FRAME * self.analyzer_fps
+                    for ind_frame_tmp in range(
+                            ind_frame - searched_frame_num + 1, ind_frame + 1):
+                        if players_list[ind_frame_tmp][ind_player].is_ult_ready is False \
+                        and players_list[ind_frame_tmp - 1][ind_player].is_ult_ready is True:
+                            flag_ult_used = True
+                    # 3) detect chara switching with ult charge changes
+                    flag_chara_switched = False
+                    if (players[ind_player].ult_charge <= 1 \
+                        and players_list[ind_frame - 1][ind_player].ult_charge > 0 \
+                        and players_list[ind_frame - 1][ind_player].dva_status \
+                        == OW.IS_WITHOUT_MEKA) \
+                    or (players_list[ind_frame - 1][ind_player].chara \
+                        != players_list[ind_frame][ind_player].chara):
+                        flag_chara_switched = True
+
+                    # Changing chara to mini-D.Va
+                    if (flag_meka_down or flag_ult_used) \
+                    and players[ind_player].dva_status == OW.IS_WITH_MEKA:
+                        for ind_frame_tmp in range(ind_frame, len(frames)):
+                            players_list[ind_frame_tmp][ind_player].dva_status \
+                            = OW.IS_WITHOUT_MEKA
+
+                    # Changing chara to big-D.Va
+                    if (flag_ult_used \
+                    and players[ind_player].dva_status == OW.IS_WITHOUT_MEKA) \
+                    or flag_chara_switched:
+                        for ind_frame_tmp in range(ind_frame, len(frames)):
+                            players_list[ind_frame_tmp][ind_player].dva_status\
+                            = OW.IS_WITH_MEKA
+
+
+

@@ -25,6 +25,9 @@ VERSION_NUM = {
     GAMETYPE_CUSTOM: 1
 }
 MIN_RESPAWN_TIME = 10
+
+# Time frame For making sure of chara switching, ult usage etc
+MIN_SEARCH_TIME_FRAME = 2
 # **********************************************************
 # ==========================================================
 #                       Name Codes
@@ -130,6 +133,10 @@ ABILITY_LIST = {
     ZENYATTA: []
 }
 
+# D.Va status
+IS_WITH_MEKA = 0
+IS_WITHOUT_MEKA = 1
+IS_NOT_DVA = 2
 
 def get_chara_name(name):
     """Get chara name given object/chara name.

@@ -15,13 +15,19 @@ class Player:
 
     Attributes:
         index: index of player, from 0 to 11
-        frame: pointer to frame obj
         image: image of current frame
         team: team index
         chara: the character current player uses
-        is_ult_ready: whether this player has ultimate ability now
+        is_ult_ready: whether this player has primary ultimate ability now
+        is_ult_2_ready: whether this player has secondary ultimate ability now
         is_dead: whether this chara is dead
         is_observed: whether this chara is observe by cam
+        ult_charge: percentage of ultimate charge
+        dva_status: see overwatch.py line 137-139. This is set in game.py
+                    during postprocess
+
+        avatars: list of combined avatart images
+        ult_charge_numbers_ref: list of ult charge number images
     """
 
     def __init__(self, index, avatars, team, image, game_type, game_version, ult_charge_numbers_ref):
@@ -43,22 +49,24 @@ class Player:
         """
         self.index = index
         self.image = image
-        self.avatars = avatars
         self.team = team
-        self.ult_charge_numbers_ref = ult_charge_numbers_ref
         self.chara = None
         self.is_ult_ready = False
         self.is_ult_2_ready = False
         self.is_dead = False
         self.is_observed = None
         self.ult_charge = 0
+        self.dva_status = OW.IS_NOT_DVA
 
+        self.avatars = avatars
+        self.ult_charge_numbers_ref = ult_charge_numbers_ref
         self.game_type = game_type
         self.game_version = game_version
 
         # TODO: future work
         self.health = None
         self.is_onfire = None
+
 
         self.get_ult_status()
         self.get_chara()
@@ -205,6 +213,9 @@ class Player:
             self.chara = "empty"
             self.is_dead = True
             return
+
+        if self.chara == OW.DVA:
+            self.dva_status = OW.IS_WITH_MEKA
             
         self.get_living_status(avatars_ref_observed[self.chara])
 

@@ -377,7 +377,7 @@ class Sheet:
                 d['_$color']['object player'] = Config.team_colors[player2['team']]
 
             for i, assist in enumerate(obj.assists):
-                d['a player {}'.format(i + 1)] = self.game.team_players[assist['player']]
+                d['a player {}'.format(i + 1)] = self.game.name_players[assist['player']]
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
             self._append(**d)
