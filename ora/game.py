@@ -69,7 +69,8 @@ class Game(object):
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
         self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
         self.ability_icons_ref = OW.get_ability_icons_ref(self.game_type, self.game_version)
-        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref(self.game_type, self.game_version)
+        self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref(
+            self.game_type, self.game_version)
         self.replay_icon_ref = OW.get_replay_icon_ref(self.game_type, self.game_version)
 
     def set_team_colors(self, frame):
@@ -153,7 +154,6 @@ class Game(object):
                         else False
         # For a video clip we specify start/end time.
         # But for a full video we don't.
-        time1 = time.time()
         start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
@@ -161,7 +161,6 @@ class Game(object):
             and (frame_image_index < video.frame_number and is_full_video is True) \
             or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = []
-            time1 = time.time()
             if self.is_game_version_set:
                 frame = Frame(frame_image,
                               start_time +
@@ -172,7 +171,6 @@ class Game(object):
                     frame_image,
                     start_time +(1 / float(self.analyzer_fps)) * step_cnt)
             self.frames.append(frame)
-            time2 = time.time() - time1
             frame_image_index += step
             step_cnt += 1
             frame_image = video.get_frame_image(frame_image_index)
@@ -228,6 +226,7 @@ class Game(object):
         self._clear_frames()
 
         players_list = self._get_players_list()
+
         # 1) 1st rematching
         self._clean_chara_switching(players_list)
         self._rematch_killfeeds(players_list, False)
@@ -236,9 +235,6 @@ class Game(object):
 
         # 2) 2nd rematching
         self._rematch_killfeeds(players_list, True)
-
-        for ind_frame, players in enumerate(players_list):
-            self.frames[ind_frame].players = players
 
         # 3) 3rd rematching
         self._clean_chara_switching(players_list)
@@ -337,7 +333,8 @@ class Game(object):
         """
         for ind in range(1, len(players_list) - 1):
             for ind_player in range(12):
-                if players_list[ind - 1][ind_player].chara == players_list[ind + 1][ind_player].chara:
+                if players_list[ind - 1][ind_player].chara \
+                == players_list[ind + 1][ind_player].chara:
                     players_list[ind][ind_player].chara = players_list[ind - 1][ind_player].chara
 
     def _freeze_death_status(self, players_list):
@@ -539,7 +536,6 @@ class Game(object):
         For the last situation, since we cannot tell if she truly switched
         chara (it's too fast), it's dealt by ult charge detection. When player
         does this, his ult charge goes to 0.
-
 
         Author: Appcell
 
