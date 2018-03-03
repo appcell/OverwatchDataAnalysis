@@ -192,7 +192,6 @@ class Game(object):
                 print(i)
                 return test_frame
         
-
     def output_to_excel(self):
         """Output the full event list to an Excel file.
 
@@ -246,8 +245,17 @@ class Game(object):
         self._freeze_death_status(players_list)
         self._correct_dva_status(players_list, self.frames)
         self._correct_ult_charge(players_list)
+        self._clean_chara_switching(players_list)
+
         for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
+
+        # for frame in self.frames:
+        #     player = frame.players[10]
+        #     print(frame.time)
+        #     print(player.chara)
+        #     print(player.is_dead)
+        #     print("==========")
 
         # for frame in self.frames:
         #     print(frame.time)
@@ -329,8 +337,8 @@ class Game(object):
         """
         for ind in range(1, len(players_list) - 1):
             for ind_player in range(12):
-                if players_list[ind - 1][ind_player] == players_list[ind + 1][ind_player]:
-                    players_list[ind][ind_player] = copy.copy(players_list[ind - 1][ind_player])
+                if players_list[ind - 1][ind_player].chara == players_list[ind + 1][ind_player].chara:
+                    players_list[ind][ind_player].chara = players_list[ind - 1][ind_player].chara
 
     def _freeze_death_status(self, players_list):
         """ Freeze player status when chara is dead
@@ -441,11 +449,15 @@ class Game(object):
                     respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
                     if killfeed.player1['chara'] == "mercy" \
                     and killfeed.player1['team'] == killfeed.player2['team']:
-                        for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
-                            players_list[ind_frame + i][killfeed.player2['player']].is_dead = False
+                        for ind_frame_tmp in range(
+                                ind_frame, 
+                                ind_frame + min(respawn_frame_num, len(frames) - ind_frame)):
+                            players_list[ind_frame_tmp][killfeed.player2['player']].is_dead = False
                     elif killfeed.player2['player'] != -1:
-                        for i in range(min(respawn_frame_num, len(frames) - ind_frame)):
-                            players_list[ind_frame + i][killfeed.player2['player']].is_dead = True
+                        for ind_frame_tmp in range(
+                                ind_frame - 1, 
+                                ind_frame + min(respawn_frame_num, len(frames) - ind_frame)):
+                            players_list[ind_frame_tmp][killfeed.player2['player']].is_dead = True
 
     def _correct_ult_charge(self, players_list):
         """ Postprocess player ult charge.
