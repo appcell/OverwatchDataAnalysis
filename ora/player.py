@@ -17,15 +17,14 @@ class Player:
         index: index of player, from 0 to 11
         frame: pointer to frame obj
         image: image of current frame
-        name: the player name
-        team: team name
+        team: team index
         chara: the character current player uses
         is_ult_ready: whether this player has ultimate ability now
         is_dead: whether this chara is dead
         is_observed: whether this chara is observe by cam
     """
 
-    def __init__(self, index, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref):
+    def __init__(self, index, avatars, team, image, game_type, game_version, ult_charge_numbers_ref):
         """Initialize a Player object.
 
         Author:
@@ -35,8 +34,7 @@ class Player:
             index: row number of current player, ranges from 0 to 11.
             avatars: all character avatars for reference
             game_type: current game type
-            name: name of the current player
-            team: name of the current team
+            team: index of the current team
             image: whole image of current frame
             ult_charge_numbers_ref: reference of ult charge numbers
 
@@ -46,7 +44,6 @@ class Player:
         self.index = index
         self.image = image
         self.avatars = avatars
-        self.name = name
         self.team = team
         self.ult_charge_numbers_ref = ult_charge_numbers_ref
         self.chara = None

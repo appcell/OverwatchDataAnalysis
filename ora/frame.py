@@ -99,22 +99,19 @@ class Frame(object):
         for i in range(0, 12):
             avatars = self.get_avatars(i)
             team = -1
-            name = -1
 
-            name = self.game.name_players[i]
             if i < 6:
                 team = self.game.team_names[OW.LEFT]
             else:
                 team = self.game.team_names[OW.RIGHT]
 
             results.append(pool.PROCESS_POOL.apply_async(Player, 
-                args=(i, avatars, name, team, image, game_type, game_version, ult_charge_numbers_ref),
+                args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref),
                 callback=self.player_callback))
         
         for res in results:
             res.wait()
         
-
     def get_team_colors_from_image(self):
         """Get team colors from this frame.
 

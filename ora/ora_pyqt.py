@@ -24,7 +24,7 @@ class MyApp( QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.browseFile.clicked.connect(self.oraSaveFile)
         
-        self.analyze.clicked.connect(self.ora)
+        # self.analyze.clicked.connect(self.ora)
 
         
 #    def CalculateTax(self):
