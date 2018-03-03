@@ -189,40 +189,23 @@ def set_comments(action):
     return table[action]
 
 
-def get_player_name(obj, index, charas, charas2):
+def get_player_name(player_index, player_names):
     """
-    通过英雄名以及队伍信息来查找玩家的名字。
-    :param obj: 玩家信息
-    :param index: 玩家队伍所处的位置， 1~6为左边的队伍, 7~12为右边的队伍。
-    :param charas: 存储了当前所有玩家 玩家名、英雄名信息的 list， 格式为 [(player, chara)...]
-    :param charas2: 存储了上一帧所有玩家 英雄名信息的list， 格式为[player1, ...] 
-    :return: playername
+    通过编号获取玩家姓名
+    :param player_index: 玩家的编号
+    :param player_names: 存储了12个玩家姓名的 list
+    :return: player_name
     """
-    name, chara = obj['player'], obj['chara']
-    if name != 'empty':
-        return name
-    team_charas = charas[:6] if index <= 5 else charas[6:]
-    for n, c in team_charas:
-        if chara == c:
-            return n
-
-    team_charas2 = charas2[:6] if index <= 5 else charas2[6:]
-    for i, c in enumerate(team_charas2):
-        if chara == c:
-            return team_charas[i][0]
-    return None
+    return player_names[player_index]
 
 
-def get_player_team_index(player_team, team_names):
+def get_player_team_index(player_index):
     """
     获取玩家所在的队伍编号
-    :param player_team: 玩家所处的队伍名
-    :param team_names: 存储了主队客队队伍名的 dict，key 分别为'left', 'right'
-    :return: 0 or 6
+    :param player_index: 玩家所处的队伍名
+    :return: 0 or 1
     """
-    for key in ['left', 'right']:
-        if team_names[key] == player_team:
-            return 0 if key == 'left' else 6
+    return 0 if player_index < 6 else 1
 
 
 class Config(object):
@@ -333,10 +316,10 @@ class Sheet:
         self.sheet.append(Config.title_top)
         self.sheet.append(Config.title)
         if self.game.team_colors is None:
-            Config.team_colors[self.game.team_names['left']] = utils.to_hex([255, 255, 255])
-            Config.team_colors[self.game.team_names['right']] = utils.to_hex([70, 70, 70])
-        Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
-        Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
+            Config.team_colors[0] = utils.to_hex([255, 255, 255])
+            Config.team_colors[1] = utils.to_hex([70, 70, 70])
+        Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
+        Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
 
         self.data = []
 
@@ -369,7 +352,7 @@ class Sheet:
 
     def _killfeed_append(self, killfeeds, time):
         """
-        往 sheet 加入击杀相关的信息。
+        往 sheet 加入击杀、自杀相关的信息。
         """
         for obj in killfeeds:
             d = {}
@@ -379,22 +362,22 @@ class Sheet:
             d['comments'] = set_comments(d['action'])
             # d['ability'] = Config.ability[obj.ability]
             d['subject hero'] = player1['chara']
-            d['subject player'] = player1['player']
+            d['subject player'] = 'empty' if player1['player'] == -1 else self.game.name_players[player1['player']]
             d['object hero'] = player2['chara']
-            d['object player'] = player2['player']
+            d['object player'] = 'empty' if player2['player'] == -1 else self.game.name_players[player2['player']]
             if obj.is_headshot:
                 d['critical kill'] = 'Y'
                 d['PS'] = 'Head Shot'
             d['_$color'] = {}
 
-            if player1['player'] != 'empty':
+            if d['subject player'] != 'empty':
                 d['_$color']['subject player'] = Config.team_colors[player1['team']]
 
-            if player2['player'] != 'empty':
+            if d['object player'] != 'empty':
                 d['_$color']['object player'] = Config.team_colors[player2['team']]
 
             for i, assist in enumerate(obj.assists):
-                d['a player {}'.format(i + 1)] = assist['player']
+                d['a player {}'.format(i + 1)] = self.game.team_players[assist['player']]
                 d['a hero {}'.format(i + 1)] = utils.chara_capitalize(assist['chara'])
                 d['_$color']['a player {}'.format(i + 1)] = Config.team_colors[assist['team']]
             self._append(**d)
@@ -406,10 +389,10 @@ class Sheet:
         for index, player in enumerate(players):
             d = {
                 'time': time,
-                'subject player': player.name,
+                'subject player': get_player_name(player.index, self.game.name_players),
                 'subject hero': player.chara,
                 '_$color': {
-                    'subject player': Config.team_colors[player.team]
+                    'subject player': Config.team_colors[get_player_team_index(player.index)]
                 }
             }
             # TODO 判断是否为小dva，小dva死的情况下把对应的大招状态清空
@@ -452,12 +435,12 @@ class Sheet:
                     d = {
                         'time': time - 1.5,
                         'action': 'Hero switch',
-                        'subject player': player.name,
+                        'subject player': get_player_name(player.index, self.game.name_players),
                         'subject hero': player.chara,
                         'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
 
                         '_$color': {
-                            'subject player': Config.team_colors[player.team],
+                            'subject player': Config.team_colors[get_player_team_index(player.index)],
                         }
                     }
                     self._append(**d)

@@ -119,6 +119,7 @@ class Sheet:
     def __init__(self, wb, game):
         self.frames = game.frames
         self.sheet = wb['sheet2']
+        self.game = game
 
     def new(self):
         start, end = self.frames[0], self.frames[-1]
@@ -135,7 +136,7 @@ class Sheet:
         将玩家名字导入到 sheet 中 
         """
         for i, player in enumerate(players):
-            s = '{:0>2d} {}'.format(i + 1, upper(player.name.encode('utf-8')))
+            s = '{:0>2d} {}'.format(i + 1, upper(self.game.name_players[player.index]))
             if i < 6:
                 cell = Config.LEFT['player']['player{}'.format(i + 1)]
             else:
@@ -146,9 +147,8 @@ class Sheet:
         """
         将队伍信息导入到 sheet 中 
         """
-        team1, team2 = self.frames[0].players[0].team, self.frames[0].players[-1].team
-        self.set_cell_value(Config.LEFT['player']['team_name'], team1)
-        self.set_cell_value(Config.RIGHT['player']['team_name'], team2)
+        self.set_cell_value(Config.LEFT['player']['team_name'], self.game.team_names[0])
+        self.set_cell_value(Config.RIGHT['player']['team_name'], self.game.team_names[1])
 
     def _set_cell_title(self):
         """
