@@ -482,17 +482,23 @@ class Game(object):
         """
         searched_frame_num = OW.MIN_SEARCH_TIME_FRAME * self.analyzer_fps
 
-        # Remove unnatually large charge percentages
+        # Remove unnatually large charge nums
         players_list_len = len(players_list)
         for ind_frame in range(1, players_list_len - 1):
             for ind in range(12):
-                # print(players_list[ind_frame - 1][ind])
                 if players_list[ind_frame][ind].ult_charge \
-                > players_list[ind_frame - 1][ind].ult_charge \
-                and players_list[ind_frame][ind].ult_charge \
-                > players_list[ind_frame + 1][ind].ult_charge:
-                    players_list[ind_frame][ind].ult_charge \
-                        = players_list[ind_frame + 1][ind].ult_charge
+                > players_list[ind_frame - 1][ind].ult_charge:
+                    unnatural_frame_ind = ind_frame
+                    while unnatural_frame_ind <= players_list_len - 1 \
+                    and abs(players_list[unnatural_frame_ind][ind].ult_charge \
+                        - players_list[ind_frame][ind].ult_charge) < 10:
+                        unnatural_frame_ind = unnatural_frame_ind + 1
+                    if unnatural_frame_ind <= players_list_len - 1 \
+                        and abs(players_list[unnatural_frame_ind][ind].ult_charge \
+                        - players_list[ind_frame - 1][ind].ult_charge) < 15:
+                        for ind_frame_tmp in range(ind_frame, unnatural_frame_ind):
+                            players_list[ind_frame_tmp][ind].ult_charge \
+                                = players_list[ind_frame - 1][ind].ult_charge
 
         for ind_frame in range(1, players_list_len - 1):
             for ind in range(12):
