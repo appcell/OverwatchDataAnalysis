@@ -30,7 +30,7 @@ class Player:
         ult_charge_numbers_ref: list of ult charge number images
     """
 
-    def __init__(self, index, avatars, team, image, game_type, game_version, ult_charge_numbers_ref):
+    def __init__(self, index, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, time):
         """Initialize a Player object.
 
         Author:
@@ -52,7 +52,7 @@ class Player:
         self.team = team
         self.chara = None
         self.is_ult_ready = False
-        self.is_ult_2_ready = False
+        self.is_secondary_ult_ready = False
         self.is_dead = False
         self.is_observed = None
         self.ult_charge = 0
@@ -62,7 +62,7 @@ class Player:
         self.ult_charge_numbers_ref = ult_charge_numbers_ref
         self.game_type = game_type
         self.game_version = game_version
-
+        self.time = time
         # TODO: future work
         self.health = None
         self.is_onfire = None
@@ -288,6 +288,7 @@ class Player:
         # img, a simple normalization based on std would do.
         ult_charge_image_g = ImageUtils.normalize_gray(ult_charge_image)
 
+
         # tell if player is observed (more accurate than previous)
         # Here I use another local variable flag_observed, since the global one
         # might be inaccurate
@@ -338,7 +339,7 @@ class Player:
                 num = cv2.copyMakeBorder(
                     num, 0, 0,
                     padding, padding, cv2.BORDER_REPLICATE)
-            self.ult_charge = self._identify_ult_charge_digit(
+            self.ult_charge, score = self._identify_ult_charge_digit(
                 num, 
                 self.ult_charge_numbers_ref[flag_observed])
         else:
@@ -380,13 +381,20 @@ class Player:
                     num_left, 0, 0,
                     OW.ULT_CHARGE_IMG_WIDTH[self.game_type][self.game_version] \
                         - num_left.shape[1], 0, cv2.BORDER_REPLICATE)
-            num_left_value = self._identify_ult_charge_digit(
+            num_left_value, score_left = self._identify_ult_charge_digit(
                 num_left, 
                 self.ult_charge_numbers_ref[flag_observed])
-            num_right_value = self._identify_ult_charge_digit(
+            num_right_value, score_right = self._identify_ult_charge_digit(
                 num_right, 
                 self.ult_charge_numbers_ref[flag_observed])
-            self.ult_charge = num_left_value * 10 + num_right_value
+            if score_left < OW.ULT_CHARGE_SSIM_THRESHOLD[self.game_type][self.game_version] \
+            or score_right < OW.ULT_CHARGE_SSIM_THRESHOLD[self.game_type][self.game_version]:
+                # Then it's actually 1 digit
+                self.ult_charge, score = self._identify_ult_charge_digit(
+                    ult_charge_image_g, 
+                    self.ult_charge_numbers_ref[flag_observed])
+            else:
+                self.ult_charge = num_left_value * 10 + num_right_value
 
         return 
 
@@ -405,7 +413,6 @@ class Player:
         score = 0
         res = -1
         digit = ImageUtils.float_to_uint8(digit)
-        scores = []
 
         for i in range(10):
             match_result = []
@@ -416,8 +423,7 @@ class Player:
                 digit, 
                 [max_loc[1], digit_refs[i].shape[0], max_loc[0], digit_refs[i].shape[1]])
             score_ssim = measure.compare_ssim(temp_digit, digit_refs[i], multichannel=True)
-            scores.append(score_ssim + max_val)
             if score_ssim + max_val > score:
                 score = score_ssim + max_val
                 res = i
-        return res
+        return [res, score]

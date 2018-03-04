@@ -481,27 +481,11 @@ class Game(object):
             None
         """
         searched_frame_num = OW.MIN_SEARCH_TIME_FRAME * self.analyzer_fps
-
-        # Remove unnatually large charge nums
         players_list_len = len(players_list)
-        for ind_frame in range(1, players_list_len - 1):
-            for ind in range(12):
-                if players_list[ind_frame][ind].ult_charge \
-                > players_list[ind_frame - 1][ind].ult_charge:
-                    unnatural_frame_ind = ind_frame
-                    while unnatural_frame_ind <= players_list_len - 1 \
-                    and abs(players_list[unnatural_frame_ind][ind].ult_charge \
-                        - players_list[ind_frame][ind].ult_charge) < 10:
-                        unnatural_frame_ind = unnatural_frame_ind + 1
-                    if unnatural_frame_ind <= players_list_len - 1 \
-                        and abs(players_list[unnatural_frame_ind][ind].ult_charge \
-                        - players_list[ind_frame - 1][ind].ult_charge) < 15:
-                        for ind_frame_tmp in range(ind_frame, unnatural_frame_ind):
-                            players_list[ind_frame_tmp][ind].ult_charge \
-                                = players_list[ind_frame - 1][ind].ult_charge
 
-        for ind_frame in range(1, players_list_len - 1):
-            for ind in range(12):
+        # 1) Remove unnatually small charge nums
+        for ind in range(12):
+            for ind_frame in range(1, players_list_len - 1):
                 if players_list[ind_frame][ind].ult_charge \
                 < players_list[ind_frame - 1][ind].ult_charge:
                     if ind_frame < searched_frame_num:
@@ -515,6 +499,7 @@ class Game(object):
                         if players_list[ind_frame_tmp][ind].is_ult_ready is False\
                         and players_list[ind_frame_tmp - 1][ind].is_ult_ready is True:
                             flag_ult_used = True
+                            break
                     # 2) Is there a chara switching event?
                     flag_player_switched = False
                     for ind_frame_tmp in range(
@@ -522,15 +507,68 @@ class Game(object):
                         if players_list[ind_frame_tmp][ind].chara \
                         != players_list[ind_frame_tmp - 1][ind].chara:
                             flag_player_switched = True
+                            break
                     # 3) For D.Va, is there a status change?
                     flag_dva_status_change = False
-                    if players_list[ind_frame_tmp][ind].chara == OW.DVA \
-                    and players_list[ind_frame_tmp][ind].dva_status \
-                    != players_list[ind_frame_tmp - 1][ind].dva_status:
-                        flag_dva_status_change = True
+                    for ind_frame_tmp in range(
+                            ind_frame - searched_frame_num + 1, 
+                            min(players_list_len - 1, ind_frame + searched_frame_num)):
+                        if players_list[ind_frame_tmp][ind].chara == OW.DVA \
+                        and players_list[ind_frame_tmp][ind].dva_status \
+                        != players_list[ind_frame_tmp - 1][ind].dva_status:
+                            flag_dva_status_change = True
+                            break
                     if (flag_ult_used or flag_player_switched or flag_dva_status_change) is False:
                         players_list[ind_frame][ind].ult_charge \
                             = players_list[ind_frame - 1][ind].ult_charge
+        # 2) Remove unnatually large charge nums
+        for ind in range(12):
+            for ind_frame in range(1, players_list_len - 1):
+                if players_list[ind_frame][ind].ult_charge \
+                > players_list[ind_frame - 1][ind].ult_charge:
+                    unnatural_frame_ind = ind_frame
+                    while unnatural_frame_ind <= players_list_len - 1 \
+                    and players_list[unnatural_frame_ind][ind].ult_charge != 100 \
+                    and abs(players_list[unnatural_frame_ind][ind].ult_charge \
+                        - players_list[ind_frame][ind].ult_charge) < 10:
+                        unnatural_frame_ind = unnatural_frame_ind + 1
+                    if unnatural_frame_ind <= players_list_len - 1 \
+                    and unnatural_frame_ind - ind_frame < 5 \
+                    and abs(players_list[unnatural_frame_ind][ind].ult_charge \
+                        - players_list[ind_frame - 1][ind].ult_charge) < 15:
+                        # 1) Is there an ult ability used?
+                        flag_ult_used = False
+                        for ind_frame_tmp in range(
+                                ind_frame, unnatural_frame_ind):
+                            if players_list[ind_frame_tmp][ind].is_ult_ready is False\
+                            and players_list[ind_frame_tmp - 1][ind].is_ult_ready is True:
+                                flag_ult_used = True
+                                break
+                        # 2) Is there a chara switching event?
+                        flag_player_switched = False
+                        for ind_frame_tmp in range(
+                                ind_frame, unnatural_frame_ind):
+                            if players_list[ind_frame_tmp][ind].chara \
+                            != players_list[ind_frame_tmp - 1][ind].chara:
+                                flag_player_switched = True
+                                break
+                        # 3) For D.Va, is there a status change?
+                        flag_dva_status_change = False
+                        for ind_frame_tmp in range(
+                                ind_frame - searched_frame_num + 1, 
+                                min(players_list_len - 1, ind_frame + searched_frame_num)):
+                            if players_list[ind_frame_tmp][ind].chara == OW.DVA \
+                            and players_list[ind_frame_tmp][ind].dva_status \
+                            != players_list[ind_frame_tmp - 1][ind].dva_status:
+                                flag_dva_status_change = True
+                                break
+
+                        if (flag_ult_used or flag_player_switched or flag_dva_status_change) is False:
+                            for ind_frame_tmp in range(ind_frame, unnatural_frame_ind):
+                                players_list[ind_frame_tmp][ind].ult_charge \
+                                    = players_list[ind_frame - 1][ind].ult_charge
+
+
 
     def _correct_dva_status(self, players_list, frames):
         """ Tell if a D.Va is with meka or not.
@@ -561,8 +599,9 @@ class Game(object):
                     flag_meka_down = False
                     for killfeed in frame.killfeeds:
                         if killfeed.player2['chara'] == OW.MEKA\
-                        and killfeed.player2['team'] == players[ind_player].team:
+                        and killfeed.player2['player'] == ind_player:
                             flag_meka_down = True
+                            break
                     # 2) detect ult usage
                     flag_ult_used = False
                     searched_frame_num = OW.MIN_SEARCH_TIME_FRAME * self.analyzer_fps
@@ -571,6 +610,8 @@ class Game(object):
                         if players_list[ind_frame_tmp][ind_player].is_ult_ready is False \
                         and players_list[ind_frame_tmp - 1][ind_player].is_ult_ready is True:
                             flag_ult_used = True
+                            break
+
                     # 3) detect chara switching with ult charge changes
                     flag_chara_switched = False
                     if (players[ind_player].ult_charge <= 1 \
@@ -580,6 +621,7 @@ class Game(object):
                     or (players_list[ind_frame - 1][ind_player].chara \
                         != players_list[ind_frame][ind_player].chara):
                         flag_chara_switched = True
+                        break
 
                     # Changing chara to mini-D.Va
                     if (flag_meka_down or flag_ult_used) \
@@ -595,6 +637,10 @@ class Game(object):
                         for ind_frame_tmp in range(ind_frame, len(frames)):
                             players_list[ind_frame_tmp][ind_player].dva_status\
                             = OW.IS_WITH_MEKA
+                    if players[ind_player].dva_status == OW.IS_WITHOUT_MEKA \
+                    and players[ind_player].is_ult_ready:
+                        players[ind_player].is_ult_ready = False
+                        players[ind_player].is_secondary_ult_ready = True
 
 
 

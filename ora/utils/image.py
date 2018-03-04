@@ -5,8 +5,8 @@ from skimage.exposure import adjust_log
 from skimage.filters import threshold_otsu
 
 REMOVE_NUMBER_VERTICAL_EDGE_LEFT = 0
-REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 0
-REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 0
+REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 1
+REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 2
 
 def crop(img, pos_arr):
     """

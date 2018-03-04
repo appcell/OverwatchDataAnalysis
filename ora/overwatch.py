@@ -27,7 +27,7 @@ VERSION_NUM = {
 MIN_RESPAWN_TIME = 10
 
 # Time frame For making sure of chara switching, ult usage etc
-MIN_SEARCH_TIME_FRAME = 2
+MIN_SEARCH_TIME_FRAME = 1
 # **********************************************************
 # ==========================================================
 #                       Name Codes
@@ -497,11 +497,11 @@ ULT_CHARGE_HEIGHT = {
 }
 ULT_GAP_DEVIATION_LIMIT = {
     GAMETYPE_OWL: {
-        0: 0.2,
-        1: 0.2
+        0: 0.25,
+        1: 0.25
     },
     GAMETYPE_CUSTOM: {
-        0: 0.2
+        0: 0.25
     }
 }
 
@@ -541,6 +541,16 @@ ULT_CHARGE_IMG_HEIGHT_OBSERVED = {
     },
     GAMETYPE_CUSTOM: {
         0: 18
+    }
+}
+
+ULT_CHARGE_SSIM_THRESHOLD = {
+    GAMETYPE_OWL: {
+        0: 0.55,
+        1: 0.55
+    },
+    GAMETYPE_CUSTOM: {
+        0: 0.55
     }
 }
 

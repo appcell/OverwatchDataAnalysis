@@ -290,7 +290,7 @@ class Killfeed:
         if assist['team'] == self.frame.game.team_names[OW.LEFT]:
             res['player'] = next((item.index for item in self.frame.players[
                 0:6] if item.chara == assist['chara']), -1)
-        else:
+        elif assist['team'] == self.frame.game.team_names[OW.RIGHT]:
             res['player'] = next((item.index for item in self.frame.players[
                 6:12] if item.chara == assist['chara']), -1)
         return res
