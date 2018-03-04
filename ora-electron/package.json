@@ -1,0 +1,26 @@
+{
+  "name": "electron-ora",
+  "version": "1.0.0",
+  "description": "Overwatch Replay Analyzer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/appcell/OverwatchDataAnalysis",
+  "keywords": [
+    "Electron",
+    "Python",
+    "Python",
+    "zerorpc",
+    "ora"
+  ],
+  "author": "hh",
+  "license": "GNU",
+  "devDependencies": {
+    "electron": "~1.8.2",
+    "electron-rebuild": "^1.7.3"
+  },
+  "dependencies": {
+    "zerorpc": "^0.9.7"
+  }
+}

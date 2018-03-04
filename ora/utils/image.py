@@ -5,8 +5,8 @@ from skimage.exposure import adjust_log
 from skimage.filters import threshold_otsu
 
 REMOVE_NUMBER_VERTICAL_EDGE_LEFT = 0
-REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 0
-REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 0
+REMOVE_NUMBER_VERTICAL_EDGE_RIGHT = 1
+REMOVE_NUMBER_VERTICAL_EDGE_BOTH = 2
 
 def crop(img, pos_arr):
     """
@@ -101,7 +101,7 @@ def remove_digit_vertical_edge(img, deviation_limit, side):
         if deviation[i] - deviation[i+3] > deviation_limit:
             edge_right = i
             break
-
+            
     if side == REMOVE_NUMBER_VERTICAL_EDGE_BOTH:
         res = crop(img, [0, height, edge_left, edge_right - edge_left + 1])
     elif side == REMOVE_NUMBER_VERTICAL_EDGE_LEFT:
@@ -176,6 +176,8 @@ def read_bw(path):
     img_gray = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     return img_gray > 127
 
+def float_to_uint8(img):
+    return (img * 255).astype('uint8')
 
 def resize(img, dest_width, dest_height):
     """
@@ -189,27 +191,27 @@ def resize(img, dest_width, dest_height):
     return cv2.resize(img, (dest_width, dest_height))
 
 
-def contrast_adjust_log(img, gain):
-    """
-    Perform logarithm correction to increase contrast
-    @Author: Rigel
-    @param img: the image to be corrected
-    @gain: constant multiplier
-    @return: a numpy.ndarray object of corrected image.
-    """
-    return adjust_log(img, gain)
+# def contrast_adjust_log(img, gain):
+#     """
+#     Perform logarithm correction to increase contrast
+#     @Author: Rigel
+#     @param img: the image to be corrected
+#     @gain: constant multiplier
+#     @return: a numpy.ndarray object of corrected image.
+#     """
+#     return adjust_log(img, gain)
 
 
-def binary_otsu(img):
-    """
-    Perform binarization with otsu algorithm
-    @Author: Rigel
-    @param img: the image to be corrected
-    @gain: constant multiplier
-    @return: a numpy.ndarray boolean object of binary image.
-    """
-    global_thresh = threshold_otsu(img)
-    return img > global_thresh
+# def binary_otsu(img):
+#     """
+#     Perform binarization with otsu algorithm
+#     @Author: Rigel
+#     @param img: the image to be corrected
+#     @gain: constant multiplier
+#     @return: a numpy.ndarray boolean object of binary image.
+#     """
+#     global_thresh = threshold_otsu(img)
+#     return img > global_thresh
 
 
 def create_bg_image(color, width, height):

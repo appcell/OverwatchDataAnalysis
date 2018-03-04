@@ -1,8 +1,7 @@
-# -*- coding:utf-8 -*-
 """
 @Author: Komorebi 
 """
-from utils import (
+from .utils import (
     chara_capitalize,
     upper,
 )
@@ -48,15 +47,15 @@ END_CHARA = [
     'chara6',
 ]
 
-ULT_NUMBER = [
+ULT_CHARGE = [
     'title',
     'empty',
-    'number1',
-    'number2',
-    'number3',
-    'number4',
-    'number5',
-    'number6',
+    'charge1',
+    'charge2',
+    'charge3',
+    'charge4',
+    'charge5',
+    'charge6',
 ]
 
 
@@ -71,7 +70,7 @@ def cell_width_and_height(start):
     :return: {'A': width, ...}, {1: 18, ...}
     """
     col, row = start[0], int(start[1:])
-    width = {f(col, i): s for i, s in enumerate([20, 14.25, 14.25, 9.75])}
+    width = {f(col, i): s for i, s in enumerate([20, 17, 14.25, 17])}
     height = {row + i: s for i, s in enumerate([18] * len(PLAYER))}
     return width, height
 
@@ -87,7 +86,7 @@ def create_table(start):
         'player': {s: col + str(row + i) for i, s in enumerate(PLAYER)},
         'start_chara': {s: f(col, 1) + str(row + i) for i, s in enumerate(START_CHARA)},
         'end_chara': {s: f(col, 2) + str(row + i) for i, s in enumerate(END_CHARA)},
-        'ult_number': {s: f(col, 3) + str(row + i) for i, s in enumerate(ULT_NUMBER)},
+        'ult_charge': {s: f(col, 3) + str(row + i) for i, s in enumerate(ULT_CHARGE)},
     }
     return config
 
@@ -120,13 +119,14 @@ class Sheet:
     def __init__(self, wb, game):
         self.frames = game.frames
         self.sheet = wb['sheet2']
+        self.game = game
 
-    def new(self, end_charas):
+    def new(self):
         start, end = self.frames[0], self.frames[-1]
         self._append_player(start.players)
         self._append_chara(start.players, 'start')
-        self._append_chara(end_charas, 'end')
-        self._append_ult_number(end.players)
+        self._append_chara(end.players, 'end')
+        self._append_ult_charge(end.players)
         self._set_cell_team()
         self._set_cell_title()
         self._set_cell_width_and_height()
@@ -136,7 +136,7 @@ class Sheet:
         将玩家名字导入到 sheet 中 
         """
         for i, player in enumerate(players):
-            s = '{:0>2d} {}'.format(i + 1, upper(player.name.encode('utf-8')))
+            s = '{:0>2d} {}'.format(i + 1, upper(self.game.name_players[player.index]))
             if i < 6:
                 cell = Config.LEFT['player']['player{}'.format(i + 1)]
             else:
@@ -147,9 +147,8 @@ class Sheet:
         """
         将队伍信息导入到 sheet 中 
         """
-        team1, team2 = self.frames[0].players[0].team, self.frames[0].players[-1].team
-        self.set_cell_value(Config.LEFT['player']['team_name'], team1)
-        self.set_cell_value(Config.RIGHT['player']['team_name'], team2)
+        self.set_cell_value(Config.LEFT['player']['team_name'], self.game.team_names[0])
+        self.set_cell_value(Config.RIGHT['player']['team_name'], self.game.team_names[1])
 
     def _set_cell_title(self):
         """
@@ -161,8 +160,8 @@ class Sheet:
             self.set_cell_value(c['start_chara']['empty'], '')
             self.set_cell_value(c['end_chara']['title'], 'Final lineup')
             self.set_cell_value(c['end_chara']['empty'], '')
-            self.set_cell_value(c['ult_number']['title'], 'Final ult charge')
-            self.set_cell_value(c['ult_number']['empty'], '')
+            self.set_cell_value(c['ult_charge']['title'], 'Final ult charge')
+            self.set_cell_value(c['ult_charge']['empty'], '')
         self.set_cell_value(left['player']['title'], 'Team A (away)')
         self.set_cell_value(right['player']['title'], 'Team B (home)')
 
@@ -214,13 +213,13 @@ class Sheet:
                 cell = Config.RIGHT[key]['chara{}'.format(i - 5)]
             self.set_cell_value(cell, chara_capitalize(player.chara), 1)
 
-    def _append_ult_number(self, players):
+    def _append_ult_charge(self, players):
         """
         导入最终大招能量
         """
         for i, player in enumerate(players):
             if i < 6:
-                cell = Config.LEFT['ult_number']['number{}'.format(i + 1)]
+                cell = Config.LEFT['ult_charge']['charge{}'.format(i + 1)]
             else:
-                cell = Config.RIGHT['ult_number']['number{}'.format(i - 5)]
-            self.set_cell_value(cell, '', 2)
+                cell = Config.RIGHT['ult_charge']['charge{}'.format(i - 5)]
+            self.set_cell_value(cell, str(player.ult_charge) + '%', 2)

@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
 from skimage import measure
-import overwatch as OW
-import gui as Gui
-from utils import image as ImageUtils
-from player import Player
-from killfeed import Killfeed
+from . import overwatch as OW
+from . import gui as Gui
+from .utils import image as ImageUtils
+from .player import Player
+from .killfeed import Killfeed
+from . import pool
 
+import time
 
 class Frame(object):
     """Class of a Frame object.
@@ -22,7 +24,7 @@ class Frame(object):
         game: the Game object who fathers all frames
     """
 
-    def __init__(self, frame_image, frame_time, game):
+    def __init__(self, frame_image, frame_time, game, game_version=0):
         """Initialize a Frame object.
 
         Author:
@@ -37,16 +39,18 @@ class Frame(object):
             None 
         """
         self.is_valid = False
-        self.players = []
+        self.is_replay = False
+        self.players = [None] * 12
         self.killfeeds = []
-        self.image = ImageUtils.resize(frame_image, 1280, 720)
+        self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
         self.time = frame_time
         self.game = game
-        if self.game.ult_colors is None:
-            self.game.set_ult_colors(self)
-
+        self.game_version = game_version
+        self.game_type = game.game_type
+        
         # Gui.gui_instance.show_progress(self.time)
-        print self.time
+
+        print(self.time)
         self.get_players()
         self.get_killfeeds()
         self.validate()
@@ -68,11 +72,14 @@ class Frame(object):
         """
         del self.image
 
+    def player_callback(self, result):
+        self.players[result.index] = result
+
     def get_players(self):
         """Get all players info in this frame.
 
         Author:
-            Appcell
+            Appcell, GenesisX
 
         Args:
             None
@@ -80,10 +87,31 @@ class Frame(object):
         Returns:
             None 
         """
-        for i in range(0, 12):
-            player = Player(i, self)
-            self.players.append(player)
+        # Multiprocess players
 
+        game_type = self.game_type
+        game_version = self.game_version
+        image = self.image
+        ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
+
+        results = []
+
+        for i in range(0, 12):
+            avatars = self.get_avatars(i)
+            team = -1
+
+            if i < 6:
+                team = self.game.team_names[OW.LEFT]
+            else:
+                team = self.game.team_names[OW.RIGHT]
+
+            results.append(pool.PROCESS_POOL.apply_async(Player, 
+                args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
+                callback=self.player_callback))
+        
+        for res in results:
+            res.wait()
+        
     def get_team_colors_from_image(self):
         """Get team colors from this frame.
 
@@ -96,12 +124,12 @@ class Frame(object):
         Returns:
             None 
         """
-        pos = OW.get_team_color_pick_pos()[self.game.game_type]
+        pos = OW.get_team_color_pick_pos(self.game_type, self.game_version)
 
-        return {
-            "left": self.image[pos[0][0], pos[0][1]],
-            "right": self.image[pos[1][0], pos[1][1]]
-        }
+        return [
+            self.image[pos[0][0], pos[0][1]],
+            self.image[pos[1][0], pos[1][1]]
+        ]
 
     def get_team_colors(self):
         if self.game.team_colors is not None:
@@ -109,49 +137,11 @@ class Frame(object):
         else:
             return self.get_team_colors_from_image()
 
-    def get_ult_colors_from_image(self):
-        """Get ultimate charge number colors from this frame.
-
-        Author:
-            Rigel
-
-        Args:
-            None
-
-        Returns:
-            @ult_color: array of int, -1: white number, 1: black number
-        """
-        left_pre_pos = OW.get_ult_charge_color_pre_pos(True)[self.game.game_type]
-        left_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, left_pre_pos))
-        left_shear = ImageUtils.shear(left_pre_image, OW.get_tf_shear(True)[self.game.game_type])
-        left_pos = OW.get_ult_charge_color_pos(True)[self.game.game_type]
-        left_image = ImageUtils.crop(left_shear, left_pos)
-        left_image_g = ImageUtils.contrast_adjust_log(left_image, OW.ULT_ADJUST_LOG_INDEX)
-        left_bin = ImageUtils.binary_otsu(left_image_g)
-
-        right_pre_pos = OW.get_ult_charge_color_pre_pos(False)[self.game.game_type]
-        right_pre_image = ImageUtils.rgb_to_gray(ImageUtils.crop(self.image, right_pre_pos))
-        right_shear = ImageUtils.shear(right_pre_image, OW.get_tf_shear(False)[self.game.game_type])
-        right_pos = OW.get_ult_charge_color_pos(False)[self.game.game_type]
-        right_image = ImageUtils.crop(right_shear, right_pos)
-        right_image_g = ImageUtils.contrast_adjust_log(right_image, OW.ULT_ADJUST_LOG_INDEX)
-        right_bin = ImageUtils.binary_otsu(right_image_g)
-        return {
-            "left": np.sign(2 * np.sum(left_bin) - np.size(left_bin)),
-            "right": np.sign(2 * np.sum(right_bin) - np.size(right_bin))
-        }
-
-    def get_ult_colors(self):
-        if self.game.ult_colors is not None:
-            return self.game.ult_colors
-        else:
-            return self.get_ult_colors_from_image()
-
     def get_killfeeds(self):
         """Get killfeed info in this frame.
 
         Author:
-            Appcell
+            Appcell, GenesisX
 
         Args:
             None
@@ -162,15 +152,11 @@ class Frame(object):
         for i in range(6):
             killfeed = Killfeed(self, i)
             if killfeed.is_valid is True:
+                self.killfeeds.append(killfeed)
                 if self.game.frames and self.game.frames[-1].killfeeds:
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
                     if killfeed == last_killfeed:
-                        self.killfeeds.append(killfeed)
                         break
-                    else:
-                        self.killfeeds.append(killfeed)
-                else:
-                    self.killfeeds.append(killfeed)
             elif i >= 1:
                 break
 
@@ -204,20 +190,18 @@ class Frame(object):
             return
         else:
             self.is_valid = True
-        validation_roi = ImageUtils.crop(self.image,
-                                         OW.FRAME_VALIDATION_POS[self.game.game_type])
-
+        validation_roi = ImageUtils.crop(
+            self.image,
+            OW.get_frame_validation_pos(self.game_type, self.game_version))
         std = np.max([np.std(validation_roi[:, :, 0]),
                       np.std(validation_roi[:, :, 1]),
                       np.std(validation_roi[:, :, 2])])
-
         mean = [np.mean(validation_roi[:, :, 0]),
                 np.mean(validation_roi[:, :, 1]),
                 np.mean(validation_roi[:, :, 2])]
 
-
-        if std < OW.FRAME_VALIDATION_COLOR_STD[self.game.game_type] \
-                and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game.game_type] \
+        if std < OW.FRAME_VALIDATION_COLOR_STD[self.game_type][self.game_version] \
+                and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game_type][self.game_version] \
                 and flag is True:
             self.is_valid = True
         else:
@@ -225,23 +209,23 @@ class Frame(object):
             return
 
         replay_icon = ImageUtils.crop(
-            self.image, OW.get_replay_icon_pos()[self.game.game_type])
+            self.image, OW.get_replay_icon_pos(self.game_type, self.game_version))
 
         replay_icon_preseason = ImageUtils.crop(
-            self.image, OW.get_replay_icon_preseason_pos()[self.game.game_type])
+            self.image, OW.get_replay_icon_preseason_pos(self.game_type, self.game_version))
         max_val = measure.compare_ssim(
                 replay_icon, self.game.replay_icon_ref, multichannel=True)
         max_val_preseason = measure.compare_ssim(
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
-        
 
         # TODO: another situation: after replay effect there might be a blue
         # rectangle remaining on screen.
         max_val = max_val if max_val > max_val_preseason else max_val_preseason
-        if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game.game_type]:
+        if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game_type][self.game_version]:
             self.is_valid = True
         else:
             self.is_valid = False
+            self.is_replay = True
             return
 
         if self.is_valid is True and self.game.team_colors is None:
@@ -265,34 +249,36 @@ class Frame(object):
             A dict of all avatar icons fused
         """
         team_colors = self.get_team_colors()
+        avatars_left_ref_observed = {}
         avatars_left_ref = {}
-        avatars_small_left_ref = {}
+        avatars_right_ref_observed = {}
         avatars_right_ref = {}
-        avatars_small_right_ref = {}
 
         # Create background image with team color
         bg_image_left = ImageUtils.create_bg_image(
-            team_colors["left"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
+            team_colors[OW.LEFT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version],
+            OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
         bg_image_right = ImageUtils.create_bg_image(
-            team_colors["right"], OW.AVATAR_WIDTH_REF, OW.AVATAR_HEIGHT_REF)
-        avatars_ref = OW.get_avatars_ref()
+            team_colors[OW.RIGHT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version], 
+            OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
+        avatars_ref_observed = OW.get_avatars_ref_observed(self.game_type, self.game_version)
 
         # Overlay transparent reference avatar on background
-        for (name, avatar_ref) in avatars_ref.iteritems():
-            avatars_left_ref[name] = ImageUtils.overlay(
-                bg_image_left, avatar_ref)
-            avatars_small_left_ref[name] = ImageUtils.resize(
-                ImageUtils.overlay(bg_image_left, avatar_ref), 33, 26)
-            avatars_right_ref[name] = ImageUtils.overlay(
-                bg_image_right, avatar_ref)
-            avatars_small_right_ref[name] = ImageUtils.resize(
-                ImageUtils.overlay(bg_image_right, avatar_ref), 33, 26)
+        for (name, avatar_ref_observed) in avatars_ref_observed.items():
+            avatars_left_ref_observed[name] = ImageUtils.overlay(
+                bg_image_left, avatar_ref_observed)
+            avatars_left_ref[name] = ImageUtils.resize(
+                avatars_left_ref_observed[name], 33, 26)
+            avatars_right_ref_observed[name] = ImageUtils.overlay(
+                bg_image_right, avatar_ref_observed)
+            avatars_right_ref[name] = ImageUtils.resize(
+                avatars_right_ref_observed[name], 33, 26)
 
         return {
+            "left_observed": avatars_left_ref_observed,
             "left": avatars_left_ref,
-            "left_small": avatars_small_left_ref,
-            "right": avatars_right_ref,
-            "right_small": avatars_small_right_ref
+            "right_observed": avatars_right_ref_observed,
+            "right": avatars_right_ref
         }
 
     def get_avatars(self, index):
@@ -318,10 +304,10 @@ class Frame(object):
 
         if index < 6:
             return {
-                "normal": all_avatars['left'],
-                "small": all_avatars['left_small']
+                "observed": all_avatars['left_observed'],
+                "normal": all_avatars['left']
             }
         return {
-            "normal": all_avatars['right'],
-            "small": all_avatars['right_small']
+            "observed": all_avatars['right_observed'],
+            "normal": all_avatars['right']
         }

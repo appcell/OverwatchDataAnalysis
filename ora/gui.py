@@ -4,25 +4,24 @@
 """
 import threading
 import time
-import tkMessageBox
-import tkFileDialog as filedialog
-from request import json_request
-import Tkinter
-from Tkinter import (Tk,
-                     Frame, Message, Button, Entry, Toplevel,
-                     Label, Text, X, LEFT, RIGHT)
-import overwatch as OW
-import game
+import tkinter
+from tkinter import *
+from tkinter import filedialog
+from tkinter import messagebox
+from .request import json_request
+from . import overwatch as OW
+from . import game
+from . import pool
 
 def log(*args):
-    print args
+    print(args)
 
 class Gui(object):
     def __init__(self):
         
-        self.root = Tk()
+        self.root = tkinter.Tk()
         self.root.title('Overwatch Replay Analyzer v0.1 Beta')
-        self.root.geometry('500x300+400+200')
+        self.root.geometry('550x300+400+200')
 
         self.read_path = None
         self.save_path = None
@@ -34,7 +33,7 @@ class Gui(object):
         # player
         self.create_player()
         # run
-        self.run_btn = Button(self.root, text="Analyze", command=self.run)
+        self.run_btn = tkinter.Button(self.root, text="Analyze", command=self.run)
         self.run_btn.pack()
         self.create_text()
         # check for update
@@ -45,52 +44,52 @@ class Gui(object):
         width_msg = 100
         width_path = 400
 
-        path_frame = Frame(self.root)
+        path_frame = tkinter.Frame(self.root)
         path_frame.pack(fill=X)
         # read
-        read_frame = Frame(path_frame)
+        read_frame = tkinter.Frame(path_frame)
         read_frame.pack(fill=X)
-        read_msg = Message(read_frame, width=width_msg, text='Video path:')
+        read_msg = tkinter.Message(read_frame, width=width_msg, text='Video path:')
         read_msg.pack(side=LEFT)
-        read_path = Message(read_frame, width=width_path, text='file1')
+        read_path = tkinter.Message(read_frame, width=width_path, text='file1')
         read_path.pack(side=LEFT)
-        read_btn = Button(read_frame, text="Choose file", command=self.click_read)
+        read_btn = tkinter.Button(read_frame, text="Choose file", command=self.click_read)
         read_btn.pack(side=RIGHT)
         # save
-        save_frame = Frame(path_frame)
+        save_frame = tkinter.Frame(path_frame)
         save_frame.pack(fill=X)
-        save_msg = Message(save_frame, width=width_msg, text='Save to:')
+        save_msg = tkinter.Message(save_frame, width=width_msg, text='Save to:')
         save_msg.pack(side=LEFT)
-        save_path = Message(save_frame, width=width_path, text='file2')
+        save_path = tkinter.Message(save_frame, width=width_path, text='file2')
         save_path.pack(side=LEFT)
-        save_btn = Button(save_frame, text="Choose file", command=self.click_save)
+        save_btn = tkinter.Button(save_frame, text="Choose file", command=self.click_save)
         save_btn.pack(side=RIGHT)
 
         self.read_path = read_path
         self.save_path = save_path
 
     def create_player(self):
-        player = Frame(self.root)
+        player = tkinter.Frame(self.root)
         player.pack(fill=X, expand=1)
         # left
-        left_frame = Frame(player)
+        left_frame = tkinter.Frame(player)
         left_frame.pack(side=LEFT)
-        left_team_name = Entry(left_frame, bg='pink', fg='black')
+        left_team_name = tkinter.Entry(left_frame, bg='pink', fg='black')
         left_team_name.insert(0, 'Team A')
         left_team_name.pack()
         for i in range(1, 7):
-            e = Entry(left_frame, bg='red', fg='white')
+            e = tkinter.Entry(left_frame, bg='red', fg='white')
             name = 'Player' + str(i)
             e.insert(0, name)
             e.pack()
         # right
-        right_frame = Frame(player)
+        right_frame = tkinter.Frame(player)
         right_frame.pack(side=RIGHT)
-        right_team_name = Entry(right_frame, bg='lightBlue', fg='black')
+        right_team_name = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         right_team_name.insert(0, 'Team B')
         right_team_name.pack()
         for i in range(7, 13):
-            e = Entry(right_frame, bg='blue', fg='white')
+            e = tkinter.Entry(right_frame, bg='blue', fg='white')
             name = 'Player' + str(i)
             e.insert(0, name)
             e.pack()
@@ -99,39 +98,39 @@ class Gui(object):
         self.right_frame = right_frame
 
     def create_time_inputs(self):
-        time_inputs_frame = Frame(self.root)
+        time_inputs_frame = tkinter.Frame(self.root)
         time_inputs_frame.pack(fill=X, expand=1)
 
-        left_frame = Frame(time_inputs_frame)
+        left_frame = tkinter.Frame(time_inputs_frame)
         left_frame.pack(side=LEFT)
 
-        label_start_time = Label(left_frame, text="Start time in seconds (0 = start from beginning):")
-        label_end_time = Label(left_frame, text="End time in seconds (0 = analyze till the end):")
-        label_fps = Label(left_frame, text='FPS of analyzer:')
+        label_start_time = tkinter.Label(left_frame, text="Start time in seconds (0 = start from beginning):")
+        label_end_time = tkinter.Label(left_frame, text="End time in seconds (0 = analyze till the end):")
+        label_fps = tkinter.Label(left_frame, text='FPS of analyzer:')
         label_start_time.pack()
         label_end_time.pack()
         label_fps.pack()
 
-        right_frame = Frame(time_inputs_frame)
+        right_frame = tkinter.Frame(time_inputs_frame)
         right_frame.pack(side=RIGHT)
 
-        start_time = Entry(right_frame, bg='lightBlue', fg='black')
+        start_time = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         start_time.insert(0, '0')
         start_time.pack()
-        end_time = Entry(right_frame, bg='lightBlue', fg='black')
+        end_time = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         end_time.insert(0, '0')
         end_time.pack()
-        fps = Entry(right_frame, bg='lightBlue', fg='black')
+        fps = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         fps.insert(0, '2')
         fps.pack()
 
         self.time_inputs_frame = right_frame
     def create_text(self):
-        self.notice_window = Toplevel(self.root)
+        self.notice_window = tkinter.Toplevel(self.root)
         self.notice_window.title('Notice')
         self.notice_window.geometry('400x400+300+100')
-        self.notice = Text(self.notice_window)
-        self.notice.insert(Tkinter.INSERT, 
+        self.notice = tkinter.Text(self.notice_window)
+        self.notice.insert(tkinter.INSERT, 
             """Overwatch Replay Analyzer, a data extractor of Overwatch game replays
 
 Copyright (C) 2017-2018 ORA developers
@@ -181,32 +180,32 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         try:
             info['start_time'] = int(time_inputs_frame[0].get())
         except ValueError:
-            tkMessageBox.showinfo('Error', 'Invalid video start time!')
+            tkinter.messagebox.showinfo('Error', 'Invalid video start time!')
             valid = False
             return [info, valid]
 
         try:
             info['end_time'] = int(time_inputs_frame[1].get())
         except ValueError:
-            tkMessageBox.showinfo('Error', 'Invalid video end time!')
+            tkinter.messagebox.showinfo('Error', 'Invalid video end time!')
             valid = False
             return [info, valid]
 
         try:
             info['fps'] = int(time_inputs_frame[2].get())
         except ValueError:
-            tkMessageBox.showinfo('Error', 'Invalid analysis fps!')
+            tkinter.messagebox.showinfo('Error', 'Invalid analysis fps!')
             valid = False
             return [info, valid]
 
         if not (info['end_time'] >= 0 and info['start_time'] >= 0 \
             and info['end_time'] >= info['start_time']):
-            tkMessageBox.showinfo('Error', 'Invalid video end time!')
+            tkinter.messagebox.showinfo('Error', 'Invalid video end time!')
             valid = False
             return [info, valid]
 
         if not (info['fps'] > 0):
-            tkMessageBox.showinfo('Error', 'Invalid analysis fps!')
+            tkinter.messagebox.showinfo('Error', 'Invalid analysis fps!')
             valid = False
             return [info, valid]
 
@@ -229,7 +228,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.root.mainloop()
 
     def show_finish_msg(self):
-        tkMessageBox.showinfo('An alert box', 'Output file successfully saved!')
+        tkinter.messagebox.showinfo('An alert box', 'Output file successfully saved!')
 
     def show_progress(self, progress):
         self.notice.insert(Tkinter.INSERT, str(progress))
@@ -237,12 +236,12 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
     def run(self):
         self.game_instance = game.Game(OW.GAMETYPE_OWL)
         info, valid = self.info()
+
         if valid is True:
             self.game_instance.set_game_info(info)
-            if info['start_time'] == 0 and info['end_time'] == 0:
-                self.game_instance.analyze(0, 0, is_test=False)
-            else:
-                self.game_instance.analyze(info['start_time'], info['end_time'], is_test=True)
+            self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
+            pool.PROCESS_POOL.close()
+            pool.PROCESS_POOL.join()
             self.game_instance.output_to_excel()
             self.show_finish_msg()
 

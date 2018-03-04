@@ -3,8 +3,8 @@ import numpy as np
 from operator import itemgetter
 from skimage import measure
 
-import overwatch as OW
-from utils import image as ImageUtils
+from . import overwatch as OW
+from .utils import image as ImageUtils
 
 
 class Killfeed:
@@ -21,8 +21,8 @@ class Killfeed:
         assists: list of assisting players, with the form of a dict:
                  {
                      "chara": "empty",
-                     "player": "empty",
-                     "team": "empty"
+                     "player": -1,
+                     "team": -1
                  }        
         index: row number of current killfeed, ranges from 0 to 5.
         is_valid: tell if the killfeed is valid, mostly for convenience only
@@ -49,14 +49,14 @@ class Killfeed:
         """
         self.player1 = {
             "chara": "empty",
-            "player": "empty",
-            "team": "empty",
+            "player": -1,
+            "team": -1,
             "pos": -1
         }
         self.player2 = {
             "chara": "empty",
-            "player": "empty",
-            "team": "empty",
+            "player": -1,
+            "team": -1,
             "pos": -1
         }
         self.ability = 0
@@ -65,16 +65,14 @@ class Killfeed:
         self.is_valid = True
         self.is_headshot = False
         self.frame = frame
-        self.game_type = frame.game.game_type
+        self.game_type = frame.game_type
+        self.game_version = frame.game_version
 
-        killfeed_pos = OW.get_killfeed_pos(index)[frame.game.game_type]
-        killfeed_with_gap_pos = OW.get_killfeed_with_gap_pos(index)[
-            frame.game.game_type]
+        killfeed_pos = OW.get_killfeed_pos(index, self.game_type, self.game_version)
+        killfeed_with_gap_pos = OW.get_killfeed_with_gap_pos(index, self.game_type, self.game_version)
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
-
-
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
@@ -138,27 +136,27 @@ class Killfeed:
         mean_pos_right = np.mean([i['pos'] for i in icons_weights_right])
 
 
-        if mean_pos_right < OW.KILLFEED_WIDTH[self.game_type] \
-                - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+        if mean_pos_right < OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
+                - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
             self.is_valid = False
             return
         if len(icons_weights) == 1 and mean_pos_right \
-            >= OW.KILLFEED_WIDTH[self.game_type] \
-            - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
+            >= OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
+            - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
             # Only one icon exists
             if icons_weights and icons_weights[0]['pos'] \
-                >= OW.KILLFEED_WIDTH[self.game_type] \
-                - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
-                self.player2 = self._set_player_info(icons_weights[0], 'right')
+                >= OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
+                - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
+                self.player2 = self._set_player_info(icons_weights[0], OW.RIGHT)
 
         if abs(mean_pos_right - mean_pos_left) \
-                < OW.KILLFEED_ICON_WIDTH[self.game_type] - 7:
+                < OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version] - 7:
             # Only one icon exists
             matched = icons_weights
             if matched and matched[0]['pos'] \
-                    >= OW.KILLFEED_WIDTH[self.game_type] \
-                    - OW.KILLFEED_RIGHT_WIDTH[self.game_type]:
-                self.player2 = self._set_player_info(matched[0], 'right')
+                    >= OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
+                    - OW.KILLFEED_RIGHT_WIDTH[self.game_type][self.game_version]:
+                self.player2 = self._set_player_info(matched[0], OW.RIGHT)
         else:
             # 2 icons got recognized
             icons_weights_left = sorted(
@@ -167,10 +165,10 @@ class Killfeed:
                 icons_weights_right, key=itemgetter('prob'), reverse=True)[0:2]
             if icons_weights_left:
                 self.player1 = self._set_player_info(
-                    icons_weights_left[0], 'left')
+                    icons_weights_left[0], OW.LEFT)
             if icons_weights_right:
                 self.player2 = self._set_player_info(
-                    icons_weights_right[0], 'right')
+                    icons_weights_right[0], OW.RIGHT)
 
         if self.player2['pos'] == -1:
             self.is_valid = False
@@ -202,16 +200,16 @@ class Killfeed:
         edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255
         # Sum on y axis and normalize
         edge_sum = edge_span.astype(
-            'float') / OW.KILLFEED_ICON_HEIGHT[self.game_type]
+            'float') / OW.KILLFEED_ICON_HEIGHT[self.game_type][self.game_version]
         edge_validation = [False, False]
 
-        for i in range(2, OW.KILLFEED_WIDTH[self.game_type] - 38):
+        for i in range(2, OW.KILLFEED_WIDTH[self.game_type][self.game_version] - 38):
             edge_scores_left = edge_sum[i-2: i+2]
             edge_scores_right = edge_sum[i+33: i+37]
             if max(edge_scores_left) \
-                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type] \
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT[self.game_type][self.game_version] \
                 and max(edge_scores_right)\
-                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type]:
+                >= OW.KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT[self.game_type][self.game_version]:
                 edge_validation.append(True)
             else:
                 edge_validation.append(False)
@@ -232,41 +230,42 @@ class Killfeed:
             A dict of player info, with the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "player": "empty",  # name of player, or "empty"
-                "team": "empty",    # name of team, or "empty"
+                "player": -1,  # index of player, or -1
+                "team": -1,    # index of team, or -1
                 "pos": -1,          # x-axis position of icon in killfeed
                                       row image
             }
         """
         res = {
             'chara': player['chara'],
-            'team': 'empty',
-            'player': 'empty',
+            'team': -1,
+            'player': -1,
             'pos': player['pos']}
         color_pos = OW.get_killfeed_team_color_pos(
-            player['pos'], position)[self.game_type]
+            player['pos'], position, self.game_type, self.game_version)
 
         color = self.image[color_pos[0], color_pos[1]]
         colors_ref = self.frame.get_team_colors()
         dist_left = ImageUtils.color_distance(
-            color, colors_ref['left'])
+            color, colors_ref[0])
         dist_right = ImageUtils.color_distance(
-            color, colors_ref['right'])
+            color, colors_ref[1])
+
         if dist_left < dist_right:
-            res['team'] = self.frame.game.team_names['left']
+            res['team'] = OW.LEFT
         else:
-            res['team'] = self.frame.game.team_names['right']
+            res['team'] = OW.RIGHT
         chara = OW.get_chara_name(player['chara'])
-        if res['team'] == self.frame.game.team_names['left']:
-            res['player'] = next((item.name for item in self.frame.players[
-                0:6] if item.chara == chara), "empty")
+        if res['team'] == self.frame.game.team_names[OW.LEFT]:
+            res['player'] = next((item.index for item in self.frame.players[
+                0:6] if item.chara == chara), -1)
         else:
-            res['player'] = next((item.name for item in self.frame.players[
-                6:12] if item.chara == chara), "empty")
+            res['player'] = next((item.index for item in self.frame.players[
+                6:12] if item.chara == chara), -1)
         return res
 
     def _set_assist_info(self, assist):
-        """Set team & player name info for a assisting chara.
+        """Set team & player info for a assisting chara.
 
         Author:
             Appcell
@@ -278,24 +277,22 @@ class Killfeed:
             A dict of player info, with the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "player": "empty",  # name of player, or "empty"
-                "team": "empty",    # name of team, or "empty"
+                "player": -1,  # index of player, or -1
+                "team": -1,    # index of team, or -1
             }
         """
         res = {
             'chara': assist['chara'],
-            'player': 'empty',
+            'player': -1,
             'team': assist['team']
         }
 
-        if assist['team'] == self.frame.game.team_names['left']:
-            for player in self.frame.players[0:6]:
-                if player.chara == assist['chara']:
-                    res['player'] = player.name
-        else:
-            for player in self.frame.players[6:12]:
-                if player.chara == assist['chara']:
-                    res['player'] = player.name
+        if assist['team'] == self.frame.game.team_names[OW.LEFT]:
+            res['player'] = next((item.index for item in self.frame.players[
+                0:6] if item.chara == assist['chara']), -1)
+        elif assist['team'] == self.frame.game.team_names[OW.RIGHT]:
+            res['player'] = next((item.index for item in self.frame.players[
+                6:12] if item.chara == assist['chara']), -1)
         return res
 
     def _get_icons_weights(self, edge_validation):
@@ -316,13 +313,13 @@ class Killfeed:
             in this killfeed image. A matching result is in the form of:
             {
                 "chara": "empty",   # name of chara, or "empty"
-                "prob": "empty",  # score from comparison
-                "pos": "empty",    # x-axis position of icon in killfeed
+                "prob": -1,  # score from comparison
+                "pos": -1,    # x-axis position of icon in killfeed
                                      row image
             }
         """
         result = []
-        for (chara, icon) in self.frame.game.killfeed_icons_ref.iteritems():
+        for (chara, icon) in self.frame.game.killfeed_icons_ref.items():
             match_result = cv2.matchTemplate(
                 self.image, icon, cv2.TM_CCOEFF_NORMED)
             # Find two most possible location of this character's icon in the killfeed image.
@@ -330,13 +327,14 @@ class Killfeed:
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
             # Here we have to allow some error, thus comes +/- 2
             if sum(edge_validation[max_loc[0] - 2: max_loc[0] + 2]) > 0 \
-                    and max_val > OW.KILLFEED_MAX_PROB[self.game_type]:
+                    and max_val > OW.KILLFEED_MAX_PROB[self.game_type][self.game_version]:
+                    # TODO: write this into ow.py
                 temp_icon = ImageUtils.crop(
                     self.image, 
-                    [3, icon.shape[0], max_loc[0], OW.KILLFEED_ICON_WIDTH[self.game_type]])
+                    [3, icon.shape[0], max_loc[0], OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version]])
                 score_ssim = measure.compare_ssim(temp_icon, icon,
                                                   multichannel=True)
-                if score_ssim >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type]:
+                if score_ssim >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type][self.game_version]:
                     result.append({
                         'chara': chara,
                         'prob': max_val,
@@ -344,14 +342,14 @@ class Killfeed:
                     })
             half_mask_width = 5
             mask_index_left = max((max_loc[0] + half_mask_width \
-                - OW.ABILITY_GAP_NORMAL[self.game_type] \
-                - OW.KILLFEED_ICON_WIDTH[self.game_type], 0))
+                - OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version] \
+                - OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version], 0))
             mask_index_right = min((
                 max_loc[0] - half_mask_width + 1 \
-                + OW.ABILITY_GAP_NORMAL[self.game_type] \
-                + OW.KILLFEED_ICON_WIDTH[self.game_type],
-                OW.KILLFEED_WIDTH[self.game_type] \
-                - OW.KILLFEED_ICON_WIDTH[self.game_type]))
+                + OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version] \
+                + OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version],
+                OW.KILLFEED_WIDTH[self.game_type][self.game_version] \
+                - OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version]))
 
             match_result_masked = np.matrix(match_result)
             match_result_masked[0:match_result_masked.shape[
@@ -359,13 +357,13 @@ class Killfeed:
             _, max_val2, _, max_loc2 = cv2.minMaxLoc(match_result_masked)
 
             if sum(edge_validation[max_loc2[0]-2: max_loc2[0]+2]) > 0 \
-                    and max_val2 > OW.KILLFEED_MAX_PROB[self.game_type]:
+                    and max_val2 > OW.KILLFEED_MAX_PROB[self.game_type][self.game_version]:
                 temp_icon2 = ImageUtils.crop(
                     self.image, 
-                    [3, icon.shape[0], max_loc2[0], OW.KILLFEED_ICON_WIDTH[self.game_type]])
+                    [3, icon.shape[0], max_loc2[0], OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version]])
                 score_ssim2 = measure.compare_ssim(temp_icon2, icon,
                                                    multichannel=True)
-                if score_ssim2 >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type]:
+                if score_ssim2 >= OW.KILLFEED_SSIM_THRESHOLD[self.game_type][self.game_version]:
                     result.append({
                         'chara': chara,
                         'prob': max_val2,
@@ -395,12 +393,12 @@ class Killfeed:
         # remove those which are never visited
         result_validation = [False] * len(result)
         if max_pos - min_pos \
-            > OW.ABILITY_GAP_NORMAL[self.game_type] + OW.KILLFEED_ICON_WIDTH[self.game_type] - 10:
+            > OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version] + OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version] - 10:
             for ind1, chara1 in enumerate(result):
                 for ind2, chara2 in enumerate(result):
                     if abs(chara1['pos'] - chara2['pos']) \
-                        > OW.ABILITY_GAP_NORMAL[self.game_type] \
-                        + OW.KILLFEED_ICON_WIDTH[self.game_type] - 10 \
+                        > OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version] \
+                        + OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version] - 10 \
                         or abs(chara1['pos'] - chara2['pos']) < 10:
                         result_validation[ind1] = True
                         result_validation[ind2] = True
@@ -443,14 +441,14 @@ class Killfeed:
             return
 
         distance = self.player2[
-            'pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type]
+            'pos'] - self.player1['pos'] - OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version]
         gap = ImageUtils.crop(
             self.image_with_gap,
             [0, self.image_with_gap.shape[0], self.player1['pos'], distance])
 
         ability_icon = ImageUtils.crop(
             self.image_with_gap,
-            OW.get_ability_icon_pos(self.player2['pos'])[self.game_type])
+            OW.get_ability_icon_pos(self.player2['pos'],self.game_type, self.game_version))
 
         # Error gets too much with lowQ videos. Use edge detection instead.
         # Honestly it's not the best choice, since for non-OWL videos it
@@ -461,10 +459,10 @@ class Killfeed:
 
         # Get the "spanned" edge image.
         roi_x_min = self.player1['pos'] + \
-            OW.KILLFEED_ICON_WIDTH[self.game_type] + 4
-        roi_x_max = self.player2['pos'] - OW.ABILITY_GAP_NORMAL[self.game_type]
+            OW.KILLFEED_ICON_WIDTH[self.game_type][self.game_version] + 4
+        roi_x_max = self.player2['pos'] - OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version]
 
-        if roi_x_max - roi_x_min < OW.ASSIST_GAP[self.game_type]:
+        if roi_x_max - roi_x_min < OW.ASSIST_GAP[self.game_type][self.game_version]:
             return
 
         edge_span = (np.sum(edge_image, 0) / 255)[roi_x_min:roi_x_max]
@@ -476,12 +474,13 @@ class Killfeed:
             return
         edge = edges[-1]  # The end of assist avatars list in image
 
-        assist_num = int(round(float(edge) / OW.ASSIST_GAP[self.game_type]))
+        assist_num = int(round(float(edge) / OW.ASSIST_GAP[self.game_type][self.game_version]))
         ability_list = OW.ABILITY_LIST[self.player1['chara']]
         ability_icons_ref = self.frame.game.ability_icons_ref[
             self.player1['chara']]
 
-        if (distance - OW.ABILITY_GAP_NORMAL[self.game_type]) % OW.ASSIST_GAP[self.game_type] > 5:
+        if (distance - OW.ABILITY_GAP_NORMAL[self.game_type][self.game_version]) \
+            % OW.ASSIST_GAP[self.game_type][self.game_version] > 5:
             # Has ability icon
             max_prob = -10
             filtered_icon = self._preprocess_ability_icon(ability_icon)
@@ -507,20 +506,15 @@ class Killfeed:
             # TODO: write this into ow.py!
             assist_icon = ImageUtils.crop(
                 self.image,
-                [
-                    OW.ABILITY_ICON_Y_MIN[self.game_type],
-                    OW.ASSIST_ICON_HEIGHT[self.game_type],
-                    8 + self.player1['pos'] + i * OW.ASSIST_GAP[self.game_type]
-                    + OW.KILLFEED_ICON_WIDTH[self.game_type],
-                    OW.ASSIST_ICON_WIDTH[self.game_type]])
+                OW.get_assist_icon_pos(self.player1['pos'], i, self.game_type, self.game_version))
 
             assist = {
                 "chara": "empty",
-                "player": "empty",
+                "player": -1,
                 "team": self.player1['team']
             }
             max_score = -10
-            for (chara, icon) in self.frame.game.assist_icons_ref.iteritems():
+            for (chara, icon) in self.frame.game.assist_icons_ref.items():
                 score = measure.compare_ssim(assist_icon,
                                              icon, multichannel=True)
 
@@ -548,9 +542,9 @@ class Killfeed:
 
         """
         ability_pos = OW.get_ability_icon_pos(
-            self.player2['pos'])[self.game_type]
-        color = self.image_with_gap[ability_pos[
-            0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
+            self.player2['pos'], self.game_type, self.game_version)
+        color = self.image_with_gap[int(ability_pos[
+                    0] + ability_pos[1]/2), ability_pos[2] + ability_pos[3] + 6]
         filtered_icon = np.zeros((icon.shape[0], icon.shape[1]))
 
         # TODO: Labelling needed here!!! Especially when background looks
@@ -560,7 +554,7 @@ class Killfeed:
         for i in range(icon.shape[0]):
             for j in range(icon.shape[1]):
                 if ImageUtils.color_distance(icon[i, j, :], color) \
-                        < OW.ABILITY_ICON_COLOR_FILTER_THRESHOLD[self.game_type]:
+                        < OW.ABILITY_ICON_COLOR_FILTER_THRESHOLD[self.game_type][self.game_version]:
                     filtered_icon[i, j] = 255
         return filtered_icon.astype('uint8')
 
@@ -577,10 +571,12 @@ class Killfeed:
             None
 
         """
+        if self.player2['pos'] == -1:
+            return
         ability_pos = OW.get_ability_icon_pos(
-            self.player2['pos'])[self.game_type]
-        color = self.image_with_gap[ability_pos[
-            0] + ability_pos[1]/2, ability_pos[2] + ability_pos[3] + 6]
+            self.player2['pos'], self.game_type, self.game_version)
+        color = self.image_with_gap[int(ability_pos[0] + ability_pos[1]/2), 
+                ability_pos[2] + ability_pos[3] + 6]
 
         # TODO: Write consts here into ow.py
         if ImageUtils.color_distance(color, np.array([255, 255, 255])) > 40:
