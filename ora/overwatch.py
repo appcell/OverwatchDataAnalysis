@@ -713,7 +713,7 @@ AVATAR_Y_MIN_OBSERVED = {
 AVATAR_HEIGHT = {
     GAMETYPE_OWL: {
         0: 26,
-        1: 26
+        1: 26 + 4
     },
     GAMETYPE_CUSTOM: {
         0: 26
@@ -722,7 +722,7 @@ AVATAR_HEIGHT = {
 AVATAR_HEIGHT_OBSERVED = {
     GAMETYPE_OWL: {
         0: 30,
-        1: 30
+        1: 30 + 4
     },
     GAMETYPE_CUSTOM: {
         0: 30
