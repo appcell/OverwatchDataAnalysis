@@ -3,6 +3,7 @@ from .frame import Frame
 from .utils.video_loader import VideoLoader
 from .excel import Excel
 import os
+import math as Math
 import time
 import copy
 import cv2
@@ -245,20 +246,6 @@ class Game(object):
         for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
 
-        # for frame in self.frames:
-        #     player = frame.players[10]
-        #     print(frame.time)
-        #     print(player.chara)
-        #     print(player.is_dead)
-        #     print("==========")
-
-        # for frame in self.frames:
-        #     print(frame.time)
-        #     for kf in frame.killfeeds:
-        #         print(kf.player1)
-        #         print(kf.player2)
-        #     print("==========")
-
     def _clear_frames(self):
         """Remove invalid frames & repeated killfeeds.
 
@@ -300,9 +287,25 @@ class Game(object):
 
 
         # 2) Remove invalid frames
-        self.frames = list(filter(
-            lambda frame: frame.is_valid is True,
-            self.frames))
+        # For replays, remove also ~0.7s after
+        frames_tmp = []
+        after_effect_frames_num = Math.ceil(OW.FRAME_VALIDATION_EFFECT_AFTER_TIME[
+                self.game_type][self.game_version] / (1 / self.analyzer_fps))
+        for ind_frame, frame in enumerate(self.frames):
+            if frame.is_valid is True:
+                if ind_frame < after_effect_frames_num:
+                    frames_tmp.append(frame)
+                    continue
+                was_in_replay = -1
+                for ind_frame_tmp in range(ind_frame - after_effect_frames_num, ind_frame + 1):
+                    if self.frames[ind_frame_tmp].is_replay is True:
+                        was_in_replay = ind_frame_tmp
+                        break
+                if was_in_replay == -1:
+                    frames_tmp.append(frame)
+                    continue
+
+        self.frames = frames_tmp
 
     def _get_players_list(self):
         players_list = []
@@ -440,22 +443,71 @@ class Game(object):
         Returns:
             None
         """
-        respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
+        # First make sure everyone is set as alive
+        for players in players_list:
+            for player in players:
+                player.is_dead = False
+
         for ind_frame, frame in enumerate(frames):
             for killfeed in frame.killfeeds:
                 if killfeed.player2['player'] != -1:
                     if killfeed.player1['chara'] == "mercy" \
                     and killfeed.player1['team'] == killfeed.player2['team']:
-                        for ind_frame_tmp in range(
-                                ind_frame, 
-                                len(frames) - 1):
-                            players_list[ind_frame_tmp][killfeed.player2['player']].is_dead = False
+                        if players_list[ind_frame][killfeed.player2['player']].is_dead is True:
+                            self._set_status_as_alive_after(
+                                    players_list, frames, ind_frame, killfeed.player2['player'])
                     elif killfeed.player2['player'] != -1 \
-                    and killfeed.player2['chara'] in OW.CHARACTER_LIST:
-                        for ind_frame_tmp in range(
-                                ind_frame - 1, 
-                                ind_frame + min(respawn_frame_num, len(frames) - ind_frame)):
-                            players_list[ind_frame_tmp][killfeed.player2['player']].is_dead = True
+                    and killfeed.player2['chara'] in OW.CHARACTER_LIST \
+                    and players_list[ind_frame][killfeed.player2['player']].is_dead is not True:
+                        # Here sometimes due to replay etc, killfeed is not reliable. Thus we have
+                        # to determine based on common sense, i.e. without resurrection, deaths of
+                        # same chara must not have a time gap of more than 10s.
+                        last_death_frame_ind = -1
+                        for ind_frame_tmp in range(ind_frame, 0, -1):
+                            if players_list[ind_frame_tmp][
+                                    killfeed.player2['player']].is_dead is True:
+                                last_death_frame_ind = ind_frame_tmp
+                                break
+                        
+                        if last_death_frame_ind != -1 \
+                            and last_death_frame_ind < ind_frame\
+                            and frames[ind_frame].time - frames[last_death_frame_ind].time \
+                            < OW.MIN_RESPAWN_TIME:
+                            # Death time gap is too small, find if there's any resurrection
+                            last_resurrection_frame_ind = -1
+                            for ind_frame_tmp in range(
+                                    ind_frame, last_death_frame_ind, -1):
+                                for killfeed_tmp in frames[ind_frame_tmp].killfeeds:
+                                    if killfeed_tmp.player2['player'] == killfeed.player2['player']\
+                                    and killfeed_tmp.player1['chara'] == OW.MERCY\
+                                    and killfeed_tmp.player1['team'] == killfeed.player2['team']:
+                                        last_resurrection_frame_ind = ind_frame_tmp
+                                        break
+                            if last_resurrection_frame_ind != -1:
+                                self._set_status_as_dead_after(
+                                    players_list, frames, ind_frame, killfeed.player2['player'])
+                                continue
+                        else:
+                            self._set_status_as_dead_after(
+                                players_list, frames, ind_frame, killfeed.player2['player'])
+    
+    def _set_status_as_alive_after(self, players_list, frames, ind_frame, player_ind):
+        for ind_frame_tmp in range(
+                ind_frame, 
+                len(frames) - 1):
+            players_list[ind_frame_tmp][player_ind].is_dead = False
+
+    def _set_status_as_dead_after(self, players_list, frames, ind_frame, player_ind):
+        ind_frame_tmp = ind_frame - 1
+        if ind_frame == 0:
+            ind_frame_tmp = 0
+        elif frames[ind_frame].time - frames[ind_frame_tmp].time > 1 / self.analyzer_fps:
+            ind_frame_tmp = ind_frame
+        while ind_frame_tmp < len(frames) \
+        and frames[ind_frame_tmp].time - frames[ind_frame].time \
+        <= OW.MIN_RESPAWN_TIME:
+            players_list[ind_frame_tmp][player_ind].is_dead = True
+            ind_frame_tmp += 1
 
     def _correct_ult_charge(self, players_list):
         """ Postprocess player ult charge.
@@ -568,8 +620,6 @@ class Game(object):
                             for ind_frame_tmp in range(ind_frame, unnatural_frame_ind):
                                 players_list[ind_frame_tmp][ind].ult_charge \
                                     = players_list[ind_frame - 1][ind].ult_charge
-
-
 
     def _correct_dva_status(self, players_list, frames):
         """ Tell if a D.Va is with meka or not.

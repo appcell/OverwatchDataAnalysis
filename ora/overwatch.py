@@ -1372,6 +1372,15 @@ FRAME_VALIDATION_EFFECT_TIME = {
         0: 2.0
     }
 }
+FRAME_VALIDATION_EFFECT_AFTER_TIME = {
+    GAMETYPE_OWL: {
+        0: 0.7,
+        1: 0.7
+    },
+    GAMETYPE_CUSTOM: {
+        0: 0.7
+    }
+}
 FRAME_VALIDATION_REPLAY_PROB = {
     GAMETYPE_OWL: {
         0: 0.5,
