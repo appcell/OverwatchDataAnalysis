@@ -25,8 +25,8 @@ DIMENSIONS = {
 CELL_WIDTH_CONFIG = {
     'time': 16.5,
     'players': 18,
-    'hps': 3.8,
-    'ults': 3.8
+    'hps': 4.8,
+    'ults': 4.8
 }
 
 
@@ -56,10 +56,6 @@ def _cell_style():
         }
     }
     return d
-
-
-def combine_player_names(name_players_team_left, name_players_team_right):
-    return name_players_team_left + name_players_team_right
 
 
 class Config(object):
@@ -102,25 +98,18 @@ class Save:
                 self._set_cell_style(cell)
 
     def _set_title_style(self):
-        color, background = Config.team_colors[self.game.team_names['left']]
-        for cell in self.sheet['B1:S1']:  # Left team
-            self._set_cell_style(cell, background)
-            fill = {
-                'fill_type': 'solid',
-                'fgColor': color,
-            }
-            cell.fill = PatternFill(**fill)
-        color, background = Config.team_colors[self.game.team_names['Right']]
-        for cell in self.sheet['T1:AK1']:  # Left team
-            self._set_cell_style(cell, background)
-            fill = {
-                'fill_type': 'solid',
-                'fgColor': color,
-            }
-            cell.fill = PatternFill(**fill)
+        title_ranges = ['B1:S1', 'T1:AK1']
+        for i in range(2):
+            color, background = Config.team_colors[i]
+            for cell in self.sheet[title_ranges[i]][0]:
+                self._set_cell_style(cell, background)
+                fill = {
+                    'fill_type': 'solid',
+                    'fgColor': color,
+                }
+                cell.fill = PatternFill(**fill)
 
     def save(self):
-        self._append()
         self._set_rows_height()
         self._set_columns_width()
         self._set_cells_style()
@@ -133,12 +122,12 @@ class Sheet:
         self.game = game
         self.frames = game.frames
         self.sheet = wb['sheet3']
-        self.player_names = combine_player_names(game.name_players_team_left, game.name_players_team_right)
+        self.player_names = self.game.name_players
         if self.game.team_colors is None:
-            Config.team_colors[self.game.team_names['left']] = utils.to_hex([255, 255, 255])
-            Config.team_colors[self.game.team_names['right']] = utils.to_hex([70, 70, 70])
-        Config.team_colors[self.game.team_names['left']] = utils.to_hex(self.game.team_colors['left'])
-        Config.team_colors[self.game.team_names['right']] = utils.to_hex(self.game.team_colors['right'])
+            Config.team_colors[0] = utils.to_hex([255, 255, 255])
+            Config.team_colors[1] = utils.to_hex([70, 70, 70])
+        Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
+        Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
 
     def new(self):
         frames = self.game.frames
