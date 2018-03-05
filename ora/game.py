@@ -186,8 +186,7 @@ class Game(object):
             if test_frame.is_valid:
                 self.is_game_version_set = True
                 self.game_version = i
-                print("Game version is set as:")
-                print(i)
+                print(f"Game version is set as: {i}")
                 return test_frame
         
     def output_to_excel(self):
