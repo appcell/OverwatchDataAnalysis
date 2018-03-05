@@ -306,6 +306,7 @@ class Save:
         self._append()
         self._set_cells_style()
         self._set_cells_merge()
+        self.sheet.freeze_panes = self.sheet['B3']
 
 
 class Sheet:
