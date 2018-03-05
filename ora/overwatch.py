@@ -443,7 +443,7 @@ ULT_CHARGE_X_MIN_RIGHT = {
 ULT_CHARGE_WIDTH = {
     GAMETYPE_OWL: {
         0: 23,
-        1: 23 + 3
+        1: 23
     },
     GAMETYPE_CUSTOM: {
         0: 23

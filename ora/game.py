@@ -232,7 +232,6 @@ class Game(object):
         self._rematch_killfeeds(players_list, False)
         self._reset_death_status(players_list, self.frames)
         self._freeze_death_status(players_list)
-
         # 2) 2nd rematching
         self._rematch_killfeeds(players_list, True)
 
@@ -242,6 +241,7 @@ class Game(object):
         self._correct_dva_status(players_list, self.frames)
         self._correct_ult_charge(players_list)
         self._clean_chara_switching(players_list)
+
 
         for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
@@ -362,6 +362,7 @@ class Game(object):
                 for ind_player, player in enumerate(players):
                     if player.is_dead:
                         players_list[ind][ind_player] = copy.copy(players_list[ind-1][ind_player])
+                        players_list[ind][ind_player].is_dead = True
 
     def _rematch_killfeeds(self, players_list, is_death_validated):
         """ Rematch charas in killfeeds with charas in players
@@ -440,17 +441,18 @@ class Game(object):
         Returns:
             None
         """
+        respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
         for ind_frame, frame in enumerate(frames):
             for killfeed in frame.killfeeds:
                 if killfeed.player2['player'] != -1:
-                    respawn_frame_num = OW.MIN_RESPAWN_TIME * self.analyzer_fps
                     if killfeed.player1['chara'] == "mercy" \
                     and killfeed.player1['team'] == killfeed.player2['team']:
                         for ind_frame_tmp in range(
                                 ind_frame, 
-                                ind_frame + min(respawn_frame_num, len(frames) - ind_frame)):
+                                len(frames) - 1):
                             players_list[ind_frame_tmp][killfeed.player2['player']].is_dead = False
-                    elif killfeed.player2['player'] != -1:
+                    elif killfeed.player2['player'] != -1 \
+                    and killfeed.player2['chara'] in OW.CHARACTER_LIST:
                         for ind_frame_tmp in range(
                                 ind_frame - 1, 
                                 ind_frame + min(respawn_frame_num, len(frames) - ind_frame)):
