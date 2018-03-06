@@ -219,16 +219,16 @@ class Game(object):
         """
         # 这是一个开关
         self.json = True
-        # if self.json:
-        #     data = {
-        #         'team_names': self.team_names,
-        #         'players_name': self.name_players,
-        #         'frames': [frame.dict() for frame in self._frames],
-        #     }
-        #     filename, _ = self.output_path.split('.')
-        #     filename = '{}_{}.txt'.format(filename, 'game')
-        #     with open(filename, 'w') as f:
-        #         dump(data, f, ensure_ascii=False, indent=4)
+        if self.json:
+            data = {
+                'team_names': self.team_names,
+                'players_name': self.name_players,
+                'frames': [frame.dict() for frame in self.frames],
+            }
+            filename, _ = self.output_path.split('.')
+            filename = '{}_{}.txt'.format(filename, 'game')
+            with open(filename, 'w') as f:
+                dump(data, f, ensure_ascii=False, indent=4)
 
     def postprocess(self):
         """ Postprocess player & killfeeds, remove incorrect info.
@@ -251,7 +251,6 @@ class Game(object):
                 players in each frame.
         """
         self._clear_frames()
-        # self._frames = copy.deepcopy(self.frames)
 
         players_list = self._get_players_list()
 

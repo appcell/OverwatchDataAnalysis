@@ -430,7 +430,7 @@ class Player:
 
     def dict(self):
         d = {
-            'index': self.index,
+            'index': self.index + 1,
             'team': self.team,
             'chara': self.chara,
             'is_ult_ready': self.is_ult_ready,
