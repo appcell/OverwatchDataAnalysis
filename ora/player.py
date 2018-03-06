@@ -427,3 +427,15 @@ class Player:
                 score = score_ssim + max_val
                 res = i
         return [res, score]
+
+    def dict(self):
+        d = {
+            'index': self.index,
+            'team': self.team,
+            'chara': self.chara,
+            'is_ult_ready': self.is_ult_ready,
+            'is_dead': self.is_dead,
+            'ult_charge': self.ult_charge,
+            'dva_status': self.dva_status,
+        }
+        return d

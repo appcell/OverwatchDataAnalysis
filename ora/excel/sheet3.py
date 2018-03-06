@@ -2,6 +2,7 @@
 """
 @Author: Rigel
 """
+from json import dump
 from . import utils
 from openpyxl.styles import (
     Alignment,
@@ -156,3 +157,26 @@ class Sheet:
         :return: None
         """
         Save(self.sheet).save()
+
+    def json(self, filename):
+        sheet_data = []
+        sheet = self.sheet
+        for col, cells in enumerate(sheet.rows):
+            if col < 1:
+                continue
+            data = {
+                'time': sheet[DIMENSIONS['time'][0] + str(col + 1)].value,
+                'players': [],
+            }
+            for i, _ in enumerate(DIMENSIONS['players']):
+                player = {
+                    'chara': sheet[DIMENSIONS['players'][i] + str(col + 1)].value,
+                    'hps': sheet[DIMENSIONS['hps'][i] + str(col + 1)].value,
+                    'ults': sheet[DIMENSIONS['ults'][i] + str(col + 1)].value,
+                    'team': self.game.team_names[0] if i < 6 else self.game.team_names[1],
+                    'index': i + 1,
+                }
+                data['players'].append(player)
+            sheet_data.append(data)
+        with open(filename, 'w') as file:
+            dump(sheet_data, file, ensure_ascii=False, indent=4)

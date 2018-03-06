@@ -12,6 +12,7 @@ from openpyxl.styles import (
     Border,
     Side,
 )
+from json import dump
 
 
 PLAYER = [
@@ -36,7 +37,7 @@ START_CHARA = [
     'chara6',
 ]
 
-END_CHARA = [
+FINAL_CHARA = [
     'title',
     'empty',
     'chara1',
@@ -85,16 +86,14 @@ def create_table(start):
     config = {
         'player': {s: col + str(row + i) for i, s in enumerate(PLAYER)},
         'start_chara': {s: f(col, 1) + str(row + i) for i, s in enumerate(START_CHARA)},
-        'end_chara': {s: f(col, 2) + str(row + i) for i, s in enumerate(END_CHARA)},
+        'final_chara': {s: f(col, 2) + str(row + i) for i, s in enumerate(FINAL_CHARA)},
         'ult_charge': {s: f(col, 3) + str(row + i) for i, s in enumerate(ULT_CHARGE)},
     }
     return config
 
 
-t = 'C3'
-
-
 class Config(object):
+    t = 'C3'
     LEFT = create_table(t)
     RIGHT = create_table('{}{}'.format(t[0], int(t[1:]) + 8))
     font = Font(name='Microsoft YaHei',
@@ -122,11 +121,11 @@ class Sheet:
         self.game = game
 
     def new(self):
-        start, end = self.frames[0], self.frames[-1]
+        start, final = self.frames[0], self.frames[-1]
         self._append_player(start.players)
         self._append_chara(start.players, 'start')
-        self._append_chara(end.players, 'end')
-        self._append_ult_charge(end.players)
+        self._append_chara(final.players, 'final')
+        self._append_ult_charge(final.players)
         self._set_cell_team()
         self._set_cell_title()
         self._set_cell_width_and_height()
@@ -138,9 +137,9 @@ class Sheet:
         for i, player in enumerate(players):
             s = '{:0>2d} {}'.format(i + 1, upper(self.game.name_players[player.index]))
             if i < 6:
-                cell = Config.LEFT['player']['player{}'.format(i + 1)]
+                cell = Config.LEFT['player']['player' + str(i + 1)]
             else:
-                cell = Config.RIGHT['player']['player{}'.format(i - 5)]
+                cell = Config.RIGHT['player']['player' + str(i - 5)]
             self.set_cell_value(cell, s, 1)
 
     def _set_cell_team(self):
@@ -154,16 +153,15 @@ class Sheet:
         """
         将基本信息导入到 sheet 中 
         """
-        left, right = Config.LEFT, Config.RIGHT
-        for c in [left, right]:
+        for c in [Config.LEFT, Config.RIGHT]:
             self.set_cell_value(c['start_chara']['title'], 'Starting lineup')
             self.set_cell_value(c['start_chara']['empty'], '')
-            self.set_cell_value(c['end_chara']['title'], 'Final lineup')
-            self.set_cell_value(c['end_chara']['empty'], '')
+            self.set_cell_value(c['final_chara']['title'], 'Final lineup')
+            self.set_cell_value(c['final_chara']['empty'], '')
             self.set_cell_value(c['ult_charge']['title'], 'Final ult charge')
             self.set_cell_value(c['ult_charge']['empty'], '')
-        self.set_cell_value(left['player']['title'], 'Team A (away)')
-        self.set_cell_value(right['player']['title'], 'Team B (home)')
+        self.set_cell_value(Config.LEFT['player']['title'], 'Team A (away)')
+        self.set_cell_value(Config.RIGHT['player']['title'], 'Team B (home)')
 
     def set_cell_value(self, cell, value, flag=0):
         """
@@ -205,12 +203,12 @@ class Sheet:
         :param players: 12个 player类组成的 list
         :param flag: 是否为起点
         """
-        key = 'start_chara' if flag == 'start' else 'end_chara'
+        key = 'start_chara' if flag == 'start' else 'final_chara'
         for i, player in enumerate(players):
             if i < 6:
-                cell = Config.LEFT[key]['chara{}'.format(i + 1)]
+                cell = Config.LEFT[key]['chara' + str(i + 1)]
             else:
-                cell = Config.RIGHT[key]['chara{}'.format(i - 5)]
+                cell = Config.RIGHT[key]['chara' + str(i - 5)]
             self.set_cell_value(cell, chara_capitalize(player.chara), 1)
 
     def _append_ult_charge(self, players):
@@ -223,3 +221,26 @@ class Sheet:
             else:
                 cell = Config.RIGHT['ult_charge']['charge{}'.format(i - 5)]
             self.set_cell_value(cell, str(player.ult_charge) + '%', 2)
+
+    def json(self, filename):
+        sheet_data = []
+        sheet = self.sheet
+        for idx, c in enumerate([Config.LEFT, Config.RIGHT]):
+            data = {
+                'team': sheet[c['player']['team_name']].value,
+                'team_status': 'away' if idx == 0 else 'home',
+                'players': [],
+            }
+            for i in range(1, 7):
+                player = {
+                    'index': int(sheet[c['player']['player' + str(i)]].value[:2]),
+                    'name': sheet[c['player']['player' + str(i)]].value[3:],
+                    'starting lineup': sheet[c['start_chara']['chara' + str(i)]].value,
+                    'final lineup': sheet[c['final_chara']['chara' + str(i)]].value,
+                    # Todo
+                    'KDA': '',
+                }
+                data['players'].append(player)
+            sheet_data.append(data)
+        with open(filename, 'w') as file:
+            dump(sheet_data, file, ensure_ascii=False, indent=4)
