@@ -86,7 +86,10 @@ class Game(object):
         Returns:
             None 
         """
-        self.team_colors = frame.get_team_colors_from_image()
+        if self.game_type == OW.GAMETYPE_OWL:
+            self.team_colors = frame.get_team_colors_from_image()
+        elif self.game_type == OW.GAMETYPE_CUSTOM:
+            self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -188,6 +191,12 @@ class Game(object):
                 self.is_game_version_set = True
                 self.game_version = i
                 print(f"Game version is set as: {i}")
+                self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
+                self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
+                self.ability_icons_ref = OW.get_ability_icons_ref(self.game_type, self.game_version)
+                self.ult_charge_numbers_ref = OW.get_ult_charge_numbers_ref(
+                    self.game_type, self.game_version)
+                self.replay_icon_ref = OW.get_replay_icon_ref(self.game_type, self.game_version)
                 return test_frame
         
     def output_to_excel(self):
@@ -241,7 +250,7 @@ class Game(object):
         self._correct_dva_status(players_list, self.frames)
         self._correct_ult_charge(players_list)
         self._clean_chara_switching(players_list)
-
+        self._clear_killfeeds(players_list)
 
         for ind_frame, players in enumerate(players_list):
             self.frames[ind_frame].players = players
@@ -306,6 +315,19 @@ class Game(object):
                     continue
 
         self.frames = frames_tmp
+
+    def _clear_killfeeds(self, players_list):
+        for ind_frame, frame in enumerate(self.frames):
+            if ind_frame >= 2:
+                for kf in frame.killfeeds:
+                    # TODO: write 1.2 into ow.py!!!
+                    if players_list[ind_frame - 2][kf.player2['player']].is_dead \
+                    and not (kf.player1['chara'] == OW.MERCY \
+                        and kf.player1['team'] == kf.player2['team']) \
+                    and frame.time - self.frames[ind_frame - 2].time <= 1.2:
+                        # if the player is already dead, there's no need to kill him
+                        kf.is_valid = False
+                frame.killfeeds = [kf for kf in frame.killfeeds if kf.is_valid is True]
 
     def _get_players_list(self):
         players_list = []
@@ -372,6 +394,9 @@ class Game(object):
         For all killfeeds without a proper player name recognition, we fill in
         all the blanks here. Still, we do not write this into original results
         for a reason.
+        
+        This might bring errors if there's a kill event in the first frame. We
+        skip the first frame instead.
 
         Author: KomorebiL, Appcell
 
@@ -384,15 +409,16 @@ class Game(object):
                 killfeeds in each frame.
         """
         for ind_frame, frame in enumerate(self.frames):
-            for killfeed in frame.killfeeds:
-                if killfeed.player1['chara'] != "empty":
-                    killfeed.player1['player'] = self._get_player(
-                        killfeed.player1, players_list, ind_frame, is_death_validated)
-                killfeed.player2['player'] = self._get_player(
-                    killfeed.player2, players_list, ind_frame, is_death_validated)
-                for assist in killfeed.assists:
-                    assist['player'] = self._get_player(
-                        assist, players_list, ind_frame, is_death_validated)
+            if ind_frame > 0:
+                for killfeed in frame.killfeeds:
+                    if killfeed.player1['chara'] != "empty":
+                        killfeed.player1['player'] = self._get_player(
+                            killfeed.player1, players_list, ind_frame, is_death_validated)
+                    killfeed.player2['player'] = self._get_player(
+                        killfeed.player2, players_list, ind_frame, is_death_validated)
+                    for assist in killfeed.assists:
+                        assist['player'] = self._get_player(
+                            assist, players_list, ind_frame, is_death_validated)
 
     def _get_player(self, data, players_list, ind_frame, is_death_validated):
         """ Rematch player in kf with player in topbar

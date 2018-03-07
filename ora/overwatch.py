@@ -1,5 +1,6 @@
 from .utils import image as ImageUtils
 import os
+import math
 import numpy as np
 
 """ Conventions of overwatch.py macros:
@@ -177,7 +178,7 @@ TEAM_COLOR_PICK_POS_LEFT = {
         1: [53 + 27, 40 + 1]
     },
     GAMETYPE_CUSTOM: {
-        0: [0, 0]
+        0: [53, 40]
     }
 }
 TEAM_COLOR_PICK_POS_RIGHT = {
@@ -186,7 +187,16 @@ TEAM_COLOR_PICK_POS_RIGHT = {
         1: [54 + 27, 1183 - 6]
     },
     GAMETYPE_CUSTOM: {
-        0: [0, DEFAULT_SCREEN_WIDTH - 1]
+        0: [54, 1183]
+    }
+}
+TEAM_COLORS_DEFAULT = {
+    GAMETYPE_OWL: {
+        0: [np.array([170, 130, 35]), np.array([18, 3, 156])],
+        1: [np.array([170, 130, 35]), np.array([18, 3, 156])]
+    },
+    GAMETYPE_CUSTOM: {
+        0: [np.array([170, 130, 35]), np.array([18, 3, 156])]
     }
 }
 # **********************************************************
@@ -241,11 +251,11 @@ ULT_ICON_HEIGHT = {
 }
 ULT_ICON_GAP = {
     GAMETYPE_OWL: {
-        0: 70,
-        1: 70
+        0: 70.6,
+        1: 70.6
     },
     GAMETYPE_CUSTOM: {
-        0: 70
+        0: 70.6
     }
 }
 
@@ -294,22 +304,28 @@ def get_team_color_pick_pos(gametype, version):
 
 def get_ult_icon_pos(index, gametype, version):
     if index < 6:
-        return [ULT_ICON_Y_MIN[gametype][version],
-                ULT_ICON_HEIGHT[gametype][version],
-                ULT_ICON_X_MIN_LEFT[gametype][version] + index * ULT_ICON_GAP[gametype][version],
-                ULT_ICON_WIDTH[gametype][version]]
+        return [round(ULT_ICON_Y_MIN[gametype][version]),
+                round(ULT_ICON_HEIGHT[gametype][version]),
+                round(ULT_ICON_X_MIN_LEFT[gametype][version] + index * ULT_ICON_GAP[gametype][version]),
+                round(ULT_ICON_WIDTH[gametype][version])]
     else:
-        return [ULT_ICON_Y_MIN[gametype][version],
-                ULT_ICON_HEIGHT[gametype][version],
-                ULT_ICON_X_MIN_RIGHT[gametype][version] + (index - 6) * ULT_ICON_GAP[gametype][version],
-                ULT_ICON_WIDTH[gametype][version]]
+        return [round(ULT_ICON_Y_MIN[gametype][version]),
+                round(ULT_ICON_HEIGHT[gametype][version]),
+                round(ULT_ICON_X_MIN_RIGHT[gametype][version] + (index - 6) * ULT_ICON_GAP[gametype][version]),
+                round(ULT_ICON_WIDTH[gametype][version])]
 
 
 def get_ult_icon_ref(index, gametype, version):
-    if index < 6:
-        return ImageUtils.read("./images/ultimate/awayUlt.png")
-    else:
-        return ImageUtils.read("./images/ultimate/homeUlt.png")
+    if gametype == GAMETYPE_OWL:
+        if index < 6:
+            return ImageUtils.read("./images/ultimate/awayUlt.png")
+        else:
+            return ImageUtils.read("./images/ultimate/homeUlt.png")
+    if gametype == GAMETYPE_CUSTOM:
+        if index < 6:
+            return ImageUtils.read("./images/ultimate/awayUlt.png")
+        else:
+            return ImageUtils.read("./images/ultimate/awayUlt.png")
 
 
 # **********************************************************
@@ -349,16 +365,16 @@ ULT_ADJUST_LOG_INDEX = {
 #  Region to read ultimate charge number, pre-shear
 ULT_CHARGE_PRE_X_MIN_LEFT = {
     GAMETYPE_OWL: {
-        0: 20,
+        0: 19,
         1: 20 + 1
     },
     GAMETYPE_CUSTOM: {
-        0: 20
+        0: 19
     }
 }
 ULT_CHARGE_PRE_X_MIN_RIGHT = {
     GAMETYPE_OWL: {
-        0: 825,
+        0: 830,
         1: 825 - 3
     },
     GAMETYPE_CUSTOM: {
@@ -394,11 +410,11 @@ ULT_CHARGE_PRE_HEIGHT = {
 }
 ULT_CHARGE_PRE_GAP = {
     GAMETYPE_OWL: {
-        0: 70,
-        1: 70
+        0: 70.8,
+        1: 70.6
     },
     GAMETYPE_CUSTOM: {
-        0: 70
+        0: 70.6
     }
 }
 
@@ -562,28 +578,30 @@ def get_tf_shear(index, gametype, version):
 
 def get_ult_charge_pre_pos(index, gametype, version):
     if index < 6:
-        return [ULT_CHARGE_PRE_Y_MIN[gametype][version],
-                ULT_CHARGE_PRE_HEIGHT[gametype][version],
-                ULT_CHARGE_PRE_X_MIN_LEFT[gametype][version] + index * ULT_CHARGE_PRE_GAP[gametype][version],
-                ULT_CHARGE_PRE_WIDTH[gametype][version]]
+        return [math.floor(ULT_CHARGE_PRE_Y_MIN[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_HEIGHT[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_X_MIN_LEFT[gametype][version] \
+                    + index * ULT_CHARGE_PRE_GAP[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_WIDTH[gametype][version])]
     else:
-        return [ULT_CHARGE_PRE_Y_MIN[gametype][version],
-                ULT_CHARGE_PRE_HEIGHT[gametype][version],
-                ULT_CHARGE_PRE_X_MIN_RIGHT[gametype][version] + (index - 6) * ULT_CHARGE_PRE_GAP[gametype][version],
-                ULT_CHARGE_PRE_WIDTH[gametype][version]]
+        return [math.floor(ULT_CHARGE_PRE_Y_MIN[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_HEIGHT[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_X_MIN_RIGHT[gametype][version] \
+                    + (index - 6) * ULT_CHARGE_PRE_GAP[gametype][version]),
+                math.floor(ULT_CHARGE_PRE_WIDTH[gametype][version])]
 
 
 def get_ult_charge_pos(index, gametype, version):
     if index < 6:
-        return [ULT_CHARGE_Y_MIN[gametype][version],
-                ULT_CHARGE_HEIGHT[gametype][version],
-                ULT_CHARGE_X_MIN_LEFT[gametype][version],
-                ULT_CHARGE_WIDTH[gametype][version]]
+        return [math.floor(ULT_CHARGE_Y_MIN[gametype][version]),
+                math.floor(ULT_CHARGE_HEIGHT[gametype][version]),
+                math.floor(ULT_CHARGE_X_MIN_LEFT[gametype][version]),
+                math.floor(ULT_CHARGE_WIDTH[gametype][version])]
     else:
-        return [ULT_CHARGE_Y_MIN[gametype][version],
-                ULT_CHARGE_HEIGHT[gametype][version],
-                ULT_CHARGE_X_MIN_RIGHT[gametype][version],
-                ULT_CHARGE_WIDTH[gametype][version]]
+        return [math.floor(ULT_CHARGE_Y_MIN[gametype][version]),
+                math.floor(ULT_CHARGE_HEIGHT[gametype][version]),
+                math.floor(ULT_CHARGE_X_MIN_RIGHT[gametype][version]),
+                math.floor(ULT_CHARGE_WIDTH[gametype][version])]
 
 
 def get_ult_charge_numbers_ref(gametype, version):
@@ -608,9 +626,24 @@ def get_ult_charge_numbers_ref(gametype, version):
             "normal": ult_charge_icons_ref_owl
         }
     else:
+        ult_charge_icons_ref_owl = []
+        ult_charge_icons_observed_ref_owl = []
+        for i in range(0, 10):
+            img = ImageUtils.rgb_to_gray(
+                ImageUtils.read("./images/ultimate/owl/" + str(i) + ".png"))
+            ult_charge_icons_ref_owl.append(ImageUtils.resize(
+                img,
+                int(img.shape[1] * ULT_CHARGE_IMG_HEIGHT[gametype][version]/img.shape[0]),
+                ULT_CHARGE_IMG_HEIGHT[gametype][version]
+                ))
+            ult_charge_icons_observed_ref_owl.append(ImageUtils.resize(
+                img,
+                int(img.shape[1] * ULT_CHARGE_IMG_HEIGHT_OBSERVED[gametype][version]/img.shape[0]),
+                ULT_CHARGE_IMG_HEIGHT_OBSERVED[gametype][version]
+                ))
         return {
-            "observed": [],
-            "normal": []
+            "observed": ult_charge_icons_observed_ref_owl,
+            "normal": ult_charge_icons_ref_owl
         }
 
 
@@ -739,11 +772,11 @@ AVATAR_GAP = {
 }
 AVATAR_GAP_OBSERVED = {
     GAMETYPE_OWL: {
-        0: 70,
-        1: 70
+        0: 70.6,
+        1: 70.6
     },
     GAMETYPE_CUSTOM: {
-        0: 70
+        0: 70.6
     }
 }
 
@@ -809,15 +842,15 @@ def get_avatar_pos(index, gametype, version):
         Pos array of this avatar
     """
     if index < 6:
-        return [AVATAR_Y_MIN[gametype][version],
-                AVATAR_HEIGHT[gametype][version],
-                AVATAR_X_MIN_LEFT[gametype][version] + index * AVATAR_GAP[gametype][version],
-                AVATAR_WIDTH[gametype][version]]
+        return [math.floor(AVATAR_Y_MIN[gametype][version]),
+                math.floor(AVATAR_HEIGHT[gametype][version]),
+                math.floor(AVATAR_X_MIN_LEFT[gametype][version] + index * AVATAR_GAP[gametype][version]),
+                math.floor(AVATAR_WIDTH[gametype][version])]
     else:
-        return [AVATAR_Y_MIN[gametype][version],
-                AVATAR_HEIGHT[gametype][version],
-                AVATAR_X_MIN_RIGHT[gametype][version] + (index - 6) * AVATAR_GAP[gametype][version],
-                AVATAR_WIDTH[gametype][version]]
+        return [math.floor(AVATAR_Y_MIN[gametype][version]),
+                math.floor(AVATAR_HEIGHT[gametype][version]),
+                math.floor(AVATAR_X_MIN_RIGHT[gametype][version] + (index - 6) * AVATAR_GAP[gametype][version]),
+                math.floor(AVATAR_WIDTH[gametype][version])]
 
 
 def get_avatar_pos_observed(index, gametype, version):
@@ -835,15 +868,15 @@ def get_avatar_pos_observed(index, gametype, version):
         Pos array of this avatar
     """
     if index < 6:
-        return [AVATAR_Y_MIN_OBSERVED[gametype][version],
-                AVATAR_HEIGHT_OBSERVED[gametype][version],
-                AVATAR_X_MIN_LEFT_OBSERVED[gametype][version] + index * AVATAR_GAP_OBSERVED[gametype][version],
-                AVATAR_WIDTH_OBSERVED[gametype][version]]
+        return [math.floor(AVATAR_Y_MIN_OBSERVED[gametype][version]),
+                math.floor(AVATAR_HEIGHT_OBSERVED[gametype][version]),
+                math.floor(AVATAR_X_MIN_LEFT_OBSERVED[gametype][version] + index * AVATAR_GAP_OBSERVED[gametype][version]),
+                math.floor(AVATAR_WIDTH_OBSERVED[gametype][version])]
     else:
-        return [AVATAR_Y_MIN_OBSERVED[gametype][version],
-                AVATAR_HEIGHT_OBSERVED[gametype][version],
-                AVATAR_X_MIN_LEFT_OBSERVED[gametype][version] + (index - 6) * AVATAR_GAP_OBSERVED[gametype][version],
-                AVATAR_WIDTH_OBSERVED[gametype][version]]
+        return [math.floor(AVATAR_Y_MIN_OBSERVED[gametype][version]),
+                math.floor(AVATAR_HEIGHT_OBSERVED[gametype][version]),
+                math.floor(AVATAR_X_MIN_LEFT_OBSERVED[gametype][version] + (index - 6) * AVATAR_GAP_OBSERVED[gametype][version]),
+                math.floor(AVATAR_WIDTH_OBSERVED[gametype][version])]
 
 def get_avatar_diff_pos(index, gametype, version):
     """Get position of ROI of difference between observed/non-observed avatars
@@ -858,15 +891,15 @@ def get_avatar_diff_pos(index, gametype, version):
         Pos array of ROI
     """
     if index < 6:
-        return [AVATAR_DIFF_Y_MIN[gametype][version],
-                AVATAR_DIFF_HIGHT[gametype][version],
-                AVATAR_X_MIN_LEFT[gametype][version] + index * AVATAR_GAP[gametype][version] - AVATAR_DIFF_WIDTH[gametype][version],
-                AVATAR_DIFF_WIDTH[gametype][version]]
+        return [math.floor(AVATAR_DIFF_Y_MIN[gametype][version]),
+                math.floor(AVATAR_DIFF_HIGHT[gametype][version]),
+                math.floor(AVATAR_X_MIN_LEFT[gametype][version] + index * AVATAR_GAP[gametype][version] - AVATAR_DIFF_WIDTH[gametype][version]),
+                math.floor(AVATAR_DIFF_WIDTH[gametype][version])]
     else:
-        return [AVATAR_DIFF_Y_MIN[gametype][version],
-                AVATAR_DIFF_HIGHT[gametype][version],
-                AVATAR_X_MIN_RIGHT[gametype][version] + (index - 6) * AVATAR_GAP[gametype][version] - AVATAR_DIFF_WIDTH[gametype][version],
-                AVATAR_DIFF_WIDTH[gametype][version]]
+        return [math.floor(AVATAR_DIFF_Y_MIN[gametype][version]),
+                math.floor(AVATAR_DIFF_HIGHT[gametype][version]),
+                math.floor(AVATAR_X_MIN_RIGHT[gametype][version] + (index - 6) * AVATAR_GAP[gametype][version] - AVATAR_DIFF_WIDTH[gametype][version]),
+                math.floor(AVATAR_DIFF_WIDTH[gametype][version])]
 
 
 # **********************************************************
@@ -1004,6 +1037,15 @@ KILLFEED_MAX_COLOR_DISTANCE = {
         0: 120
     }
 }
+KILLFEED_EDGE_MAX_COLOR_DISTANCE = {
+    GAMETYPE_OWL: {
+        0: 30,
+        1: 30
+    },
+    GAMETYPE_CUSTOM: {
+        0: 80
+    }
+}
 
 KILLFEED_TEAM_COLOR_POS_Y = {
     GAMETYPE_OWL: {
@@ -1021,7 +1063,7 @@ KILLFEED_TEAM_COLOR_POS_X_LEFT = {
         1: -10
     },
     GAMETYPE_CUSTOM: {
-        0: -10
+        0: -1
     }
 }
 KILLFEED_TEAM_COLOR_POS_X_RIGHT = {
@@ -1030,7 +1072,7 @@ KILLFEED_TEAM_COLOR_POS_X_RIGHT = {
         1: 10
     },
     GAMETYPE_CUSTOM: {
-        0: 10
+        0: 1
     }
 }
 def get_killfeed_icons_ref(gametype, version):
@@ -1104,10 +1146,10 @@ def get_killfeed_pos(index, gametype, version):
     Returns:
         pos array of this killfeed row
     """
-    return [KILLFEED_Y_MIN[gametype][version] + index * KILLFEED_GAP[gametype][version],
-            KILLFEED_HEIGHT[gametype][version],
-            KILLFEED_X_MIN[gametype][version],
-            KILLFEED_WIDTH[gametype][version]]
+    return [math.floor(KILLFEED_Y_MIN[gametype][version] + index * KILLFEED_GAP[gametype][version]),
+            math.floor(KILLFEED_HEIGHT[gametype][version]),
+            math.floor(KILLFEED_X_MIN[gametype][version]),
+            math.floor(KILLFEED_WIDTH[gametype][version])]
 
 
 def get_killfeed_with_gap_pos(index, gametype, version):
@@ -1125,10 +1167,10 @@ def get_killfeed_with_gap_pos(index, gametype, version):
     Returns:
         pos array of this killfeed row
     """
-    return [KILLFEED_Y_MIN[gametype][version] + index * KILLFEED_GAP[gametype][version],
-            KILLFEED_GAP[gametype][version],
-            KILLFEED_X_MIN[gametype][version],
-            KILLFEED_WIDTH[gametype][version]]
+    return [math.floor(KILLFEED_Y_MIN[gametype][version] + index * KILLFEED_GAP[gametype][version]),
+            math.floor(KILLFEED_GAP[gametype][version]),
+            math.floor(KILLFEED_X_MIN[gametype][version]),
+            math.floor(KILLFEED_WIDTH[gametype][version])]
 
 
 # **********************************************************
@@ -1322,11 +1364,11 @@ ASSIST_ICON_X_OFFSET = {
 }
 
 def get_assist_icon_pos(pos_x, assist_index, gametype, version):
-    return [ASSIST_ICON_Y_MIN[gametype][version],
-            ASSIST_ICON_HEIGHT[gametype][version],
-            ASSIST_ICON_X_OFFSET[gametype][version] + pos_x \
-            + assist_index * ASSIST_GAP[gametype][version] + KILLFEED_ICON_WIDTH[gametype][version],
-            ASSIST_ICON_WIDTH[gametype][version]]
+    return [math.floor(ASSIST_ICON_Y_MIN[gametype][version]),
+            math.floor(ASSIST_ICON_HEIGHT[gametype][version]),
+            math.floor(ASSIST_ICON_X_OFFSET[gametype][version] + pos_x \
+            + assist_index * ASSIST_GAP[gametype][version] + KILLFEED_ICON_WIDTH[gametype][version]),
+            math.floor(ASSIST_ICON_WIDTH[gametype][version])]
 # **********************************************************
 # ==========================================================
 #                   Frame Validation
