@@ -2,6 +2,7 @@ from . import overwatch as OW
 from .frame import Frame
 from .utils.video_loader import VideoLoader
 from .excel import Excel
+from json import dump
 import os
 import math as Math
 import time
@@ -62,10 +63,12 @@ class Game(object):
         self.video_path = ""
         self.output_path = ""
         self.is_test = False
+        self.json = False
         self.is_game_version_set = False
         self.game_version = 0
 
         self.frames = []
+        self._frames = [] # 只做过删除重复和无效帧处理的数据
         self.avatars_ref = {}
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
         self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
@@ -211,6 +214,30 @@ class Game(object):
             None 
         """
         Excel(self).save()
+
+    def output_to_json(self):
+        """
+
+        Author: KomorebiL
+
+        Args:
+            None
+
+        Returns:
+            None 
+        """
+        # 这是一个开关
+        self.json = True
+        if self.json:
+            data = {
+                'team_names': self.team_names,
+                'players_name': self.name_players,
+                'frames': [frame.dict() for frame in self.frames],
+            }
+            filename, _ = self.output_path.split('.')
+            filename = '{}_{}.txt'.format(filename, 'game')
+            with open(filename, 'w') as f:
+                dump(data, f, ensure_ascii=False, indent=4)
 
     def postprocess(self):
         """ Postprocess player & killfeeds, remove incorrect info.
@@ -718,6 +745,3 @@ class Game(object):
                     and players[ind_player].is_ult_ready:
                         players[ind_player].is_ult_ready = False
                         players[ind_player].is_secondary_ult_ready = True
-
-
-

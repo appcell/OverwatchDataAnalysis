@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from operator import itemgetter
 from skimage import measure
-
 from . import overwatch as OW
 from .utils import image as ImageUtils
 
@@ -620,3 +619,13 @@ class Killfeed:
         # TODO: Write consts here into ow.py
         if ImageUtils.color_distance(color, np.array([255, 255, 255])) > 40:
             self.is_headshot = True
+
+    def dict(self):
+        d = {
+            'player1': self.player1,
+            'player2': self.player2,
+            'ability': self.ability,
+            'is_headshot': self.is_headshot,
+            'assists': self.assists,
+        }
+        return d

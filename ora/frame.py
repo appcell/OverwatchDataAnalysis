@@ -322,3 +322,11 @@ class Frame(object):
             "observed": all_avatars['right_observed'],
             "normal": all_avatars['right']
         }
+
+    def dict(self):
+        d = {
+            'time': self.time,
+            'players': [player.dict() for player in self.players],
+            'killfeeds': [killfeed.dict() for killfeed in self.killfeeds]
+        }
+        return d

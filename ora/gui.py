@@ -261,6 +261,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
             pool.PROCESS_POOL.close()
             pool.PROCESS_POOL.join()
+            self.game_instance.output_to_json()
             self.game_instance.output_to_excel()
             self.show_finish_msg()
 
