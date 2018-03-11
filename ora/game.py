@@ -193,7 +193,7 @@ class Game(object):
             if test_frame.is_valid:
                 self.is_game_version_set = True
                 self.game_version = i
-                print(f"Game version is set as: {i}")
+                print("Game version is set as: {i}")
                 self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
                 self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
                 self.ability_icons_ref = OW.get_ability_icons_ref(self.game_type, self.game_version)

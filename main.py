@@ -1,8 +1,9 @@
-import ora.gui as Gui
+from ora.command_line import program
 import ora.pool as pool
 
+
 def main():
-    Gui.gui_instance.show()
+    program.run()
 
 if __name__ == '__main__':
     pool.initPool()
