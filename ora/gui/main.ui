@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>491</height>
+    <width>723</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QStackedWidget" name="main_stackedwidget">
     <property name="geometry">
      <rect>
-      <x>16</x>
-      <y>12</y>
+      <x>140</x>
+      <y>10</y>
       <width>569</width>
       <height>461</height>
      </rect>
@@ -26,29 +26,20 @@
     <property name="layoutDirection">
      <enum>Qt::LeftToRight</enum>
     </property>
-    <property name="tabPosition">
-     <enum>QTabWidget::West</enum>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
-    <widget class="QWidget" name="tab">
-     <property name="minimumSize">
-      <size>
-       <width>544</width>
-       <height>453</height>
-      </size>
-     </property>
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-     <widget class="QListWidget" name="listWidget_2">
+    <widget class="QWidget" name="stackedWidgetPage1" native="true">
+     <widget class="QListWidget" name="video_listwidget">
       <property name="geometry">
        <rect>
-        <x>15</x>
-        <y>10</y>
+        <x>0</x>
+        <y>30</y>
         <width>253</width>
-        <height>381</height>
+        <height>421</height>
        </rect>
       </property>
       <property name="font">
@@ -65,45 +56,30 @@
       <property name="wordWrap">
        <bool>true</bool>
       </property>
-      <item>
-       <property name="text">
-        <string>Video1</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/newPrefix/D:/GitHub/OverwatchDataAnalysis/images/abilities/ana/1.png</normalon>
-        </iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Video2</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/newPrefix/D:/GitHub/OverwatchDataAnalysis/images/abilities/bastion/3.png</normalon>
-        </iconset>
-       </property>
-      </item>
      </widget>
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
         <x>280</x>
-        <y>18</y>
-        <width>115</width>
+        <y>20</y>
+        <width>161</width>
         <height>29</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>VIDEO</string>
+       <string>VIDEO NAME</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit">
       <property name="geometry">
        <rect>
         <x>282</x>
-        <y>62</y>
+        <y>120</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -113,7 +89,7 @@
       <property name="geometry">
        <rect>
         <x>412</x>
-        <y>62</y>
+        <y>120</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -123,7 +99,7 @@
       <property name="geometry">
        <rect>
         <x>412</x>
-        <y>92</y>
+        <y>150</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -133,7 +109,7 @@
       <property name="geometry">
        <rect>
         <x>282</x>
-        <y>92</y>
+        <y>150</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -143,7 +119,7 @@
       <property name="geometry">
        <rect>
         <x>412</x>
-        <y>122</y>
+        <y>180</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -153,7 +129,7 @@
       <property name="geometry">
        <rect>
         <x>282</x>
-        <y>122</y>
+        <y>180</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -163,8 +139,8 @@
       <property name="geometry">
        <rect>
         <x>284</x>
-        <y>162</y>
-        <width>71</width>
+        <y>368</y>
+        <width>231</width>
         <height>16</height>
        </rect>
       </property>
@@ -176,8 +152,8 @@
       <property name="geometry">
        <rect>
         <x>284</x>
-        <y>188</y>
-        <width>71</width>
+        <y>394</y>
+        <width>241</width>
         <height>16</height>
        </rect>
       </property>
@@ -189,8 +165,8 @@
       <property name="geometry">
        <rect>
         <x>284</x>
-        <y>214</y>
-        <width>71</width>
+        <y>420</y>
+        <width>241</width>
         <height>16</height>
        </rect>
       </property>
@@ -198,42 +174,113 @@
        <string>CheckBox</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_7">
+     <widget class="QLineEdit" name="lineEdit_8">
       <property name="geometry">
        <rect>
-        <x>16</x>
-        <y>402</y>
-        <width>425</width>
-        <height>31</height>
+        <x>280</x>
+        <y>50</y>
+        <width>113</width>
+        <height>20</height>
        </rect>
-      </property>
-      <property name="text">
-       <string>Save</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QLineEdit" name="lineEdit_9">
       <property name="geometry">
        <rect>
-        <x>448</x>
-        <y>402</y>
-        <width>75</width>
-        <height>29</height>
+        <x>410</x>
+        <y>50</y>
+        <width>113</width>
+        <height>20</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Analyze</string>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_10">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>272</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_11">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>212</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_12">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>272</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_13">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>242</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_14">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>242</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_15">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>212</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_16">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>310</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_17">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>310</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Page</string>
-     </attribute>
+    <widget class="QWidget" name="stackedWidgetPage2" native="true">
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
         <x>12</x>
-        <y>10</y>
+        <y>40</y>
         <width>217</width>
         <height>37</height>
        </rect>
@@ -275,17 +322,14 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Tab 2</string>
-     </attribute>
+    <widget class="QWidget" name="stackedWidgetPage3" native="true">
      <widget class="QPlainTextEdit" name="plainTextEdit">
       <property name="geometry">
        <rect>
-        <x>6</x>
-        <y>6</y>
+        <x>0</x>
+        <y>40</y>
         <width>253</width>
-        <height>437</height>
+        <height>411</height>
        </rect>
       </property>
       <property name="plainText">
@@ -327,11 +371,97 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QListWidget" name="label_listwidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>121</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="currentRow">
+     <number>0</number>
+    </property>
+    <item>
+     <property name="text">
+      <string>Home</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Setting</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>About</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="logo_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Adobe 黑体 Std R</family>
+      <pointsize>25</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>LOGO</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_7">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>520</y>
+      <width>431</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>520</y>
+      <width>75</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Analyze</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="C:/Users/skx/Desktop/1.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
