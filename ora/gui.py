@@ -252,12 +252,12 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.notice.insert(Tkinter.INSERT, str(progress))
 
     def run(self):
-        
         info, valid = self.info()
         game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
         self.game_instance = game.Game(game_type)
         if valid is True:
             self.game_instance.set_game_info(info)
+            pool.initPool()
             self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
             pool.PROCESS_POOL.close()
             pool.PROCESS_POOL.join()
