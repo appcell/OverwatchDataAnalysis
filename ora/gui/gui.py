@@ -9,19 +9,27 @@ class MainUi(QtWidgets.QMainWindow, windowui):
     def __init__(self):
         super(MainUi, self).__init__()
         self.setupUi(self)
-        self._add_custome_item(self.video_listwidget, '111', '222', 'replay.png')
+        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel',
+                               'replay.png')
+
+        self._add_custome_item(self.tab_listwidget, TabItem, "ANALYSIS", 'replay.png')
+        self._add_custome_item(self.tab_listwidget, TabItem, "VIDEO PALY", 'replay.png')
+        self._add_custome_item(self.tab_listwidget, TabItem, "SETTINGS", 'replay.png')
+
+
         self._init_connect()
 
     def _init_connect(self):
-        self.label_listwidget.clicked.connect(lambda: self.main_stackedwidget.setCurrentIndex(self.label_listwidget.currentRow()))
+        self.tab_listwidget.clicked.connect(lambda: self.main_stackedwidget.setCurrentIndex(self.tab_listwidget.currentRow()))
 
     def _init_default(self):
-        self.label_listwidget.setCurrentRow(0)
-        self.main_stackedwidget.setCurrentIndex(0)
+        self.tab_listwidget.setCurrentRow(0)
+        self.main_stackedwidget.setCurrentIndex(2)
 
     @staticmethod
-    def _add_custome_item(listwidget, up_str, down_str, icon_path):
-        citem = CustomeItem(listwidget, up_str, down_str, icon_path)
+    def _add_custome_item(listwidget, item_class, *args):
+        citem = item_class(listwidget, *args)
         item = QtWidgets.QListWidgetItem(listwidget)
         item.setSizeHint(citem.sizeHint())
         listwidget.addItem(item)
