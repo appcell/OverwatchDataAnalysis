@@ -1,6 +1,13 @@
 import sys
 
 from PyQt5 import QtGui, QtWidgets
+from PyQt5.QtCore import Qt
+
+
+class ListWidget(QtWidgets.QListWidget):
+    def __init__(self, parent=None):
+        super(ListWidget, self).__init__(parent)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
 
 class VideoItem(QtWidgets.QWidget):
@@ -79,6 +86,38 @@ class TabItem(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
 
+class PicLabel(QtWidgets.QLabel):
+    def __init__(self, parent=None):
+        super(PicLabel, self).__init__(parent)
+        self.setStyleSheet("{background-color: rgb(14, 31, 51);}")
+        self.setGeometry(0, 0, 120, 67)
+
+
+class TextLabel(QtWidgets.QLabel):
+    def __init__(self, parent=None):
+        super(TextLabel, self).__init__(parent)
+        self.setStyleSheet("{background-color: rgb(14, 31, 51);}")
+        self.setGeometry(0, 0, 120, 67)
+        self.setText("123")
+
+
+class LineEdit(QtWidgets.QLineEdit):
+    pass
+
+
+class ClickButton(QtWidgets.QPushButton):
+    def __init__(self):
+        super(ClickButton, self).__init__()
+        self.setFlat(True)
+
+
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setGeometry(50, 50, 1200, 800)
+
+
 class _MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(_MyWindow, self).__init__()
@@ -93,7 +132,7 @@ class _MyWindow(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    w = _MyWindow()
+    w = MainWindow()
     w.show()
     sys.exit(app.exec_())
 

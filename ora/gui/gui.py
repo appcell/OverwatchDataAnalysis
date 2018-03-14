@@ -1,24 +1,33 @@
-from PyQt5 import uic
+
 
 from widget import *
 
-windowui, QtBaseClass = uic.loadUiType('main.ui')
+
+class MainUiBaseWidget(MainWindow):
+    def __init__(self):
+        super(MainUiBaseWidget, self).__init__()
+        layout = QtWidgets.QGridLayout()
+        self.videoListWidget = ListWidget(self)
+        self.videoListWidget.setGeometry(120, 67, 620, 640)
+        self.tabListWidget = QtWidgets.QListWidget(self)
+        self.tabListWidget.setGeometry(0, 0, 0, 0)
+        layout.addWidget(self.videoListWidget)
+        self.setLayout(layout)
 
 
-class MainUi(QtWidgets.QMainWindow, windowui):
+class MainUi(MainUiBaseWidget):
     def __init__(self):
         super(MainUi, self).__init__()
-        self.setupUi(self)
-        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
-        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel',
+        self._add_custome_item(self.videoListWidget, VideoItem, '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        self._add_custome_item(self.videoListWidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel',
                                'replay.png')
 
-        self._add_custome_item(self.tab_listwidget, TabItem, "ANALYSIS", 'replay.png')
-        self._add_custome_item(self.tab_listwidget, TabItem, "VIDEO PALY", 'replay.png')
-        self._add_custome_item(self.tab_listwidget, TabItem, "SETTINGS", 'replay.png')
+        self._add_custome_item(self.tabListWidget, TabItem, "ANALYSIS", 'replay.png')
+        self._add_custome_item(self.tabListWidget, TabItem, "VIDEO PALY", 'replay.png')
+        self._add_custome_item(self.tabListWidget, TabItem, "SETTINGS", 'replay.png')
 
 
-        self._init_connect()
+        # self._init_connect()
 
     def _init_connect(self):
         self.tab_listwidget.clicked.connect(lambda: self.main_stackedwidget.setCurrentIndex(self.tab_listwidget.currentRow()))
