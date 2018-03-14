@@ -93,7 +93,6 @@ class Frame(object):
         game_version = self.game_version
         image = self.image
         ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
-
         results = []
 
         for i in range(0, 12):
@@ -132,10 +131,13 @@ class Frame(object):
         ]
 
     def get_team_colors(self):
-        if self.game.team_colors is not None:
-            return self.game.team_colors
-        else:
-            return self.get_team_colors_from_image()
+        if self.game_type == OW.GAMETYPE_OWL:
+            if self.game.team_colors is not None:
+                return self.game.team_colors
+            else:
+                return self.get_team_colors_from_image()
+        elif self.game_type == OW.GAMETYPE_CUSTOM:
+            return OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
 
     def get_killfeeds(self):
         """Get killfeed info in this frame.
@@ -154,6 +156,7 @@ class Frame(object):
             if killfeed.is_valid is True:
                 self.killfeeds.append(killfeed)
                 if self.game.frames and self.game.frames[-1].killfeeds:
+
                     last_killfeed = self.game.frames[-1].killfeeds[-1]
                     if killfeed == last_killfeed:
                         break
@@ -180,54 +183,62 @@ class Frame(object):
         Returns:
             None 
         """
+        # 1) Test if there's any players detectable. If none, frame is invalid
         flag = False
         for player in self.players:
             if player.is_dead is False:
                 flag = True
 
-        if flag == False:
+        if flag is False:
             self.is_valid = False
             return
         else:
             self.is_valid = True
-        validation_roi = ImageUtils.crop(
-            self.image,
-            OW.get_frame_validation_pos(self.game_type, self.game_version))
-        std = np.max([np.std(validation_roi[:, :, 0]),
-                      np.std(validation_roi[:, :, 1]),
-                      np.std(validation_roi[:, :, 2])])
-        mean = [np.mean(validation_roi[:, :, 0]),
-                np.mean(validation_roi[:, :, 1]),
-                np.mean(validation_roi[:, :, 2])]
 
-        if std < OW.FRAME_VALIDATION_COLOR_STD[self.game_type][self.game_version] \
-                and np.mean(mean) > OW.FRAME_VALIDATION_COLOR_MEAN[self.game_type][self.game_version] \
-                and flag is True:
-            self.is_valid = True
-        else:
-            self.is_valid = False
-            return
+        # 2) Test if top-right corner is white. If not, frame is invalid.
+        # This is only for OWL games.
+        if self.game_type == OW.GAMETYPE_OWL:
+            validation_roi = ImageUtils.crop(
+                self.image,
+                OW.get_frame_validation_pos(self.game_type, self.game_version))
+            std = np.max([np.std(validation_roi[:, :, 0]),
+                          np.std(validation_roi[:, :, 1]),
+                          np.std(validation_roi[:, :, 2])])
+            mean = [np.mean(validation_roi[:, :, 0]),
+                    np.mean(validation_roi[:, :, 1]),
+                    np.mean(validation_roi[:, :, 2])]
 
-        replay_icon = ImageUtils.crop(
-            self.image, OW.get_replay_icon_pos(self.game_type, self.game_version))
+            if std < OW.FRAME_VALIDATION_COLOR_STD[self.game_type][self.game_version] \
+                    and np.mean(mean) \
+                        > OW.FRAME_VALIDATION_COLOR_MEAN[self.game_type][self.game_version] \
+                    and flag is True:
+                self.is_valid = True
+            else:
+                self.is_valid = False
+                return
 
-        replay_icon_preseason = ImageUtils.crop(
-            self.image, OW.get_replay_icon_preseason_pos(self.game_type, self.game_version))
-        max_val = measure.compare_ssim(
+        # 3) Test if current frame is during replay. Still, for OWL only.
+        if self.game_type == OW.GAMETYPE_OWL:
+            replay_icon = ImageUtils.crop(
+                self.image, OW.get_replay_icon_pos(self.game_type, self.game_version))
+
+            replay_icon_preseason = ImageUtils.crop(
+                self.image, OW.get_replay_icon_preseason_pos(self.game_type, self.game_version))
+            max_val = measure.compare_ssim(
                 replay_icon, self.game.replay_icon_ref, multichannel=True)
-        max_val_preseason = measure.compare_ssim(
+            max_val_preseason = measure.compare_ssim(
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
 
-        # TODO: another situation: after replay effect there might be a blue
-        # rectangle remaining on screen.
-        max_val = max_val if max_val > max_val_preseason else max_val_preseason
-        if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game_type][self.game_version]:
-            self.is_valid = True
-        else:
-            self.is_valid = False
-            self.is_replay = True
-            return
+            max_val = max_val if max_val > max_val_preseason else max_val_preseason
+            if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game_type][self.game_version]:
+                self.is_valid = True
+            else:
+                self.is_valid = False
+                self.is_replay = True
+                return
 
+        # 4) If frame is valid and Game info (i.e. team colors, avatars) are not
+        # set, set them up.
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
             self.game.avatars_ref = self._get_avatars_before_validation()
@@ -311,3 +322,11 @@ class Frame(object):
             "observed": all_avatars['right_observed'],
             "normal": all_avatars['right']
         }
+
+    def dict(self):
+        d = {
+            'time': self.time,
+            'players': [player.dict() for player in self.players],
+            'killfeeds': [killfeed.dict() for killfeed in self.killfeeds]
+        }
+        return d

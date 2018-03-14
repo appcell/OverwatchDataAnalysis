@@ -5,6 +5,7 @@
 /temp
 /credentials
 /gui
+/ui_design/source
 .idea/
 *.DS_Store
 *.pyc

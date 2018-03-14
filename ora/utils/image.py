@@ -18,6 +18,15 @@ def crop(img, pos_arr):
     """
     return img[pos_arr[0]:pos_arr[0]+pos_arr[1], pos_arr[2]:pos_arr[2]+pos_arr[3]]
 
+def filter_by(img, color, threshold):
+    w = img.shape[1]
+    h = img.shape[0]
+    res = np.zeros((h, w))
+    for i in range(h):
+        for j in range(w):
+            if color_distance(img[i, j], color) < threshold:
+                res[i, j] = 1
+    return res
 
 def shear(img, shear_rad):
     """

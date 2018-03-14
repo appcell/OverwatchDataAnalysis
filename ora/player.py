@@ -67,10 +67,11 @@ class Player:
         self.health = None
         self.is_onfire = None
 
-
+        
         self.get_ult_status()
         self.get_chara()
         self.get_ult_charge()
+
         self.free()
 
     def free(self):
@@ -262,12 +263,14 @@ class Player:
         Returns:
             None
         """
+
         if self.is_ult_ready:
             self.ult_charge = 100
             return
 
         ult_charge_pre_pos = OW.get_ult_charge_pre_pos(
             self.index, self.game_type, self.game_version)
+
         ult_charge_pre_image = ImageUtils.rgb_to_gray(
             ImageUtils.crop(self.image, ult_charge_pre_pos))
 
@@ -287,7 +290,6 @@ class Player:
         # Our contrast adjusting must be seriously problematic. For grayscale
         # img, a simple normalization based on std would do.
         ult_charge_image_g = ImageUtils.normalize_gray(ult_charge_image)
-
 
         # tell if player is observed (more accurate than previous)
         # Here I use another local variable flag_observed, since the global one
@@ -312,6 +314,8 @@ class Player:
         # Find the gap
         deviation = ult_charge_image_g.max(axis=0) - ult_charge_image_g.min(axis=0)
         gap = -1
+        dev_list_left = []
+        dev_list_right = []
         for i in range(width - 4, 3, -1):
             if deviation[i-3] - deviation[i] \
                 > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version] \
@@ -319,6 +323,8 @@ class Player:
                 > OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version]:
                 gap = i
                 break
+            dev_list_left.append(deviation[i-3] - deviation[i])
+            dev_list_right.append(deviation[i+3] - deviation[i])
 
         bg_color = ult_charge_image_g[0, :].mean()
         if bg_color < 0.6:
@@ -332,7 +338,7 @@ class Player:
             num = ImageUtils.remove_digit_vertical_edge(
                 ult_charge_image_g,
                 OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version],
-                ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_BOTH)
+                ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_LEFT)
             if num.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version]:
                 padding = int(np.ceil((
                     OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version] - num.shape[1])/2))
@@ -413,17 +419,31 @@ class Player:
         score = 0
         res = -1
         digit = ImageUtils.float_to_uint8(digit)
-
         for i in range(10):
             match_result = []
+
             match_result = cv2.matchTemplate(
                 digit, digit_refs[i], cv2.TM_CCOEFF_NORMED)
+
             _, max_val, _, max_loc = cv2.minMaxLoc(match_result)
             temp_digit = ImageUtils.crop(
                 digit, 
                 [max_loc[1], digit_refs[i].shape[0], max_loc[0], digit_refs[i].shape[1]])
+
             score_ssim = measure.compare_ssim(temp_digit, digit_refs[i], multichannel=True)
             if score_ssim + max_val > score:
                 score = score_ssim + max_val
                 res = i
         return [res, score]
+
+    def dict(self):
+        d = {
+            'index': self.index + 1,
+            'team': self.team,
+            'chara': self.chara,
+            'is_ult_ready': self.is_ult_ready,
+            'is_dead': self.is_dead,
+            'ult_charge': self.ult_charge,
+            'dva_status': self.dva_status,
+        }
+        return d

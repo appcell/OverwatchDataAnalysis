@@ -21,7 +21,7 @@ class Gui(object):
         
         self.root = tkinter.Tk()
         self.root.title('Overwatch Replay Analyzer v0.1 Beta')
-        self.root.geometry('550x300+400+200')
+        self.root.geometry('550x350+400+200')
 
         self.read_path = None
         self.save_path = None
@@ -107,9 +107,11 @@ class Gui(object):
         label_start_time = tkinter.Label(left_frame, text="Start time in seconds (0 = start from beginning):")
         label_end_time = tkinter.Label(left_frame, text="End time in seconds (0 = analyze till the end):")
         label_fps = tkinter.Label(left_frame, text='FPS of analyzer:')
+        label_game_type = tkinter.Label(left_frame, text='Game type (0 = OWL, 1 = Custom game):')
         label_start_time.pack()
         label_end_time.pack()
         label_fps.pack()
+        label_game_type.pack()
 
         right_frame = tkinter.Frame(time_inputs_frame)
         right_frame.pack(side=RIGHT)
@@ -123,6 +125,9 @@ class Gui(object):
         fps = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         fps.insert(0, '2')
         fps.pack()
+        game_type = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
+        game_type.insert(0, '0')
+        game_type.pack()
 
         self.time_inputs_frame = right_frame
     def create_text(self):
@@ -170,7 +175,8 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             "output_path": "/",
             "start_time": 0,
             "end_time": 0,
-            "fps": 0
+            "fps": 0,
+            "game_type": 0
         }
         frame_left = self.left_frame.pack_slaves()
         frame_right = self.right_frame.pack_slaves()
@@ -209,6 +215,18 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             valid = False
             return [info, valid]
 
+        try:
+            info['game_type'] = int(time_inputs_frame[3].get())
+        except ValueError:
+            tkinter.messagebox.showinfo('Error', 'Invalid game type!')
+            valid = False
+            return [info, valid]
+            
+        if not (info['game_type'] == 0 or info['game_type'] == 1):
+            tkinter.messagebox.showinfo('Error', 'Invalid game type!')
+            valid = False
+            return [info, valid]
+
         team_left = []
         team_right = []
         for i in range(1, 7):
@@ -234,14 +252,16 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.notice.insert(Tkinter.INSERT, str(progress))
 
     def run(self):
-        self.game_instance = game.Game(OW.GAMETYPE_OWL)
         info, valid = self.info()
-
+        game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
+        self.game_instance = game.Game(game_type)
         if valid is True:
             self.game_instance.set_game_info(info)
+            pool.initPool()
             self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
             pool.PROCESS_POOL.close()
             pool.PROCESS_POOL.join()
+            self.game_instance.output_to_json()
             self.game_instance.output_to_excel()
             self.show_finish_msg()
 

@@ -1,6 +1,7 @@
 """
 @Author: Komorebi 
 """
+from json import dump
 from . import utils
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import (
@@ -12,12 +13,12 @@ from openpyxl.styles import (
 
 SUBJECT = [
     'subject player',
-    'subject hero',
+    'subject chara',
 ]
 
 OBJECT = [
     'object player',
-    'object hero',
+    'object chara',
 ]
 
 SUPPLEMENT = [
@@ -71,9 +72,9 @@ DIMENSIONS = {
     'time': 'A',
     'action': 'B',
     'subject player': 'C',
-    'subject hero': 'D',
+    'subject chara': 'D',
     'object player': 'E',
-    'object hero': 'F',
+    'object chara': 'F',
     'ability': 'G',
     'critical kill': 'H',
     'a player 1': 'I',
@@ -91,8 +92,8 @@ DIMENSIONS = {
 
 TITLE_TOP_MERGE_CELL = {
     '': None,
-    'subject': '{}1:{}1'.format(DIMENSIONS['subject player'], DIMENSIONS['subject hero']),
-    'object': '{}1:{}1'.format(DIMENSIONS['object player'], DIMENSIONS['object hero']),
+    'subject': '{}1:{}1'.format(DIMENSIONS['subject player'], DIMENSIONS['subject chara']),
+    'object': '{}1:{}1'.format(DIMENSIONS['object player'], DIMENSIONS['object chara']),
     'assist 1': '{}1:{}1'.format(DIMENSIONS['a player 1'], DIMENSIONS['a hero 1']),
     'assist 2': '{}1:{}1'.format(DIMENSIONS['a player 2'], DIMENSIONS['a hero 2']),
     'assist 3': '{}1:{}1'.format(DIMENSIONS['a player 3'], DIMENSIONS['a hero 3']),
@@ -107,9 +108,9 @@ CELL_WIDTH_CONFIG = {
     DIMENSIONS['time']: 16.5,
     DIMENSIONS['action']: 20,
     DIMENSIONS['subject player']: 18,
-    DIMENSIONS['subject hero']: 16,
+    DIMENSIONS['subject chara']: 16,
     DIMENSIONS['object player']: 18,
-    DIMENSIONS['object hero']: 16,
+    DIMENSIONS['object chara']: 16,
     DIMENSIONS['ability']: 14.5,
     DIMENSIONS['critical kill']: 14,
     DIMENSIONS['comments']: 45.5,
@@ -292,7 +293,7 @@ class Save:
         format_spec = Config.format
         result = [''] * (len(Config.title) + 1)
         for k, v in format_spec.items():
-            if k in ['object hero', 'subject hero'] and k in data:
+            if k in ['object chara', 'subject chara'] and k in data:
                 data[k] = utils.chara_capitalize(data[k])
             if k in data:
                 result[v-1] = data[k]
@@ -306,6 +307,7 @@ class Save:
         self._append()
         self._set_cells_style()
         self._set_cells_merge()
+        self.sheet.freeze_panes = self.sheet['B3']
 
 
 class Sheet:
@@ -344,7 +346,6 @@ class Sheet:
         """
         frames = self.game.frames
         for i, frame in enumerate(frames):
-            # ultimate detection not working properly
             self._switch_hero_append(frame.players, frame.time, i)
             self._killfeed_append(frame.killfeeds, frame.time)
             self._ultimate_append(frame.players, frame.time, i)
@@ -361,9 +362,9 @@ class Sheet:
             d['action'] = set_action(obj)
             d['comments'] = set_comments(d['action'])
             # d['ability'] = Config.ability[obj.ability]
-            d['subject hero'] = player1['chara']
+            d['subject chara'] = player1['chara']
             d['subject player'] = 'empty' if player1['player'] == -1 else self.game.name_players[player1['player']]
-            d['object hero'] = player2['chara']
+            d['object chara'] = player2['chara']
             d['object player'] = 'empty' if player2['player'] == -1 else self.game.name_players[player2['player']]
             if obj.is_headshot:
                 d['critical kill'] = 'Y'
@@ -390,20 +391,18 @@ class Sheet:
             d = {
                 'time': time,
                 'subject player': get_player_name(player.index, self.game.name_players),
-                'subject hero': player.chara,
+                'subject chara': player.chara,
                 '_$color': {
                     'subject player': Config.team_colors[get_player_team_index(player.index)]
                 }
             }
-            # TODO 判断是否为小dva，小dva死的情况下把对应的大招状态清空
-            # 小dva活着的情况下判断is_ult_ready。
             previous_player = self.game.frames[idx - 1].players[index]
             if idx > 0:
                 if not previous_player.is_ult_ready and player.is_ult_ready:
                     d['action'] = 'Ult ready'
                     self._append(**d)
                 elif previous_player.is_ult_ready and not player.is_ult_ready:
-                    d['action'] = 'Ult used'
+                    d['action'] = 'Meka up' if player.dva_status == 1 and player.chara == 'dva' else 'Ult used'
                     self._append(**d)
             else:
                 if player.is_ult_ready:
@@ -436,8 +435,9 @@ class Sheet:
                         'time': time - 1.5,
                         'action': 'Hero switch',
                         'subject player': get_player_name(player.index, self.game.name_players),
-                        'subject hero': player.chara,
-                        'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara), utils.chara_capitalize(player.chara)),
+                        'subject chara': player.chara,
+                        'comments': 'Switch from {} to {}'.format(utils.chara_capitalize(top_chara),
+                                                                  utils.chara_capitalize(player.chara)),
 
                         '_$color': {
                             'subject player': Config.team_colors[get_player_team_index(player.index)],
@@ -451,3 +451,48 @@ class Sheet:
         :return: None
         """
         Save(self.sheet, self.data).save()
+
+    def json(self, filename):
+        titles = {v: k for k, v in DIMENSIONS.items()}
+        sheet_data = []
+        for col, cells in enumerate(self.sheet.rows):
+            if col < 2:
+                continue
+            data = {
+                'subject': {
+                    'team': '',
+                },
+                'object': {
+                    'team': '',
+                },
+                'assist': {
+                    '1': {},
+                    '2': {},
+                    '3': {},
+                    '4': {},
+                    '5': {},
+                },
+            }
+            for cell in cells:
+                title = titles[cell.column]
+                if title in SUBJECT:
+                    unit = title[8:]
+                    data['subject'][unit] = cell.value
+                    if unit == 'player' and cell.value != '':
+                        data['subject']['team'] = self._get_team(cell)
+                elif title in OBJECT:
+                    unit = title[7:]
+                    data['object'][unit] = cell.value
+                    if unit == 'player' and cell.value != '':
+                        data['object']['team'] = self._get_team(cell)
+                elif title in ASSIST:
+                    data['assist'][title[-1]][title[2:-2]] = cell.value
+                else:
+                    data[title] = cell.value
+            sheet_data.append(data)
+        with open(filename, 'w') as file:
+            dump(sheet_data, file, ensure_ascii=False, indent=4)
+
+    def _get_team(self, cell):
+        color = cell.fill.fgColor.__dict__['rgb'][2:]
+        return self.game.team_names[0] if color == Config.team_colors[0][0] else self.game.team_names[1]
