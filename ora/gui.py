@@ -258,11 +258,17 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         if valid is True:
             self.game_instance.set_game_info(info)
             pool.initPool()
-            self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
+
+            try:
+                self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
+            except Exception as err:
+                print(err)
+            else:
+                self.game_instance.output_to_json()
+                self.game_instance.output_to_excel()
+                self.show_finish_msg()
+                
             pool.PROCESS_POOL.close()
             pool.PROCESS_POOL.join()
-            self.game_instance.output_to_json()
-            self.game_instance.output_to_excel()
-            self.show_finish_msg()
 
 gui_instance = Gui()
