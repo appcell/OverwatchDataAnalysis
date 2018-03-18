@@ -10,6 +10,11 @@ class ListWidget(QtWidgets.QListWidget):
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
 
+class StackedWidget(QtWidgets.QStackedWidget):
+    def __init__(self, parent=None):
+        super(StackedWidget, self).__init__(parent)
+
+
 class VideoItem(QtWidgets.QWidget):
     def __init__(self, parent=None, up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
         super(VideoItem, self).__init__(parent)
@@ -94,11 +99,11 @@ class PicLabel(QtWidgets.QLabel):
 
 
 class TextLabel(QtWidgets.QLabel):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, text=''):
         super(TextLabel, self).__init__(parent)
         self.setStyleSheet("{background-color: rgb(14, 31, 51);}")
         self.setGeometry(0, 0, 120, 67)
-        self.setText("123")
+        self.setText(text)
 
 
 class LineEdit(QtWidgets.QLineEdit):
@@ -106,9 +111,10 @@ class LineEdit(QtWidgets.QLineEdit):
 
 
 class ClickButton(QtWidgets.QPushButton):
-    def __init__(self):
-        super(ClickButton, self).__init__()
+    def __init__(self, parent=None, text=''):
+        super(ClickButton, self).__init__(parent)
         self.setFlat(True)
+        self.setText(text)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -128,6 +134,45 @@ class _MyWindow(QtWidgets.QMainWindow):
         self.listwidget.addItem(item)
         self.listwidget.setItemWidget(item, citem)
         self.setCentralWidget(self.listwidget)
+
+
+class WindowDragMixin(object):
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.m_drag = True
+            self.m_DragPosition = event.globalPos() - self.pos()
+            event.accept()
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if QMouseEvent.buttons() and Qt.LeftButton:
+            self.move(QMouseEvent.globalPos() - self.m_DragPosition)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_drag = False
+
+
+class ControlButtonMixin(QtWidgets.QWidget):
+    def __init__(self, ):
+        super(ControlButtonMixin, self).__init__()
+
+    def set_button(self, min_button, max_button, exit_button, max_icon='', resize_icon=''):
+        self.max_button = max_button
+        self.max_icon = max_icon
+        self.resize_icon = resize_icon
+
+        min_button.clicked.connect(self.showMinimized)
+        max_button.clicked.connect(self._max_button_clicked)
+        exit_button.clicked.connect(self.close)
+
+    def _max_button_clicked(self):
+        if self.isMaximized():
+            self.showNormal()
+            self.max_button.setText(self.resize_icon)
+        else:
+            self.showMaximized()
+            self.max_button.setText(self.resize_icon)
+
 
 
 if __name__ == '__main__':
