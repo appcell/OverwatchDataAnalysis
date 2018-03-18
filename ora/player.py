@@ -89,6 +89,8 @@ class Player:
             None 
         """
         del self.image
+        del self.avatars
+        del self.ult_charge_numbers_ref
 
     def get_ult_status(self):
         """Retrieves ultimate statues info for current player in current frame.
