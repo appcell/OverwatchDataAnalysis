@@ -374,7 +374,7 @@ ULT_CHARGE_PRE_X_MIN_LEFT = {
 }
 ULT_CHARGE_PRE_X_MIN_RIGHT = {
     GAMETYPE_OWL: {
-        0: 830,
+        0: 825,
         1: 825 - 3
     },
     GAMETYPE_CUSTOM: {
@@ -410,7 +410,7 @@ ULT_CHARGE_PRE_HEIGHT = {
 }
 ULT_CHARGE_PRE_GAP = {
     GAMETYPE_OWL: {
-        0: 70.8,
+        0: 70.6,
         1: 70.6
     },
     GAMETYPE_CUSTOM: {
