@@ -366,7 +366,7 @@ ULT_ADJUST_LOG_INDEX = {
 ULT_CHARGE_PRE_X_MIN_LEFT = {
     GAMETYPE_OWL: {
         0: 19,
-        1: 20 + 1
+        1: 20 + 3
     },
     GAMETYPE_CUSTOM: {
         0: 19
@@ -393,7 +393,7 @@ ULT_CHARGE_PRE_WIDTH = {
 ULT_CHARGE_PRE_Y_MIN = {
     GAMETYPE_OWL: {
         0: 50,
-        1: 50 + 23
+        1: 50 + 25
     },
     GAMETYPE_CUSTOM: {
         0: 50
