@@ -68,7 +68,6 @@ class Game(object):
         self.game_version = 0
 
         self.frames = []
-        self._frames = [] # 只做过删除重复和无效帧处理的数据
         self.avatars_ref = {}
         self.killfeed_icons_ref = OW.get_killfeed_icons_ref(self.game_type, self.game_version)
         self.assist_icons_ref = OW.get_assist_icons_ref(self.game_type, self.game_version)
