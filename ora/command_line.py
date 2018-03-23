@@ -19,7 +19,7 @@ class Program(object):
 
     def _get_data(self, key):
         """
-        从 sys.argv 中提取出 key，并把key从sys.argv中删除。
+        Extract key from sys.argv, then delete the key
         """
         key += '='
         key_index = len(key)
@@ -32,9 +32,9 @@ class Program(object):
 
     def _user_input(self):
         """
-        获取用户从命令行输入的信息
+        Retrieving info from user input in command line
         """
-        # 获取 fps
+        # Getting fps
         fps = self._get_data('fps')
         info = {
             'fps': 2 if fps is None else fps,
@@ -44,22 +44,20 @@ class Program(object):
         }
         if len(self.argv) <= 3 or len(self.argv) > 4:
             raise ValueError("""
-            请输入正确数目的参数
-            示例:
+            Please input with proper amount of arguments.
+            Example:
                 main.exe F:/video.mp4 F:/ 0 players=player.txt fps=2 start_time=0 end_time=0
 
-            其中:
-                main.exe             为程序名
-                F:/video.mp4         为视频名(绝对路径)
-                F:/                  为文件保存的目录(绝对路径)
-                0                    这里的值可为 0或1
-                                     0 代表 owl, 1 代表 训练赛
+            Mandatory arguments:
+                F:/video.mp4         Absolute path of video
+                F:/                  Absolute path of output file
+                0                    A number representing game type. 0: OWL, 1: Non-OWL
 
-            可选:
-                players=players.txt  内容为"以json格式储存了12个玩家以及队员信息"的文本
-                fps=2                为每一秒分析的帧数(默认为2)
-                start_time=0         开始分析的时间（两者默认为0的话，
-                end_time=0           结束分析的时间 则是分析整个视频）
+            Optional:
+                players=players.txt  A text file saving info of all 12 players with JSON formatting
+                fps=2                FPS of analyzer (2 by default)
+                start_time=0         Starting time in seconds
+                end_time=0           Ending time in seconds (If both are 0, then the whole video is analyzed)
             """)
         info['video_path'] = self.argv[1]
         info['output_path'] = self.argv[2]
@@ -77,7 +75,7 @@ class Program(object):
         else:
             data = load(open(player_path, 'r'))
             """
-            此处为 json 格式:
+            JSON format:
             {
                 "right": {
                     "players": [
