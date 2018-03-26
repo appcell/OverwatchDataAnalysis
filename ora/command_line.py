@@ -78,7 +78,8 @@ class Program(object):
             info['name_players_team_left'] = ['player' + str(i) for i in range(1, 7)]
             info['name_players_team_right'] = ['player' + str(i) for i in range(7, 13)]
         else:
-            data = load(open(player_path, 'r'))
+            with open(player_path, 'r') as f:
+                data = load(f)
             """
             JSON format:
             {
