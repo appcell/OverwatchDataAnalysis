@@ -2,6 +2,7 @@ import sys
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.Qt import QSize
 
 
 class ListWidget(QtWidgets.QListWidget):
@@ -67,13 +68,13 @@ class VideoItem(QtWidgets.QWidget):
     def setLabelText(label, text):
         label.setText(text)
 
-    def setTextUp (self, text):
+    def setTextUp(self, text):
         self.textUpLeftLabel.setText(text)
 
-    def setTextDown (self, text):
+    def setTextDown(self, text):
         self.textUpRightLabel.setText(text)
 
-    def setIcon (self, img_path):
+    def setIcon(self, img_path):
         self.iconQLabel.setPixmap(QtGui.QPixmap(img_path))
 
 
@@ -111,10 +112,27 @@ class LineEdit(QtWidgets.QLineEdit):
 
 
 class ClickButton(QtWidgets.QPushButton):
-    def __init__(self, parent=None, text=''):
+    def __init__(self, parent=None, text='', icon_path=None):
         super(ClickButton, self).__init__(parent)
         self.setFlat(True)
         self.setText(text)
+        if icon_path:
+            self.setIcon(icon_path)
+            self.setIconSize(QSize(100, 100))
+
+
+class RadioButton(QtWidgets.QRadioButton):
+    def __init__(self):
+        super(RadioButton, self).__init__()
+
+
+class CheckButton(QtWidgets.QCheckBox):
+    def __init__(self):
+        super(CheckButton, self).__init__()
+
+
+def click_button():
+    button = ClickButton()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -156,7 +174,7 @@ class ControlButtonMixin(QtWidgets.QWidget):
     def __init__(self, ):
         super(ControlButtonMixin, self).__init__()
 
-    def set_button(self, min_button, max_button, exit_button, max_icon='', resize_icon=''):
+    def set_control_button(self, min_button, max_button, exit_button, max_icon='', resize_icon=''):
         self.max_button = max_button
         self.max_icon = max_icon
         self.resize_icon = resize_icon

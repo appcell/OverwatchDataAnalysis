@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>10</y>
+      <y>100</y>
       <width>967</width>
-      <height>721</height>
+      <height>631</height>
      </rect>
     </property>
     <property name="whatsThis">
@@ -35,14 +35,14 @@
     <property name="currentIndex">
      <number>0</number>
     </property>
-    <widget class="QWidget" name="stackedWidgetPage1" native="true">
+    <widget class="QWidget" name="stackedWidgetPage1">
      <widget class="QListWidget" name="video_listwidget">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>88</y>
+        <y>0</y>
         <width>681</width>
-        <height>623</height>
+        <height>711</height>
        </rect>
       </property>
       <property name="font">
@@ -64,7 +64,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>30</y>
+        <y>86</y>
         <width>231</width>
         <height>29</height>
        </rect>
@@ -82,7 +82,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>334</y>
+        <y>390</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -92,7 +92,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>334</y>
+        <y>390</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -102,7 +102,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>364</y>
+        <y>420</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -112,7 +112,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>364</y>
+        <y>420</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -122,7 +122,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>394</y>
+        <y>450</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -132,7 +132,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>394</y>
+        <y>450</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -142,7 +142,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>100</y>
+        <y>156</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -152,7 +152,7 @@
       <property name="geometry">
        <rect>
         <x>840</x>
-        <y>100</y>
+        <y>156</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -162,7 +162,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>486</y>
+        <y>542</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -172,7 +172,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>426</y>
+        <y>482</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -182,7 +182,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>486</y>
+        <y>542</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -192,7 +192,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>456</y>
+        <y>512</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -202,7 +202,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>456</y>
+        <y>512</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -212,7 +212,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>426</y>
+        <y>482</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -222,7 +222,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>518</y>
+        <y>574</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -232,7 +232,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>518</y>
+        <y>574</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -242,7 +242,7 @@
       <property name="geometry">
        <rect>
         <x>714</x>
-        <y>80</y>
+        <y>136</y>
         <width>54</width>
         <height>12</height>
        </rect>
@@ -258,7 +258,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>80</y>
+        <y>136</y>
         <width>54</width>
         <height>12</height>
        </rect>
@@ -271,7 +271,7 @@
       <property name="geometry">
        <rect>
         <x>714</x>
-        <y>136</y>
+        <y>192</y>
         <width>93</width>
         <height>16</height>
        </rect>
@@ -284,7 +284,7 @@
       <property name="geometry">
        <rect>
         <x>818</x>
-        <y>136</y>
+        <y>192</y>
         <width>43</width>
         <height>16</height>
        </rect>
@@ -297,7 +297,7 @@
       <property name="geometry">
        <rect>
         <x>886</x>
-        <y>136</y>
+        <y>192</y>
         <width>65</width>
         <height>16</height>
        </rect>
@@ -310,7 +310,7 @@
       <property name="geometry">
        <rect>
         <x>714</x>
-        <y>162</y>
+        <y>218</y>
         <width>131</width>
         <height>16</height>
        </rect>
@@ -323,7 +323,7 @@
       <property name="geometry">
        <rect>
         <x>886</x>
-        <y>164</y>
+        <y>220</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -339,7 +339,7 @@
       <property name="geometry">
        <rect>
         <x>710</x>
-        <y>202</y>
+        <y>258</y>
         <width>231</width>
         <height>29</height>
        </rect>
@@ -357,7 +357,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>260</y>
+        <y>316</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -367,7 +367,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>260</y>
+        <y>316</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -377,7 +377,7 @@
       <property name="geometry">
        <rect>
         <x>712</x>
-        <y>238</y>
+        <y>294</y>
         <width>73</width>
         <height>16</height>
        </rect>
@@ -393,7 +393,7 @@
       <property name="geometry">
        <rect>
         <x>846</x>
-        <y>236</y>
+        <y>292</y>
         <width>67</width>
         <height>16</height>
        </rect>
@@ -409,7 +409,7 @@
       <property name="geometry">
        <rect>
         <x>714</x>
-        <y>308</y>
+        <y>364</y>
         <width>89</width>
         <height>16</height>
        </rect>
@@ -425,7 +425,7 @@
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>306</y>
+        <y>362</y>
         <width>89</width>
         <height>16</height>
        </rect>
@@ -437,26 +437,8 @@
        <string>Players Right</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>28</y>
-        <width>57</width>
-        <height>57</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>50</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
-      </property>
-     </widget>
     </widget>
-    <widget class="QWidget" name="stackedWidgetPage2" native="true">
+    <widget class="QWidget" name="stackedWidgetPage2">
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
@@ -503,7 +485,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="stackedWidgetPage3" native="true">
+    <widget class="QWidget" name="stackedWidgetPage3">
      <widget class="QPlainTextEdit" name="plainTextEdit">
       <property name="geometry">
        <rect>
@@ -568,7 +550,7 @@
    <widget class="QLabel" name="logo_label">
     <property name="geometry">
      <rect>
-      <x>4</x>
+      <x>8</x>
       <y>10</y>
       <width>111</width>
       <height>51</height>
@@ -587,8 +569,8 @@
    <widget class="QLineEdit" name="lineEdit_7">
     <property name="geometry">
      <rect>
-      <x>134</x>
-      <y>732</y>
+      <x>128</x>
+      <y>736</y>
       <width>587</width>
       <height>31</height>
      </rect>
@@ -600,14 +582,119 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>732</y>
+      <x>726</x>
+      <y>736</y>
       <width>75</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
      <string>Analyze</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="back_button">
+    <property name="geometry">
+     <rect>
+      <x>126</x>
+      <y>4</y>
+      <width>65</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="help_button">
+    <property name="geometry">
+     <rect>
+      <x>814</x>
+      <y>2</y>
+      <width>65</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>?</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="min_button">
+    <property name="geometry">
+     <rect>
+      <x>884</x>
+      <y>0</y>
+      <width>65</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="max_button">
+    <property name="geometry">
+     <rect>
+      <x>960</x>
+      <y>0</y>
+      <width>65</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>[]</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="close_button">
+    <property name="geometry">
+     <rect>
+      <x>1034</x>
+      <y>0</y>
+      <width>65</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>X</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
