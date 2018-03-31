@@ -54,6 +54,14 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
         self.video_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
 
         self._set_background_img(self.left_group, 'left_bg.png')
+        self._set_background_img(self.top_group, 'top_bg.png')
+        self._set_background_img(self.analyze_group, 'analyze_bg.png')
+        self._set_background_img(self.video_title_group, 'column_title_bg.png')
+        self._set_background_img(self.team_title_group, 'column_title_bg.png')
+        self._set_background_img(self.video_setting_group, 'right_bg.png')
+        self._set_background_img(self.team_setting_group, 'right_bg.png')
+        self._set_background_img(self.left_shadow_label, 'left_bg_shadow.png')
+
 
 
 class MainUi(QtWidgets.QMainWindow, BeautiUi):
@@ -63,9 +71,11 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi):
         self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel',
                                'replay.png')
 
-        self._add_custome_item(self.tab_listwidget, TabItem, "ANALYSIS", 'replay.png')
-        self._add_custome_item(self.tab_listwidget, TabItem, "VIDEO PALY", 'replay.png')
-        self._add_custome_item(self.tab_listwidget, TabItem, "SETTINGS", 'replay.png')
+        self._add_custome_item(self.tab_listwidget, PicTabItem, SRC_PATH+'/tab_icons/1_normal.png', SRC_PATH + '/tab_icons/1_selected.png')
+
+        #self._add_custome_item(self.tab_listwidget, TabItem, "ANALYSIS", 'replay.png')
+        #self._add_custome_item(self.tab_listwidget, TabItem, "VIDEO PALY", 'replay.png')
+        #self._add_custome_item(self.tab_listwidget, TabItem, "SETTINGS", 'replay.png')
 
 
         self._init_connect()

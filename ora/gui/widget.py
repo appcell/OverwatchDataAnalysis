@@ -92,6 +92,24 @@ class TabItem(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
 
+class PicTabItem(QtWidgets.QWidget):
+    def __init__(self, parent=None, normal_img='', selected_img=''):
+        super(PicTabItem, self).__init__(parent)
+        self.normal_img = normal_img
+        self.selected_img = selected_img
+        self.label = QtWidgets.QLabel()
+        self.label.setPixmap(QtGui.QPixmap(normal_img))
+        self.layout = QtWidgets.QGridLayout()
+        self.layout.addWidget(self.label)
+        self.setLayout(self.layout)
+
+    def to_selected_img(self):
+        self.label.setPixmap(QtGui.QPixmap(self.selected_img))
+
+    def to_normal_img(self):
+        self.label.setPixmap(QtGui.QPixmap(self.normal_img))
+
+
 class PicLabel(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super(PicLabel, self).__init__(parent)

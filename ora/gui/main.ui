@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>100</y>
+      <y>90</y>
       <width>967</width>
-      <height>631</height>
+      <height>641</height>
      </rect>
     </property>
     <property name="whatsThis">
@@ -39,10 +39,10 @@
      <widget class="QListWidget" name="video_listwidget">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>4</x>
         <y>0</y>
-        <width>681</width>
-        <height>711</height>
+        <width>695</width>
+        <height>645</height>
        </rect>
       </property>
       <property name="font">
@@ -220,29 +220,13 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>714</x>
-        <y>42</y>
-        <width>54</width>
-        <height>12</height>
-       </rect>
-      </property>
-      <property name="statusTip">
-       <string comment="2"/>
-      </property>
-      <property name="text">
-       <string>Start at</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
         <x>842</x>
-        <y>42</y>
+        <y>40</y>
         <width>54</width>
-        <height>12</height>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">
@@ -315,24 +299,6 @@
       </property>
       <property name="tristate">
        <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_9">
-      <property name="geometry">
-       <rect>
-        <x>710</x>
-        <y>164</y>
-        <width>231</width>
-        <height>29</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>TEAM SETTING</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit_18">
@@ -419,25 +385,7 @@
        <string>Players Right</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>710</x>
-        <y>0</y>
-        <width>231</width>
-        <height>29</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>VIDEO SETTING</string>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QGroupBox" name="video_title_group">
       <property name="geometry">
        <rect>
         <x>700</x>
@@ -449,8 +397,26 @@
       <property name="title">
        <string/>
       </property>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>2</x>
+         <y>0</y>
+         <width>247</width>
+         <height>29</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>VIDEO SETTING</string>
+       </property>
+      </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="video_setting_group">
       <property name="geometry">
        <rect>
         <x>700</x>
@@ -462,8 +428,24 @@
       <property name="title">
        <string/>
       </property>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>12</y>
+         <width>54</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="statusTip">
+        <string comment="2"/>
+       </property>
+       <property name="text">
+        <string>Start at</string>
+       </property>
+      </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_4">
+     <widget class="QGroupBox" name="team_title_group">
       <property name="geometry">
        <rect>
         <x>700</x>
@@ -475,8 +457,26 @@
       <property name="title">
        <string/>
       </property>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>4</x>
+         <y>4</y>
+         <width>247</width>
+         <height>29</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>TEAM SETTING</string>
+       </property>
+      </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_6">
+     <widget class="QGroupBox" name="team_setting_group">
       <property name="geometry">
        <rect>
         <x>700</x>
@@ -489,6 +489,39 @@
        <string/>
       </property>
      </widget>
+     <zorder>team_setting_group</zorder>
+     <zorder>team_title_group</zorder>
+     <zorder>video_setting_group</zorder>
+     <zorder>video_title_group</zorder>
+     <zorder>video_listwidget</zorder>
+     <zorder>lineEdit</zorder>
+     <zorder>lineEdit_2</zorder>
+     <zorder>lineEdit_3</zorder>
+     <zorder>lineEdit_4</zorder>
+     <zorder>lineEdit_5</zorder>
+     <zorder>lineEdit_6</zorder>
+     <zorder>lineEdit_8</zorder>
+     <zorder>lineEdit_9</zorder>
+     <zorder>lineEdit_10</zorder>
+     <zorder>lineEdit_11</zorder>
+     <zorder>lineEdit_12</zorder>
+     <zorder>lineEdit_13</zorder>
+     <zorder>lineEdit_14</zorder>
+     <zorder>lineEdit_15</zorder>
+     <zorder>lineEdit_16</zorder>
+     <zorder>lineEdit_17</zorder>
+     <zorder>label_6</zorder>
+     <zorder>label_7</zorder>
+     <zorder>radioButton</zorder>
+     <zorder>radioButton_2</zorder>
+     <zorder>label_8</zorder>
+     <zorder>checkBox_5</zorder>
+     <zorder>lineEdit_18</zorder>
+     <zorder>lineEdit_19</zorder>
+     <zorder>label_10</zorder>
+     <zorder>label_11</zorder>
+     <zorder>label_12</zorder>
+     <zorder>label_13</zorder>
     </widget>
     <widget class="QWidget" name="stackedWidgetPage2">
      <widget class="QLabel" name="label_3">
@@ -586,38 +619,6 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QListWidget" name="tab_listwidget">
-    <property name="geometry">
-     <rect>
-      <x>4</x>
-      <y>98</y>
-      <width>121</width>
-      <height>669</height>
-     </rect>
-    </property>
-    <property name="currentRow">
-     <number>-1</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="logo_label">
-    <property name="geometry">
-     <rect>
-      <x>8</x>
-      <y>10</y>
-      <width>111</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Adobe 黑体 Std R</family>
-      <pointsize>25</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>LOGO</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="lineEdit_7">
     <property name="geometry">
      <rect>
@@ -644,143 +645,175 @@
      <string>Analyze</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="back_button">
-    <property name="geometry">
-     <rect>
-      <x>126</x>
-      <y>4</y>
-      <width>65</width>
-      <height>65</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>&lt;</string>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="help_button">
-    <property name="geometry">
-     <rect>
-      <x>814</x>
-      <y>2</y>
-      <width>65</width>
-      <height>65</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>?</string>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="min_button">
-    <property name="geometry">
-     <rect>
-      <x>884</x>
-      <y>0</y>
-      <width>65</width>
-      <height>65</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="max_button">
-    <property name="geometry">
-     <rect>
-      <x>960</x>
-      <y>0</y>
-      <width>65</width>
-      <height>65</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>[]</string>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="close_button">
-    <property name="geometry">
-     <rect>
-      <x>1034</x>
-      <y>0</y>
-      <width>65</width>
-      <height>65</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>X</string>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
+   <widget class="QGroupBox" name="top_group">
     <property name="geometry">
      <rect>
       <x>120</x>
       <y>0</y>
       <width>971</width>
-      <height>80</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="title">
      <string/>
     </property>
+    <widget class="QPushButton" name="back_button">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>75</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>&lt;</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="help_button">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>2</y>
+       <width>65</width>
+       <height>69</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>?</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="min_button">
+     <property name="geometry">
+      <rect>
+       <x>758</x>
+       <y>2</y>
+       <width>65</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>-</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="max_button">
+     <property name="geometry">
+      <rect>
+       <x>828</x>
+       <y>2</y>
+       <width>71</width>
+       <height>75</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>[]</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="close_button">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>4</y>
+       <width>65</width>
+       <height>73</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="left_group">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>-1</y>
-      <width>120</width>
+      <x>-1</x>
+      <y>2</y>
+      <width>123</width>
       <height>771</height>
      </rect>
     </property>
     <property name="title">
      <string/>
     </property>
+    <widget class="QLabel" name="logo_label">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>4</y>
+       <width>113</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Adobe 黑体 Std R</family>
+       <pointsize>25</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>LOGO</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="tab_listwidget">
+     <property name="geometry">
+      <rect>
+       <x>-2</x>
+       <y>90</y>
+       <width>121</width>
+       <height>669</height>
+      </rect>
+     </property>
+     <property name="currentRow">
+      <number>-1</number>
+     </property>
+    </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_5">
+   <widget class="QGroupBox" name="analyze_group">
     <property name="geometry">
      <rect>
       <x>120</x>
       <y>729</y>
-      <width>681</width>
+      <width>703</width>
       <height>81</height>
      </rect>
     </property>
@@ -788,6 +821,26 @@
      <string/>
     </property>
    </widget>
+   <widget class="QLabel" name="left_shadow_label">
+    <property name="geometry">
+     <rect>
+      <x>114</x>
+      <y>0</y>
+      <width>16</width>
+      <height>761</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>analyze_group</zorder>
+   <zorder>top_group</zorder>
+   <zorder>left_group</zorder>
+   <zorder>main_stackedwidget</zorder>
+   <zorder>lineEdit_7</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>left_shadow_label</zorder>
   </widget>
  </widget>
  <resources/>
