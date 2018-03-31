@@ -1,13 +1,13 @@
 from os.path import join
 
-from PyQt5 import uic
+from PyQt5 import uic, QtWidgets
 from PyQt5.Qt import QIcon
 
 from widget import *
 
 windowui, QtBaseClass = uic.loadUiType('main.ui')
 
-SRC_PATH = 'D:/GitHub/OverwatchDataAnalysis/ui_design/images'
+SRC_PATH = './images'
 
 
 class UiFunc(object):
@@ -36,6 +36,11 @@ class UiFunc(object):
     def _set_background_img(widget, file_name):
         widget.setStyleSheet("background-image: url(%s)" % (SRC_PATH + '/bgs/' + file_name))
 
+    @staticmethod
+    def dynamic_base_class(instance, cls, cls_name):
+        instance.__class__ = type(cls_name, (cls, instance.__class__), {})
+        return instance
+
 
 class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
     def __init__(self):
@@ -44,6 +49,11 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
 
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.set_control_button(self.min_button, self.max_button, self.close_button)
+
+        self.tab_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.video_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
+
+        self._set_background_img(self.left_group, 'left_bg.png')
 
 
 class MainUi(QtWidgets.QMainWindow, BeautiUi):
