@@ -1,9 +1,10 @@
 from os.path import join
 
 from PyQt5 import uic, QtWidgets
-from PyQt5.Qt import QIcon
+from PyQt5.Qt import QIcon, QSize
 
 from widget import *
+from style import *
 
 windowui, QtBaseClass = uic.loadUiType('main.ui')
 
@@ -33,6 +34,11 @@ class UiFunc(object):
         return QIcon(join(SRC_PATH, 'icons', file_name))
 
     @staticmethod
+    def _set_full_icon(widget, qicon):
+        widget.setIcon(qicon)
+        widget.setIconSize(QSize(100, 100))
+
+    @staticmethod
     def _set_background_img(widget, file_name):
         widget.setStyleSheet("background-image: url(%s)" % (SRC_PATH + '/bgs/' + file_name))
 
@@ -53,15 +59,14 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
         self.tab_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.video_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
 
-        self._set_background_img(self.left_group, 'left_bg.png')
-        self._set_background_img(self.top_group, 'top_bg.png')
-        self._set_background_img(self.analyze_group, 'analyze_bg.png')
-        self._set_background_img(self.video_title_group, 'column_title_bg.png')
-        self._set_background_img(self.team_title_group, 'column_title_bg.png')
-        self._set_background_img(self.video_setting_group, 'right_bg.png')
-        self._set_background_img(self.team_setting_group, 'right_bg.png')
-        self._set_background_img(self.left_shadow_label, 'left_bg_shadow.png')
+        self._set_style()
 
+    def _set_style(self):
+        for wi, bg in background_imgs.items():
+            self._set_background_img(getattr(self, wi), bg)
+
+        for wi, ic in button_icons.items():
+            self._set_full_icon(getattr(self, wi), self._get_icon(ic))
 
 
 class MainUi(QtWidgets.QMainWindow, BeautiUi):

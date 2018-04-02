@@ -50,6 +50,9 @@
         <pointsize>8</pointsize>
        </font>
       </property>
+      <property name="accessibleName">
+       <string>video_listwidget</string>
+      </property>
       <property name="iconSize">
        <size>
         <width>30</width>
@@ -394,6 +397,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="accessibleName">
+       <string>video_title_group</string>
+      </property>
       <property name="title">
        <string/>
       </property>
@@ -425,6 +431,9 @@
         <height>131</height>
        </rect>
       </property>
+      <property name="accessibleName">
+       <string>video_setting_group</string>
+      </property>
       <property name="title">
        <string/>
       </property>
@@ -453,6 +462,9 @@
         <width>261</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="accessibleName">
+       <string>team_title_group</string>
       </property>
       <property name="title">
        <string/>
@@ -484,6 +496,9 @@
         <width>261</width>
         <height>311</height>
        </rect>
+      </property>
+      <property name="accessibleName">
+       <string>team_setting_group</string>
       </property>
       <property name="title">
        <string/>
@@ -654,6 +669,9 @@
       <height>91</height>
      </rect>
     </property>
+    <property name="accessibleName">
+     <string>top_group</string>
+    </property>
     <property name="title">
      <string/>
     </property>
@@ -693,7 +711,7 @@
       </font>
      </property>
      <property name="text">
-      <string>?</string>
+      <string/>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -714,7 +732,7 @@
       </font>
      </property>
      <property name="text">
-      <string>-</string>
+      <string/>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -735,7 +753,7 @@
       </font>
      </property>
      <property name="text">
-      <string>[]</string>
+      <string/>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -756,7 +774,7 @@
       </font>
      </property>
      <property name="text">
-      <string>X</string>
+      <string/>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -771,6 +789,9 @@
       <width>123</width>
       <height>771</height>
      </rect>
+    </property>
+    <property name="accessibleName">
+     <string>left_group</string>
     </property>
     <property name="title">
      <string/>
@@ -797,9 +818,9 @@
     <widget class="QListWidget" name="tab_listwidget">
      <property name="geometry">
       <rect>
-       <x>-2</x>
+       <x>6</x>
        <y>90</y>
-       <width>121</width>
+       <width>115</width>
        <height>669</height>
       </rect>
      </property>
