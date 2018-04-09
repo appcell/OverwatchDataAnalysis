@@ -126,7 +126,10 @@ class TextLabel(QtWidgets.QLabel):
 
 
 class LineEdit(QtWidgets.QLineEdit):
-    pass
+    def __init__(self, parent=None, text=''):
+        super(LineEdit, self).__init__(parent)
+        self.setStyleSheet()
+
 
 
 class ClickButton(QtWidgets.QPushButton):

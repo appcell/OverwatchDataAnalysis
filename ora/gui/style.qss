@@ -1,0 +1,14 @@
+QLineEdit {
+    background-color: rgb(23, 57, 86);
+}
+QStackedWidget {
+    background-color: rgb(13, 37, 59);
+}
+QLabel {
+    color: rgb(201, 216, 229);
+}
+QPushButton {
+    border-width: 2px;
+    border-color: rgb(37, 173, 231);
+    color: rgb(37, 173, 231);
+}

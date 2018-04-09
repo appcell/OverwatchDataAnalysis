@@ -18,3 +18,8 @@ button_icons = {
     'max_button': 'design_08',
     'close_button': 'design_09'
 }
+
+hover_icons = {
+    'analyze_button':['button_analyze.png', 'button_analyze_onhover.png'],
+    'save_button': ['button_save.png', 'button_save_onhover.png']
+}
