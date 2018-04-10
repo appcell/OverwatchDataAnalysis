@@ -115,7 +115,6 @@ class Player:
         # Tranfer both to grayscale for comparison
         ult_icon_ref = ImageUtils.rgb_to_gray(ult_icon_ref)
         ult_icon = ImageUtils.rgb_to_gray(ult_icon)
-
         # Compare cropped icon with reference, get the probability of them
         # being similar
         prob_map = cv2.matchTemplate(ult_icon, 
@@ -334,9 +333,12 @@ class Player:
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
 
         # No need to switch to BW here.
-        
+        # if self.game_version == 1:
+        #     cv2.imshow('t', ult_charge_image_g)
+        #     cv2.waitKey(0)
         if gap == -1:
             # Only one digit
+            # print('One digit')
             num = ImageUtils.remove_digit_vertical_edge(
                 ult_charge_image_g,
                 OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version],
@@ -352,6 +354,7 @@ class Player:
                 self.ult_charge_numbers_ref[flag_observed])
         else:
             # 2 digits
+            # print('2 digit')
             num_left = ImageUtils.crop(
                 ult_charge_image_g, 
                 [0, ult_charge_image_g.shape[0], 0, gap + 1])
@@ -403,7 +406,9 @@ class Player:
                     self.ult_charge_numbers_ref[flag_observed])
             else:
                 self.ult_charge = num_left_value * 10 + num_right_value
-
+        # print(self.index)
+        # print(self.ult_charge)
+        # print('===')
         return 
 
     def _identify_ult_charge_digit(self, digit, digit_refs):
