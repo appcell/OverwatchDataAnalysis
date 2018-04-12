@@ -333,7 +333,7 @@ class Player:
             ult_charge_image_g = ImageUtils.inverse_gray(ult_charge_image_g)
 
         # No need to switch to BW here.
-        # if self.game_version == 1:
+        # if self.game_version == 0:
         #     cv2.imshow('t', ult_charge_image_g)
         #     cv2.waitKey(0)
         if gap == -1:
@@ -343,6 +343,9 @@ class Player:
                 ult_charge_image_g,
                 OW.ULT_GAP_DEVIATION_LIMIT[self.game_type][self.game_version],
                 ImageUtils.REMOVE_NUMBER_VERTICAL_EDGE_LEFT)
+            # if self.game_version == 0 and self.index == 2:
+            #     cv2.imshow('t', num)
+            #     cv2.waitKey(0)
             if num.shape[1] < OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version]:
                 padding = int(np.ceil((
                     OW.ULT_CHARGE_IMG_WIDTH_OBSERVED[self.game_type][self.game_version] - num.shape[1])/2))
@@ -406,9 +409,10 @@ class Player:
                     self.ult_charge_numbers_ref[flag_observed])
             else:
                 self.ult_charge = num_left_value * 10 + num_right_value
-        # print(self.index)
-        # print(self.ult_charge)
-        # print('===')
+        # if self.game_version == 0 and self.index == 2:
+        # # print(self.index)
+        #     print(self.ult_charge)
+        # # print('===')
         return 
 
     def _identify_ult_charge_digit(self, digit, digit_refs):
