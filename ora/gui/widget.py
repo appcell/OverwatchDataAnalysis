@@ -4,6 +4,8 @@ from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.Qt import QSize
 
+from style import text_colors
+
 
 class ListWidget(QtWidgets.QListWidget):
     def __init__(self, parent=None):
@@ -42,16 +44,11 @@ class VideoItem(QtWidgets.QWidget):
 
         self.allQHBoxLayout = QtWidgets.QHBoxLayout()
         self.iconQLabel = QtWidgets.QLabel()
+        self.iconQLabel.setFixedSize(200, 110)
         self.allQHBoxLayout.addWidget(self.iconQLabel, 0)
         self.allQHBoxLayout.addLayout(self.allTextLayout, 1)
         self.setLayout(self.allQHBoxLayout)
 
-        self.textUpLeftLabel.setStyleSheet('''
-            color: rgb(0, 0, 255);
-        ''')
-        self.textUpRightLabel.setStyleSheet('''
-            color: rgb(255, 0, 0);
-        ''')
 
         self.setTextDown(down_left_str)
         self.setLabelText(self.textUpLeftLabel, up_left_str)
@@ -62,7 +59,16 @@ class VideoItem(QtWidgets.QWidget):
         self.setLabelText(self.textDownRightLabel, down_right_str)
 
         if icon_path:
-            self.setIcon(icon_path)
+            # self.setIcon(icon_path)
+            self.iconQLabel.setPixmap(QtGui.QPixmap(icon_path))
+            self.iconQLabel.setScaledContents(True)
+
+        for w, c in text_colors.items():
+            self.set_text_color(getattr(self, w), c)
+
+    @staticmethod
+    def set_text_color(widget, color):
+        widget.setStyleSheet("color: %s" % color)
 
     @staticmethod
     def setLabelText(label, text):

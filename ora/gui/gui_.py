@@ -42,6 +42,10 @@ class UiFunc(object):
     def _set_background_img(widget, file_name, path='/bgs/'):
         widget.setStyleSheet("background-image: url(%s)" % (SRC_PATH + path + file_name))
 
+    @staticmethod
+    def _set_background_color(widget, color):
+        widget.setStyleSheet("background-color: %s" % color)
+
     def _set_hover_icon(self, widget, normal_file, hover_file):
         self._set_full_icon(widget, normal_file, 'widgets')
         widget.setAttribute(Qt.WA_Hover, True)
@@ -79,8 +83,13 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
         for wi, ic in button_icons.items():
             self._set_full_icon(getattr(self, wi), ic)
 
+        for wi, cl in background_colors.items():
+            self._set_background_color(getattr(self, wi), cl)
+
         for label in self._get_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
             pass
+
+
 
 
         #for wi, ics in hover_icons.items():

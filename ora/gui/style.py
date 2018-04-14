@@ -11,6 +11,10 @@ background_imgs = {
     'video_listwidget': ''
 }
 
+background_colors = {
+    'video_listwidget': '#143048'
+}
+
 button_icons = {
     'back_button': 'design_03',
     'help_button': 'design_05',
@@ -22,4 +26,14 @@ button_icons = {
 hover_icons = {
     'analyze_button':['button_analyze.png', 'button_analyze_onhover.png'],
     'save_button': ['button_save.png', 'button_save_onhover.png']
+}
+
+text_colors = {
+    'textUpLeftLabel': '#ffffff',
+    'textUpRightLabel': '#3df0d0',
+    'textDownLabelTeam1': '#c9d8e5',
+    'textDownLabelTeam2': '#c9d8e5',
+    'textDownLeftLabel': '#80bce2',
+    'textDownRightLabel': '#80bce2'
+
 }
