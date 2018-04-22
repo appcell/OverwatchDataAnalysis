@@ -1,11 +1,11 @@
-from os.path import join
 
-from PyQt5 import uic, QtWidgets
-from PyQt5.Qt import QIcon, QSize
+from PyQt5 import uic, QtCore
 
 from widget import *
 from style import *
+from functions import *
 
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 windowui, QtBaseClass = uic.loadUiType('main.ui')
 
 SRC_PATH = './images'
@@ -29,32 +29,10 @@ class UiFunc(object):
         layout.addWidget(widget)
         return widget
 
-    @staticmethod
-    def _get_icon(file_name, path='icons'):
-        return QIcon(join(SRC_PATH, path, file_name))
-
-    def _set_full_icon(self, widget, file_name, path='icons'):
-        qicon = self._get_icon(file_name, path)
-        widget.setIcon(qicon)
-        widget.setIconSize(QSize(100, 100))
-
-    @staticmethod
-    def _set_background_img(widget, file_name, path='/bgs/'):
-        widget.setStyleSheet("background-image: url(%s)" % (SRC_PATH + path + file_name))
-
-    @staticmethod
-    def _set_background_color(widget, color):
-        widget.setStyleSheet("background-color: %s" % color)
-
     def _set_hover_icon(self, widget, normal_file, hover_file):
-        self._set_full_icon(widget, normal_file, 'widgets')
+        set_full_icon(widget, normal_file, 'widgets')
         widget.setAttribute(Qt.WA_Hover, True)
         widget.setStyleSheet('background-image: url(%s)' % (SRC_PATH + '/widgets/' + hover_file))
-
-    @staticmethod
-    def dynamic_base_class(instance, cls, cls_name):
-        instance.__class__ = type(cls_name, (cls, instance.__class__), {})
-        return instance
 
 
 class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
@@ -70,23 +48,19 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
 
         self._set_style()
 
-    @staticmethod
-    def _get_child_widgets(widget, qclass):
-        for c in widget.children():
-            if isinstance(c, qclass):
-                yield c
+        self._set_full_icon(self.publish_box, 'switch_on.png')
 
     def _set_style(self):
         for wi, bg in background_imgs.items():
-            self._set_background_img(getattr(self, wi), bg)
+            set_background_img(getattr(self, wi), bg)
 
         for wi, ic in button_icons.items():
-            self._set_full_icon(getattr(self, wi), ic)
+            set_full_icon(getattr(self, wi), ic)
 
         for wi, cl in background_colors.items():
-            self._set_background_color(getattr(self, wi), cl)
+            set_background_color(getattr(self, wi), cl)
 
-        for label in self._get_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
+        for label in get_qclass_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
             pass
 
 

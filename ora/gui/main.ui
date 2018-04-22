@@ -339,7 +339,7 @@
        <string>Publish your analysis</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_5">
+     <widget class="QCheckBox" name="publish_box">
       <property name="geometry">
        <rect>
         <x>886</x>
@@ -631,7 +631,6 @@
       <zorder>save_button</zorder>
       <zorder>analyze_button</zorder>
      </widget>
-     <zorder>analyze_group</zorder>
      <zorder>team_setting_group</zorder>
      <zorder>team_title_group</zorder>
      <zorder>video_setting_group</zorder>
@@ -658,14 +657,14 @@
      <zorder>radioButton</zorder>
      <zorder>radioButton_2</zorder>
      <zorder>label_8</zorder>
-     <zorder>checkBox_5</zorder>
+     <zorder>publish_box</zorder>
      <zorder>lineEdit_18</zorder>
      <zorder>lineEdit_19</zorder>
      <zorder>label_10</zorder>
      <zorder>label_11</zorder>
      <zorder>label_12</zorder>
      <zorder>label_13</zorder>
-     <zorder></zorder>
+     <zorder>analyze_group</zorder>
     </widget>
     <widget class="QWidget" name="stackedWidgetPage2">
      <widget class="QLabel" name="label_3">

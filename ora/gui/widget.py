@@ -1,10 +1,10 @@
 import sys
 
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5 import QtGui
 from PyQt5.Qt import QSize
 
 from style import text_colors
+from mixin import *
 
 
 class ListWidget(QtWidgets.QListWidget):
@@ -18,7 +18,7 @@ class StackedWidget(QtWidgets.QStackedWidget):
         super(StackedWidget, self).__init__(parent)
 
 
-class VideoItem(QtWidgets.QWidget):
+class VideoItem(QtWidgets.QWidget, MousePressChangeBackgroundMixin):
     def __init__(self, parent=None, up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
         super(VideoItem, self).__init__(parent)
 
@@ -179,45 +179,6 @@ class _MyWindow(QtWidgets.QMainWindow):
         self.listwidget.addItem(item)
         self.listwidget.setItemWidget(item, citem)
         self.setCentralWidget(self.listwidget)
-
-
-class WindowDragMixin(object):
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.m_drag = True
-            self.m_DragPosition = event.globalPos() - self.pos()
-            event.accept()
-
-    def mouseMoveEvent(self, QMouseEvent):
-        if QMouseEvent.buttons() and Qt.LeftButton:
-            self.move(QMouseEvent.globalPos() - self.m_DragPosition)
-            QMouseEvent.accept()
-
-    def mouseReleaseEvent(self, QMouseEvent):
-        self.m_drag = False
-
-
-class ControlButtonMixin(QtWidgets.QWidget):
-    def __init__(self, ):
-        super(ControlButtonMixin, self).__init__()
-
-    def set_control_button(self, min_button, max_button, exit_button, max_icon='', resize_icon=''):
-        self.max_button = max_button
-        self.max_icon = max_icon
-        self.resize_icon = resize_icon
-
-        min_button.clicked.connect(self.showMinimized)
-        max_button.clicked.connect(self._max_button_clicked)
-        exit_button.clicked.connect(self.close)
-
-    def _max_button_clicked(self):
-        if self.isMaximized():
-            self.showNormal()
-            self.max_button.setText(self.resize_icon)
-        else:
-            self.showMaximized()
-            self.max_button.setText(self.resize_icon)
-
 
 
 if __name__ == '__main__':

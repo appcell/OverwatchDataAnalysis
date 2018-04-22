@@ -1,5 +1,6 @@
 QLineEdit {
     background-color: rgb(23, 57, 86);
+    border-radius: 3px;
 }
 QStackedWidget {
     background-color: rgb(13, 37, 59);
