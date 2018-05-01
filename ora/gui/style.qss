@@ -8,7 +8,27 @@ QStackedWidget {
 QLabel {
     color: rgb(201, 216, 229);
 }
+QGroupBox {
+    border: None;
+}
 QPushButton {
+    border: None;
+}
+#publish_box::indicator:checked {
+    image: url(./images/widgets/switch_on_f.png);
+}
+#publish_box::indicator:unchecked {
+    image: url(./images/widgets/switch_off_f.png);
+}
+QRadioButton::indicator:unchecked{
+    image: url(./images/widgets/radiobox_normal_f.png);
+}
+QRadioButton::indicator:checked{
+    image: url(./images/widgets/radiobox_selected_f.png);
+}
+
+#analyze_button {
+    border-style: solid;
     border-width: 2px;
     border-color: rgb(37, 173, 231);
     color: rgb(37, 173, 231);

@@ -18,12 +18,12 @@ class StackedWidget(QtWidgets.QStackedWidget):
         super(StackedWidget, self).__init__(parent)
 
 
-class VideoItem(QtWidgets.QWidget, MousePressChangeBackgroundMixin):
+class VideoItem(MousePressChangeBackgroundMixin):
     def __init__(self, parent=None, up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
-        super(VideoItem, self).__init__(parent)
+        super(VideoItem, self).__init__()
 
         self.textUpLayout = QtWidgets.QHBoxLayout()
-        self.textUpLeftLabel = QtWidgets.QLabel()
+        self.textUpLeftLabel = FullLabel()
         self.textUpRightLabel = QtWidgets.QLabel()
         self.textUpLayout.addWidget(self.textUpLeftLabel)
         self.textUpLayout.addWidget(self.textUpRightLabel)
@@ -47,6 +47,8 @@ class VideoItem(QtWidgets.QWidget, MousePressChangeBackgroundMixin):
         self.iconQLabel.setFixedSize(200, 110)
         self.allQHBoxLayout.addWidget(self.iconQLabel, 0)
         self.allQHBoxLayout.addLayout(self.allTextLayout, 1)
+        self.allQHBoxLayout.setSpacing(0)
+        self.allQHBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.allQHBoxLayout)
 
 
@@ -57,6 +59,8 @@ class VideoItem(QtWidgets.QWidget, MousePressChangeBackgroundMixin):
         self.setLabelText(self.textDownLeftLabel, down_left_str)
         self.setLabelText(self.textDownLabelTeam2, "TEAM 2")
         self.setLabelText(self.textDownRightLabel, down_right_str)
+
+        self.setStyleSheet('border: None')
 
         if icon_path:
             # self.setIcon(icon_path)
@@ -95,6 +99,7 @@ class TabItem(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.iconLabel)
         self.layout.addWidget(self.textLabel)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
 
@@ -107,6 +112,7 @@ class PicTabItem(QtWidgets.QWidget):
         self.label.setPixmap(QtGui.QPixmap(normal_img))
         self.layout = QtWidgets.QGridLayout()
         self.layout.addWidget(self.label)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
     def to_selected_img(self):
@@ -156,6 +162,14 @@ class RadioButton(QtWidgets.QRadioButton):
 class CheckButton(QtWidgets.QCheckBox):
     def __init__(self):
         super(CheckButton, self).__init__()
+
+
+class FullLabel(QtWidgets.QLabel):
+    def __init__(self):
+        super(FullLabel, self).__init__()
+
+    def enterEvent(self, QEvent):
+        QEvent.accept()
 
 
 def click_button():

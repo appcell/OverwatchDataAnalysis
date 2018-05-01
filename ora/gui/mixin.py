@@ -2,10 +2,13 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
 
-class MousePressChangeBackgroundMixin(object):
+class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
     def __init__(self):
         super(MousePressChangeBackgroundMixin, self).__init__()
         self.setMouseTracking(True)
+
+    def enterEvent(self, QMouseEvent):
+        pass
 
     def mouseMoveEvent(self, QMouseEvent):
         pass

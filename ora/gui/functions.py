@@ -22,8 +22,8 @@ def pic_to_icon(file_name, path='icons'):
     return QIcon(join(SRC_PATH, path, file_name))
 
 
-def set_full_icon(self, widget, file_name, path='icons'):
-    qicon = self._get_icon(file_name, path)
+def set_full_icon(widget, file_name, path='icons'):
+    qicon = pic_to_icon(file_name, path)
     widget.setIcon(qicon)
     widget.setIconSize(QSize(100, 100))
 

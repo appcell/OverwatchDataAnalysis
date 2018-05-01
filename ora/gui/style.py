@@ -7,7 +7,7 @@ background_imgs = {
     'team_title_group': 'column_title_bg.png',
     'video_setting_group': 'right_bg.png',
     'team_setting_group': 'right_bg.png',
-    'left_shadow_label': 'left_bg_shadow.png',
+    #'left_shadow_label': 'left_bg_shadow.png',
     'video_listwidget': ''
 }
 

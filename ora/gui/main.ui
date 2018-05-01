@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>787</height>
+    <width>1089</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QStackedWidget" name="main_stackedwidget">
     <property name="geometry">
      <rect>
-      <x>124</x>
+      <x>118</x>
       <y>90</y>
-      <width>967</width>
-      <height>691</height>
+      <width>973</width>
+      <height>701</height>
      </rect>
     </property>
     <property name="whatsThis">
@@ -52,6 +52,9 @@
       </property>
       <property name="accessibleName">
        <string>video_listwidget</string>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
       </property>
       <property name="iconSize">
        <size>
@@ -343,9 +346,9 @@
       <property name="geometry">
        <rect>
         <x>886</x>
-        <y>126</y>
-        <width>16</width>
-        <height>16</height>
+        <y>122</y>
+        <width>63</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -551,7 +554,7 @@
         <x>700</x>
         <y>200</y>
         <width>271</width>
-        <height>491</height>
+        <height>483</height>
        </rect>
       </property>
       <property name="accessibleName">
@@ -567,11 +570,14 @@
         <x>4</x>
         <y>644</y>
         <width>697</width>
-        <height>47</height>
+        <height>49</height>
        </rect>
       </property>
       <property name="title">
        <string/>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
       <widget class="QPushButton" name="analyze_button">
        <property name="geometry">
@@ -614,9 +620,9 @@
       <widget class="QLineEdit" name="path_lineedit">
        <property name="geometry">
         <rect>
-         <x>8</x>
+         <x>-2</x>
          <y>8</y>
-         <width>545</width>
+         <width>555</width>
          <height>31</height>
         </rect>
        </property>
@@ -887,9 +893,9 @@
     <property name="geometry">
      <rect>
       <x>-1</x>
-      <y>2</y>
+      <y>-2</y>
       <width>123</width>
-      <height>783</height>
+      <height>791</height>
      </rect>
     </property>
     <property name="accessibleName">
@@ -937,23 +943,9 @@
      </property>
     </widget>
    </widget>
-   <widget class="QLabel" name="left_shadow_label">
-    <property name="geometry">
-     <rect>
-      <x>114</x>
-      <y>0</y>
-      <width>16</width>
-      <height>761</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <zorder>top_group</zorder>
    <zorder>left_group</zorder>
    <zorder>main_stackedwidget</zorder>
-   <zorder>left_shadow_label</zorder>
   </widget>
  </widget>
  <resources/>

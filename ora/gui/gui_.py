@@ -48,7 +48,7 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
 
         self._set_style()
 
-        self._set_full_icon(self.publish_box, 'switch_on.png')
+        set_full_icon(self.publish_box, 'switch_on.png')
 
     def _set_style(self):
         for wi, bg in background_imgs.items():
@@ -62,6 +62,7 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
 
         for label in get_qclass_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
             pass
+
 
 
 
@@ -96,6 +97,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi):
     @staticmethod
     def _add_custome_item(listwidget, item_class, *args):
         citem = item_class(listwidget, *args)
+        citem.setObjectName('DyItem')
         item = QtWidgets.QListWidgetItem(listwidget)
         item.setSizeHint(citem.sizeHint())
         listwidget.addItem(item)
