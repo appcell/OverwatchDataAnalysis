@@ -2,7 +2,7 @@
 background_imgs = {
     'left_group': 'left_bg.png',
     'top_group': 'top_bg.png',
-    'analyze_group': 'analyze_bg.png',
+    #'analyze_group': 'analyze_bg.png',
     'video_title_group': 'column_title_bg.png',
     'team_title_group': 'column_title_bg.png',
     'video_setting_group': 'right_bg.png',
@@ -22,12 +22,6 @@ button_icons = {
     'max_button': 'design_08',
     'close_button': 'design_09'
 }
-
-hover_icons = {
-    'analyze_button':['button_analyze.png', 'button_analyze_onhover.png'],
-    'save_button': ['button_save.png', 'button_save_onhover.png']
-}
-
 text_colors = {
     'textUpLeftLabel': '#ffffff',
     'textUpRightLabel': '#3df0d0',

@@ -63,14 +63,6 @@ class BeautiUi(windowui, UiFunc, WindowDragMixin, ControlButtonMixin):
         for label in get_qclass_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
             pass
 
-
-
-
-
-        #for wi, ics in hover_icons.items():
-        #    self._set_hover_icon(getattr(self, wi), *ics)
-
-
 class MainUi(QtWidgets.QMainWindow, BeautiUi):
     def __init__(self):
         super(MainUi, self).__init__()

@@ -1,5 +1,9 @@
+from functools import partial
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
+
+from functions import set_background_color
 
 
 class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
@@ -44,13 +48,15 @@ class WindowDragMixin(object):
 
 
 class ControlButtonMixin(QtWidgets.QWidget):
-    def __init__(self, ):
+    def __init__(self):
         super(ControlButtonMixin, self).__init__()
 
-    def set_control_button(self, min_button, max_button, exit_button, max_icon='', resize_icon=''):
+    def set_control_button(self, min_button, max_button, exit_button, max_icon='', resize_icon='', bg_color='#000000'):
         self.max_button = max_button
         self.max_icon = max_icon
         self.resize_icon = resize_icon
+
+        # map(partial(set_background_color, color=bg_color), [min_button, max_button, exit_button])
 
         min_button.clicked.connect(self.showMinimized)
         max_button.clicked.connect(self._max_button_clicked)

@@ -6,6 +6,7 @@ QStackedWidget {
     background-color: rgb(13, 37, 59);
 }
 QLabel {
+    border: None;
     color: rgb(201, 216, 229);
 }
 QGroupBox {
@@ -26,10 +27,21 @@ QRadioButton::indicator:unchecked{
 QRadioButton::indicator:checked{
     image: url(./images/widgets/radiobox_selected_f.png);
 }
-
 #analyze_button {
     border-style: solid;
     border-width: 2px;
     border-color: rgb(37, 173, 231);
     color: rgb(37, 173, 231);
+}
+#save_button {
+    image: url(./images/widgets/button_save.png);
+}
+#save_button:hover {
+    image: url(./images/widgets/button_save_onhover.png);
+}
+#analyze_button {
+    image: url(./images/widgets/button_analyze.png);
+}
+#analyze_button:hover {
+    image: url(./images/widgets/button_analyze_onhover.png);
 }

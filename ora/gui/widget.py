@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5.Qt import QSize
 
 from style import text_colors
@@ -103,17 +103,19 @@ class TabItem(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
 
-class PicTabItem(QtWidgets.QWidget):
+class PicTabItem(QtWidgets.QPushButton):
     def __init__(self, parent=None, normal_img='', selected_img=''):
         super(PicTabItem, self).__init__(parent)
         self.normal_img = normal_img
         self.selected_img = selected_img
-        self.label = QtWidgets.QLabel()
-        self.label.setPixmap(QtGui.QPixmap(normal_img))
+        # self.label = QtWidgets.QLabel()
+        # self.label.setPixmap(QtGui.QPixmap(normal_img))
         self.layout = QtWidgets.QGridLayout()
-        self.layout.addWidget(self.label)
+        # self.layout.addWidget(self.label)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
+
+        # self.setPixmap(QtGui.QPixmap(normal_img))
 
     def to_selected_img(self):
         self.label.setPixmap(QtGui.QPixmap(self.selected_img))

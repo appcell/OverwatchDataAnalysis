@@ -39,9 +39,9 @@
      <widget class="QListWidget" name="video_listwidget">
       <property name="geometry">
        <rect>
-        <x>4</x>
+        <x>0</x>
         <y>0</y>
-        <width>695</width>
+        <width>699</width>
         <height>645</height>
        </rect>
       </property>
@@ -466,9 +466,9 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>2</x>
+         <x>12</x>
          <y>-2</y>
-         <width>265</width>
+         <width>255</width>
          <height>35</height>
         </rect>
        </property>
@@ -532,9 +532,9 @@
       <widget class="QLabel" name="label_9">
        <property name="geometry">
         <rect>
-         <x>2</x>
+         <x>12</x>
          <y>4</y>
-         <width>217</width>
+         <width>207</width>
          <height>37</height>
         </rect>
        </property>
@@ -582,24 +582,24 @@
       <widget class="QPushButton" name="analyze_button">
        <property name="geometry">
         <rect>
-         <x>608</x>
-         <y>6</y>
-         <width>87</width>
-         <height>35</height>
+         <x>610</x>
+         <y>14</y>
+         <width>80</width>
+         <height>28</height>
         </rect>
        </property>
        <property name="accessibleName">
         <string>analyze_button</string>
        </property>
        <property name="text">
-        <string>ANALYZE</string>
+        <string/>
        </property>
       </widget>
       <widget class="QPushButton" name="save_button">
        <property name="geometry">
         <rect>
-         <x>552</x>
-         <y>8</y>
+         <x>564</x>
+         <y>12</y>
          <width>39</width>
          <height>31</height>
         </rect>
@@ -610,18 +610,21 @@
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="flat">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
       <widget class="QLineEdit" name="path_lineedit">
        <property name="geometry">
         <rect>
-         <x>-2</x>
-         <y>8</y>
+         <x>10</x>
+         <y>12</y>
          <width>555</width>
          <height>31</height>
         </rect>
@@ -633,9 +636,9 @@
         <bool>false</bool>
        </property>
       </widget>
-      <zorder>path_lineedit</zorder>
       <zorder>save_button</zorder>
       <zorder>analyze_button</zorder>
+      <zorder>path_lineedit</zorder>
      </widget>
      <zorder>team_setting_group</zorder>
      <zorder>team_title_group</zorder>
@@ -771,9 +774,9 @@
    <widget class="QGroupBox" name="top_group">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>118</x>
       <y>0</y>
-      <width>971</width>
+      <width>973</width>
       <height>91</height>
      </rect>
     </property>
@@ -786,10 +789,10 @@
     <widget class="QPushButton" name="back_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>2</x>
        <y>0</y>
-       <width>75</width>
-       <height>71</height>
+       <width>83</width>
+       <height>89</height>
       </rect>
      </property>
      <property name="font">
@@ -807,10 +810,10 @@
     <widget class="QPushButton" name="help_button">
      <property name="geometry">
       <rect>
-       <x>690</x>
+       <x>700</x>
        <y>2</y>
        <width>65</width>
-       <height>69</height>
+       <height>85</height>
       </rect>
      </property>
      <property name="font">
@@ -818,8 +821,17 @@
        <pointsize>20</pointsize>
       </font>
      </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -828,10 +840,10 @@
     <widget class="QPushButton" name="min_button">
      <property name="geometry">
       <rect>
-       <x>758</x>
+       <x>764</x>
        <y>2</y>
        <width>65</width>
-       <height>71</height>
+       <height>83</height>
       </rect>
      </property>
      <property name="font">
@@ -852,7 +864,7 @@
        <x>828</x>
        <y>2</y>
        <width>71</width>
-       <height>75</height>
+       <height>85</height>
       </rect>
      </property>
      <property name="font">
@@ -873,7 +885,7 @@
        <x>900</x>
        <y>4</y>
        <width>65</width>
-       <height>73</height>
+       <height>81</height>
       </rect>
      </property>
      <property name="font">
@@ -929,9 +941,9 @@
     <widget class="QListWidget" name="tab_listwidget">
      <property name="geometry">
       <rect>
-       <x>6</x>
+       <x>4</x>
        <y>90</y>
-       <width>115</width>
+       <width>117</width>
        <height>669</height>
       </rect>
      </property>
