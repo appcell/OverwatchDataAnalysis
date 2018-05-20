@@ -6,7 +6,8 @@ from skimage import measure
 from . import overwatch as OW
 from .utils import image as ImageUtils
 
-
+import time as t
+import matplotlib.pyplot as plt
 
 class Player:
     """Class of a Killfeed object.
@@ -68,9 +69,20 @@ class Player:
         self.is_onfire = None
 
         
-        self.get_ult_status()
-        self.get_chara()
-        self.get_ult_charge()
+        self.current_time = t.time()
+
+        # 60ms baseline
+        self.get_ult_status() # 106ms or +0ms? 1ms each
+        print("--- get_ult_status %s ms ---" % ((t.time() - self.current_time) * 1000))
+        self.current_time = t.time()
+
+        self.get_chara() # +130ms 44ms each
+        print("--- get_chara %s ms ---" % ((t.time() - self.current_time) * 1000))
+        self.current_time = t.time()
+
+        self.get_ult_charge() # + 50ms 9/16 ms each
+        print("--- get_ult_charge %s ms ---" % ((t.time() - self.current_time) * 1000))
+        self.current_time = t.time()
 
         self.free()
 
@@ -171,35 +183,38 @@ class Player:
             self.index, self.game_type, self.game_version))
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index, self.game_type, self.game_version))
+        # plt.subplot(211)
+        # plt.imshow(avatar_observed)
+        # plt.subplot(212)
+        # plt.imshow(avatar)
+        # plt.gray()
+        # plt.show()
 
-        # If player is observed, not sure about this tho
-        avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
-            self.index, self.game_type, self.game_version))
-        max_diff = 0
-        for i in range(avatar_diff.shape[0]):
-            for j in range(avatar_diff.shape[1]):
-                if ImageUtils.color_distance(
-                        avatar_diff[i, j], team_color) > max_diff:
-                    max_diff = ImageUtils.color_distance(
-                        avatar_diff[i, j], team_color)
-        if max_diff < 40 and self.is_ult_ready is False:
-            self.is_observed = True
+        self._identify_is_observed(team_color)
+        
         score = 0
+
+        # + 120ms or 40ms each
         for (name, avatar_ref_observed) in avatars_ref_observed.items():
+            # 0 or 0.5 ms
             s_observed = cv2.matchTemplate(avatar_observed, avatar_ref_observed,
                                   cv2.TM_CCOEFF_NORMED)
             _, s_observed, _, loc_observed = cv2.minMaxLoc(s_observed)
+            # 1ms
             temp_avatar_observed = ImageUtils.crop(
                 avatar_observed, 
                 [loc_observed[1], avatar_ref_observed.shape[0], loc_observed[0], avatar_ref_observed.shape[1]])
             s_ssim_observed = measure.compare_ssim(temp_avatar_observed, avatar_ref_observed, 
                                           multichannel=True)
+            # almost 0ms
             s = cv2.matchTemplate(avatar, avatars_ref[
                                         name], cv2.TM_CCOEFF_NORMED)
             _, s, _, loc = cv2.minMaxLoc(s)
             temp_avatar = ImageUtils.crop(avatar, [loc[1], avatars_ref[
                                         name].shape[0], loc[0], avatars_ref[
                                         name].shape[1]])
+            # current_time = t.time()
+            # 1 or 0.5 ms
             s_ssim = measure.compare_ssim(
                         temp_avatar,
                         avatars_ref[name],
@@ -207,10 +222,13 @@ class Player:
             s_ssim_final = s_ssim_observed if s_ssim_observed > s_ssim else s_ssim
             s_final = s_observed if s_observed > s else s
             loc_final = loc_observed if s_observed > s else loc
+            # print("--- in get char %s ms ---" % ((t.time() - current_time) * 1000))
+            # current_time = t.time()
 
             if s_final*0.4 + s_ssim_final*0.6 > score:
                 score = s_final*0.4 + s_ssim_final*0.6
                 self.chara = name
+
 
         if self.chara is None:
             self.chara = "empty"
@@ -405,6 +423,30 @@ class Player:
                 self.ult_charge = num_left_value * 10 + num_right_value
 
         return 
+
+    def _identify_is_observed(self, team_color):
+        """
+        # 1ms each
+        # If player is observed, not sure about this tho
+        # not work if ult is ready???
+        """
+        # current_time = t.time()
+        avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
+            self.index, self.game_type, self.game_version))
+        max_diff = 0
+        if self.is_ult_ready is False:
+            for i in range(avatar_diff.shape[0]):
+                for j in range(avatar_diff.shape[1]):
+                    diff = ImageUtils.color_distance(
+                            avatar_diff[i, j], team_color)
+                    if diff > max_diff:
+                        max_diff = diff
+                        if max_diff > 40:
+                            return
+        self.is_observed = True
+        # if max_diff < 40 and self.is_ult_ready is False:
+        #     self.is_observed = True
+        # print("--- is_observed %s ms ---" % ((t.time() - current_time) * 1000))
 
     def _identify_ult_charge_digit(self, digit, digit_refs):
         """Retrieves ultimate charge for current player.
