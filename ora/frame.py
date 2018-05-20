@@ -24,7 +24,7 @@ class Frame(object):
         game: the Game object who fathers all frames
     """
 
-    def __init__(self, frame_image, frame_time, game, game_version=0):
+    def __init__(self, frame_image, frame_time, game, game_version=0, game_type=0):
         """Initialize a Frame object.
 
         Author:
@@ -38,11 +38,15 @@ class Frame(object):
         Returns:
             None 
         """
+        self.current_time = time.time()
         self.is_valid = False
         self.is_replay = False
         self.players = [None] * 12
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
+
+        print("--- resize %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.current_time = time.time()
         self.time = frame_time
         self.game = game
         self.game_version = game_version
@@ -51,10 +55,22 @@ class Frame(object):
         # Gui.gui_instance.show_progress(self.time)
 
         print(self.time)
-        self.get_players()
-        self.get_killfeeds()
-        self.validate()
-        self.free()
+        if self.game_type != OW.GAMETYPE_1ST:
+            self.get_players() # 246ms
+            print("--- get_players %s ms ---" % ((time.time() - self.current_time) * 1000))
+            self.current_time = time.time()
+
+        self.get_killfeeds() # 38ms
+        print("--- killfeeds %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.current_time = time.time()
+
+        self.validate() # 3ms
+        print("--- validate %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.current_time = time.time()
+
+        self.free() # 0ms
+        print("--- free %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.current_time = time.time()
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -96,7 +112,9 @@ class Frame(object):
         results = []
 
         for i in range(0, 12):
-            avatars = self.get_avatars(i)
+            # current_time = time.time()
+            avatars = self.get_avatars(i) # 12ms each, or 0 after 1st time.
+            # print("--- get_avatars %s ms ---" % ((time.time() - current_time) * 1000))
             team = -1
 
             if i < 6:
@@ -104,12 +122,13 @@ class Frame(object):
             else:
                 team = self.game.team_names[OW.RIGHT]
 
-            results.append(pool.PROCESS_POOL.apply_async(Player, 
-                args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
-                callback=self.player_callback))
+            self.players[i] = Player(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time)
+            # results.append(pool.PROCESS_POOL.apply_async(Player, 
+            #     args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
+            #     callback=self.player_callback))
         
-        for res in results:
-            res.wait()
+        # for res in results:
+        #     res.wait()
         
     def get_team_colors_from_image(self):
         """Get team colors from this frame.
@@ -170,7 +189,7 @@ class Frame(object):
 
         Validation by:
         1) Test if there's any players detectable. If none, frame is invalid
-        2) Test if top-right corner is white. If not, frame is invalid
+        2) Test if top-right corner is white for OWL. If not, frame is invalid
         If frame is valid and Game info (i.e. team colors, avatars) are not
         set, set them up.
 
@@ -183,17 +202,20 @@ class Frame(object):
         Returns:
             None 
         """
-        # 1) Test if there's any players detectable. If none, frame is invalid
+        self.is_valid = True
         flag = False
-        for player in self.players:
-            if player.is_dead is False:
-                flag = True
+        # 1) Test if there's any players detectable. If none, frame is invalid
+        # This is only for non 1st person games.
+        if self.game_type != OW.GAMETYPE_1ST:
+            for player in self.players:
+                if player.is_dead is False:
+                    flag = True
+                    break
 
-        if flag is False:
-            self.is_valid = False
-            return
-        else:
-            self.is_valid = True
+            if flag is False:
+                self.is_valid = False
+                return
+
 
         # 2) Test if top-right corner is white. If not, frame is invalid.
         # This is only for OWL games.
@@ -241,7 +263,8 @@ class Frame(object):
         # set, set them up.
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
-            self.game.avatars_ref = self._get_avatars_before_validation()
+            if self.game_type != OW.GAMETYPE_1ST:
+                self.game.avatars_ref = self._get_avatars_before_validation()
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.

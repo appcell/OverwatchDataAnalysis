@@ -239,6 +239,10 @@ class Killfeed:
             edge_image = cv2.Canny(self.image, 100, 200)
             # Get the "spanned" edge image.
             edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255
+        elif self.game_type == OW.GAMETYPE_1ST:
+            edge_image = cv2.Canny(self.image, 100, 200)
+            # Get the "spanned" edge image.
+            edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255           
 
         return edge_span
 

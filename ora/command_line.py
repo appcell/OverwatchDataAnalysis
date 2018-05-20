@@ -51,7 +51,7 @@ class Program(object):
             Mandatory arguments:
                 F:/video.mp4         Absolute path of video
                 F:/                  Absolute path of output file
-                0                    A number representing game type. 0: OWL, 1: Non-OWL
+                0                    A number representing game type. 0: OWL, 1: Non-OWL, 2: 1st person
 
             Optional:
                 players=players.txt  A text file saving info of all 12 players with JSON formatting
@@ -132,20 +132,20 @@ class Program(object):
         except ValueError:
             log('Invalid game type!')
 
-        if not (info['game_type'] == 0 or info['game_type'] == 1):
+        if not (info['game_type'] >= 0 and info['game_type'] <= 2):
             raise ValueError('Invalid game type!')
         return info
 
     def run(self):
         info = self.info()
-        game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
-        self.game_instance = game.Game(game_type)
+        # game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
+        self.game_instance = game.Game(info['game_type'])
         self.game_instance.set_game_info(info)
         self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
         pool.PROCESS_POOL.close()
         pool.PROCESS_POOL.join()
-        self.game_instance.output_to_json()
-        self.game_instance.output_to_excel()
+        # self.game_instance.output_to_json()
+        # self.game_instance.output_to_excel()
         log('ok')
 
 program = Program()

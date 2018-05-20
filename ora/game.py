@@ -16,7 +16,7 @@ class Game(object):
 
     Attributes:
         game_type: type of this game, can be OW.CAMETYPE_OWL or
-            OW.GAMETYPE_CUSTOM
+            OW.GAMETYPE_CUSTOM, OW.GAMETYPE_1ST
         analyzer_fps: FPS of game analyzer, usually 2 for OWL video
         team_names: names of both teams
         name_players_team_left: names of players in left team
@@ -92,6 +92,9 @@ class Game(object):
             self.team_colors = frame.get_team_colors_from_image()
         elif self.game_type == OW.GAMETYPE_CUSTOM:
             self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
+        elif self.game_type == OW.GAMETYPE_1ST:
+            # TODO
+            self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type - 1][self.game_version]
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -152,7 +155,12 @@ class Game(object):
         Returns:
             None 
         """
+        current_time = time.time()
         video = VideoLoader(self.video_path)
+        print("--- Loading video %s ms ---" % ((time.time() - current_time) * 1000))
+        current_time = time.time()
+        # print('bktest show fps')
+        # print(video.fps)
         step = int(round(video.fps/self.analyzer_fps))
         step_cnt = 0
         self.is_test = is_test
@@ -163,25 +171,50 @@ class Game(object):
         start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
+        print("--- get_frame_image %s ms ---" % ((time.time() - current_time) * 1000))
+        current_time = time.time()
+        # print("frame_image_index %d video.frame_number %d" % (frame_image_index, video.frame_number))
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_full_video is True) \
             or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = []
-            if self.is_game_version_set:
+            if self.game_type == OW.GAMETYPE_1ST:
+                print(self.game_type)
+                frame = Frame(frame_image,
+                              start_time +
+                              (1 / float(self.analyzer_fps)) * step_cnt,
+                              self, self.game_version, self.game_type)
+            elif self.is_game_version_set:
+                print('Analyzing frame with game version set.')
                 frame = Frame(frame_image,
                               start_time +
                               (1 / float(self.analyzer_fps)) * step_cnt,
                               self, self.game_version)
             else:
+                print('Analyzing frame without game version set.')
                 frame = self._set_game_version(
                     frame_image,
                     start_time +(1 / float(self.analyzer_fps)) * step_cnt)
-            self.frames.append(frame)
+                if not frame:
+                    print('Invalid frame.')
+
+            if frame:
+                self.frames.append(frame)
+
             frame_image_index += step
             step_cnt += 1
+            print("--- Processing frame %s ms ---" % ((time.time() - current_time) * 1000))
+            current_time = time.time()
             frame_image = video.get_frame_image(frame_image_index)
+            print("--- get_frame_image for next frame %s ms ---" % ((time.time() - current_time) * 1000))
+            current_time = time.time()
+
         video.close()
+        print("--- Processing video %s ms ---" % ((time.time() - current_time) * 1000))
+        current_time = time.time()
         self.postprocess()
+        print("--- Post processing video %s ms ---" % ((time.time() - current_time) * 1000))
+        current_time = time.time()
 
     def _set_game_version(self, frame_image, frame_time):
         for i in range(OW.VERSION_NUM[self.game_type]):

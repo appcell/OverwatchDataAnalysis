@@ -18,6 +18,7 @@ import numpy as np
 # **********************************************************
 GAMETYPE_OWL = 0
 GAMETYPE_CUSTOM = 1
+GAMETYPE_1ST = 2
 ANALYZER_FPS = 2
 DEFAULT_SCREEN_WIDTH = 1280
 DEFAULT_SCREEN_HEIGHT = 720
@@ -529,6 +530,9 @@ ULT_CHARGE_IMG_WIDTH = {
     },
     GAMETYPE_CUSTOM: {
         0: 6
+    },
+    GAMETYPE_1ST: {
+        0: 6
     }
 }
 ULT_CHARGE_IMG_WIDTH_OBSERVED = {
@@ -537,6 +541,9 @@ ULT_CHARGE_IMG_WIDTH_OBSERVED = {
         1: 7
     },
     GAMETYPE_CUSTOM: {
+        0: 7
+    },
+    GAMETYPE_1ST: {
         0: 7
     }
 }
@@ -548,6 +555,9 @@ ULT_CHARGE_IMG_HEIGHT = {
     },
     GAMETYPE_CUSTOM: {
         0: 16
+    },
+    GAMETYPE_1ST: {
+        0: 16
     }
 }
 ULT_CHARGE_IMG_HEIGHT_OBSERVED = {
@@ -556,6 +566,9 @@ ULT_CHARGE_IMG_HEIGHT_OBSERVED = {
         1: 18
     },
     GAMETYPE_CUSTOM: {
+        0: 18
+    },
+    GAMETYPE_1ST: {
         0: 18
     }
 }
@@ -914,6 +927,9 @@ KILLFEED_ICON_HEIGHT = {
     },
     GAMETYPE_CUSTOM: {
         0: 21
+    },
+    GAMETYPE_1ST: {
+        0: 21
     }
 }
 KILLFEED_ICON_WIDTH = {
@@ -922,6 +938,9 @@ KILLFEED_ICON_WIDTH = {
         1: 31
     },
     GAMETYPE_CUSTOM: {
+        0: 31
+    },
+    GAMETYPE_1ST: {
         0: 31
     }
 }
@@ -933,6 +952,9 @@ KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT = {
     },
     GAMETYPE_CUSTOM: {
         0: 0.7
+    },
+    GAMETYPE_1ST: {
+        0: 0.7
     }
 }
 KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT = {
@@ -941,6 +963,9 @@ KILLFEED_ICON_EDGE_HEIGHT_RATIO_RIGHT = {
         1: 0.7
     },
     GAMETYPE_CUSTOM: {
+        0: 0.7
+    },
+    GAMETYPE_1ST: {
         0: 0.7
     }
 }
@@ -952,6 +977,9 @@ KILLFEED_WIDTH = {
     },
     GAMETYPE_CUSTOM: {
         0: 320
+    },
+    GAMETYPE_1ST: {
+        0: 320
     }
 }
 KILLFEED_RIGHT_WIDTH = {
@@ -960,6 +988,9 @@ KILLFEED_RIGHT_WIDTH = {
         1: 140
     },
     GAMETYPE_CUSTOM: {
+        0: 140
+    },
+    GAMETYPE_1ST: {
         0: 140
     }
 }
@@ -971,6 +1002,9 @@ KILLFEED_X_MIN = {
     },
     GAMETYPE_CUSTOM: {
         0: 963
+    },
+    GAMETYPE_1ST: {
+        0: 963
     }
 }
 KILLFEED_Y_MIN = {
@@ -979,6 +1013,9 @@ KILLFEED_Y_MIN = {
         1: 114 + 25
     },
     GAMETYPE_CUSTOM: {
+        0: 114
+    },
+    GAMETYPE_1ST: {
         0: 114
     }
 }
@@ -989,6 +1026,9 @@ KILLFEED_WIDTH = {
     },
     GAMETYPE_CUSTOM: {
         0: 320
+    },
+    GAMETYPE_1ST: {
+        0: 320
     }
 }
 KILLFEED_HEIGHT = {
@@ -998,6 +1038,9 @@ KILLFEED_HEIGHT = {
     },
     GAMETYPE_CUSTOM: {
         0: 27
+    },
+    GAMETYPE_1ST: {
+        0: 27
     }
 }
 KILLFEED_GAP = {
@@ -1006,6 +1049,9 @@ KILLFEED_GAP = {
         1: 35
     },
     GAMETYPE_CUSTOM: {
+        0: 35
+    },
+    GAMETYPE_1ST: {
         0: 35
     }
 }
@@ -1017,6 +1063,9 @@ KILLFEED_MAX_PROB = {
     },
     GAMETYPE_CUSTOM: {
         0: 0.6
+    },
+    GAMETYPE_1ST: {
+        0: 0.6
     }
 }
 KILLFEED_SSIM_THRESHOLD = {
@@ -1025,6 +1074,9 @@ KILLFEED_SSIM_THRESHOLD = {
         1: 0.35
     },
     GAMETYPE_CUSTOM: {
+        0: 0.35
+    },
+    GAMETYPE_1ST: {
         0: 0.35
     }
 }
@@ -1035,6 +1087,9 @@ KILLFEED_MAX_COLOR_DISTANCE = {
     },
     GAMETYPE_CUSTOM: {
         0: 120
+    },
+    GAMETYPE_1ST: {
+        0: 120
     }
 }
 KILLFEED_EDGE_MAX_COLOR_DISTANCE = {
@@ -1043,6 +1098,9 @@ KILLFEED_EDGE_MAX_COLOR_DISTANCE = {
         1: 30
     },
     GAMETYPE_CUSTOM: {
+        0: 80
+    },
+    GAMETYPE_1ST: {
         0: 80
     }
 }
@@ -1054,6 +1112,9 @@ KILLFEED_TEAM_COLOR_POS_Y = {
     },
     GAMETYPE_CUSTOM: {
         0: 2
+    },
+    GAMETYPE_1ST: {
+        0: 2
     }
 }
 
@@ -1064,6 +1125,9 @@ KILLFEED_TEAM_COLOR_POS_X_LEFT = {
     },
     GAMETYPE_CUSTOM: {
         0: -1
+    },
+    GAMETYPE_1ST: {
+        0: -1
     }
 }
 KILLFEED_TEAM_COLOR_POS_X_RIGHT = {
@@ -1072,6 +1136,9 @@ KILLFEED_TEAM_COLOR_POS_X_RIGHT = {
         1: 10
     },
     GAMETYPE_CUSTOM: {
+        0: 1
+    },
+    GAMETYPE_1ST: {
         0: 1
     }
 }
@@ -1185,6 +1252,9 @@ ABILITY_ICON_WIDTH = {
     },
     GAMETYPE_CUSTOM: {
         0: 26
+    },
+    GAMETYPE_1ST: {
+        0: 26
     }
 }
 ABILITY_ICON_HEIGHT = {
@@ -1193,6 +1263,9 @@ ABILITY_ICON_HEIGHT = {
         1: 26
     },
     GAMETYPE_CUSTOM: {
+        0: 26
+    },
+    GAMETYPE_1ST: {
         0: 26
     }
 }
@@ -1204,6 +1277,9 @@ ABILITY_ICON_REF_WIDTH = {
     },
     GAMETYPE_CUSTOM: {
         0: 22
+    },
+    GAMETYPE_1ST: {
+        0: 22
     }
 }
 ABILITY_ICON_REF_HEIGHT = {
@@ -1212,6 +1288,9 @@ ABILITY_ICON_REF_HEIGHT = {
         1: 22
     },
     GAMETYPE_CUSTOM: {
+        0: 22
+    },
+    GAMETYPE_1ST: {
         0: 22
     }
 }
@@ -1223,6 +1302,9 @@ ABILITY_ICON_COLOR_FILTER_THRESHOLD = {
     },
     GAMETYPE_CUSTOM: {
         0: 70
+    },
+    GAMETYPE_1ST: {
+        0: 70
     }
 }
 
@@ -1233,6 +1315,9 @@ ABILITY_GAP_ICON = {
     },
     GAMETYPE_CUSTOM: {
         0: 26
+    },
+    GAMETYPE_1ST: {
+        0: 26
     }
 }
 ABILITY_GAP_NORMAL = {
@@ -1241,6 +1326,9 @@ ABILITY_GAP_NORMAL = {
         1: 30
     },
     GAMETYPE_CUSTOM: {
+        0: 30
+    },
+    GAMETYPE_1ST: {
         0: 30
     }
 }
@@ -1252,6 +1340,9 @@ ASSIST_ICON_Y_MIN = {
     },
     GAMETYPE_CUSTOM: {
         0: 6
+    },
+    GAMETYPE_1ST: {
+        0: 6
     }
 }
 ABILITY_ICON_Y_MIN = {
@@ -1260,6 +1351,9 @@ ABILITY_ICON_Y_MIN = {
         1: 2
     },
     GAMETYPE_CUSTOM: {
+        0: 2
+    },
+    GAMETYPE_1ST: {
         0: 2
     }
 }
@@ -1270,6 +1364,9 @@ ABILITY_ICON_X_MIN = {
         1: -23
     },
     GAMETYPE_CUSTOM: {
+        0: -23
+    },
+    GAMETYPE_1ST: {
         0: -23
     }
 }
@@ -1331,6 +1428,9 @@ ASSIST_GAP = {
     },
     GAMETYPE_CUSTOM: {
         0: 18
+    },
+    GAMETYPE_1ST: {
+        0: 18
     }
 }
 
@@ -1341,6 +1441,9 @@ ASSIST_ICON_HEIGHT = {
     },
     GAMETYPE_CUSTOM: {
         0: 18
+    },
+    GAMETYPE_1ST: {
+        0: 18
     }
 }
 ASSIST_ICON_WIDTH = {
@@ -1349,6 +1452,9 @@ ASSIST_ICON_WIDTH = {
         1: 12
     },
     GAMETYPE_CUSTOM: {
+        0: 12
+    },
+    GAMETYPE_1ST: {
         0: 12
     }
 }
@@ -1359,6 +1465,9 @@ ASSIST_ICON_X_OFFSET = {
         1: 8
     },
     GAMETYPE_CUSTOM: {
+        0: 8
+    },
+    GAMETYPE_1ST: {
         0: 8
     }
 }
@@ -1412,6 +1521,9 @@ FRAME_VALIDATION_EFFECT_TIME = {
     },
     GAMETYPE_CUSTOM: {
         0: 2.0
+    },
+    GAMETYPE_1ST: {
+        0: 2.0
     }
 }
 FRAME_VALIDATION_EFFECT_AFTER_TIME = {
@@ -1421,6 +1533,9 @@ FRAME_VALIDATION_EFFECT_AFTER_TIME = {
     },
     GAMETYPE_CUSTOM: {
         0: 0.7
+    },
+    GAMETYPE_1ST: {
+        0: 0.7
     }
 }
 FRAME_VALIDATION_REPLAY_PROB = {
@@ -1429,6 +1544,9 @@ FRAME_VALIDATION_REPLAY_PROB = {
         1: 0.5
     },
     GAMETYPE_CUSTOM: {
+        0: 0.5
+    },
+    GAMETYPE_1ST: {
         0: 0.5
     }
 }
@@ -1440,6 +1558,9 @@ REPLAY_ICON_POS = {
     },
     GAMETYPE_CUSTOM: {
         0: [111, 64, 64, 74]
+    },
+    GAMETYPE_1ST: {
+        0: [111, 64, 64, 74]
     }
 }
 
@@ -1449,6 +1570,9 @@ REPLAY_ICON_POS_PRESEASON = {
         1: [109, 66, 23, 74]
     },
     GAMETYPE_CUSTOM: {
+        0: [109, 66, 23, 74]
+    },
+    GAMETYPE_1ST: {
         0: [109, 66, 23, 74]
     }
 }
