@@ -108,14 +108,20 @@ class PicTabItem(QtWidgets.QPushButton):
         super(PicTabItem, self).__init__(parent)
         self.normal_img = normal_img
         self.selected_img = selected_img
-        # self.label = QtWidgets.QLabel()
-        # self.label.setPixmap(QtGui.QPixmap(normal_img))
+        self.setFixedSize(120, 90)
+        self.label = QtWidgets.QLabel()
+        self.label.setPixmap(QtGui.QPixmap(normal_img))
+        #self.label.setMinimumSize(120, 90)
         self.layout = QtWidgets.QGridLayout()
-        # self.layout.addWidget(self.label)
+        self.layout.addWidget(self.label)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSizeConstraint(4)
         self.setLayout(self.layout)
 
-        # self.setPixmap(QtGui.QPixmap(normal_img))
+        self.clicked.connect(self.button_clicked)
+
+    def button_clicked(self):
+        print(self.normal_img)
 
     def to_selected_img(self):
         self.label.setPixmap(QtGui.QPixmap(self.selected_img))
