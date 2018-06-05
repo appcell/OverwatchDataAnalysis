@@ -192,12 +192,18 @@ TEAM_COLOR_PICK_POS_RIGHT = {
     }
 }
 TEAM_COLORS_DEFAULT = {
+    # OpenCV uses BGR
     GAMETYPE_OWL: {
         0: [np.array([170, 130, 35]), np.array([18, 3, 156])],
         1: [np.array([170, 130, 35]), np.array([18, 3, 156])]
     },
     GAMETYPE_CUSTOM: {
         0: [np.array([170, 130, 35]), np.array([18, 3, 156])]
+    },
+    GAMETYPE_1ST: {
+        # blue is https://www.w3schools.com/colors/colors_rgb.asp?color=rgb(0,%20191,%20255)
+        # red is https://www.w3schools.com/colors/colors_rgb.asp?color=rgb(0,%20191,%20255)
+        0: [np.array([213, 176, 108]), np.array([90, 70, 140])]
     }
 }
 # **********************************************************
@@ -370,7 +376,7 @@ ULT_CHARGE_PRE_X_MIN_LEFT = {
         1: 20 + 3
     },
     GAMETYPE_CUSTOM: {
-        0: 19
+        0: 17
     }
 }
 ULT_CHARGE_PRE_X_MIN_RIGHT = {
@@ -379,7 +385,7 @@ ULT_CHARGE_PRE_X_MIN_RIGHT = {
         1: 825 - 3
     },
     GAMETYPE_CUSTOM: {
-        0: 825
+        0: 825 - 2
     }
 }
 ULT_CHARGE_PRE_WIDTH = {
@@ -415,7 +421,7 @@ ULT_CHARGE_PRE_GAP = {
         1: 70.6
     },
     GAMETYPE_CUSTOM: {
-        0: 70.6
+        0: 71
     }
 }
 
@@ -1004,7 +1010,7 @@ KILLFEED_X_MIN = {
         0: 963
     },
     GAMETYPE_1ST: {
-        0: 963
+        0: 963 - 30
     }
 }
 KILLFEED_Y_MIN = {
@@ -1016,7 +1022,7 @@ KILLFEED_Y_MIN = {
         0: 114
     },
     GAMETYPE_1ST: {
-        0: 114
+        0: 27
     }
 }
 KILLFEED_WIDTH = {
@@ -1211,7 +1217,7 @@ def get_killfeed_pos(index, gametype, version):
         index: index of killfeed row
 
     Returns:
-        pos array of this killfeed row
+        pos array of this killfeed row while width is fixed
     """
     return [math.floor(KILLFEED_Y_MIN[gametype][version] + index * KILLFEED_GAP[gametype][version]),
             math.floor(KILLFEED_HEIGHT[gametype][version]),

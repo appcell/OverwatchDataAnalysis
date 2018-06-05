@@ -6,7 +6,7 @@ from . import game
 from . import pool
 from json import load
 from sys import argv
-
+import time
 
 def log(*args):
     print(args)
@@ -35,6 +35,23 @@ class Program(object):
         Retrieving info from user input in command line
         """
         # Getting fps
+        if 'help' in self.argv:
+            print("""
+            Example:
+                main_cli.exe <video_path> <output_path> <number> players=player.txt fps=2 start_time=0 end_time=0
+
+            Mandatory arguments:
+                <video_path>         Absolute path of video(example: F:/video.mp4)
+                <output_path>        Absolute path of output file(example: F:/)
+                <number>             A number representing game type. 0: OWL, 1: Non-OWL
+
+            Optional:
+                players=players.txt  A text file saving info of all 12 players with JSON formatting
+                fps=2                FPS of analyzer (2 by default)
+                start_time=0         Starting time in seconds
+                end_time=0           Ending time in seconds (If both are 0, then the whole video is analyzed)
+                """)
+            exit(0)
         fps = self._get_data('fps')
         info = {
             'fps': 2 if fps is None else fps,
@@ -45,19 +62,7 @@ class Program(object):
         if len(self.argv) <= 3 or len(self.argv) > 4:
             raise ValueError("""
             Please input with proper amount of arguments.
-            Example:
-                main.exe F:/video.mp4 F:/ 0 players=player.txt fps=2 start_time=0 end_time=0
-
-            Mandatory arguments:
-                F:/video.mp4         Absolute path of video
-                F:/                  Absolute path of output file
-                0                    A number representing game type. 0: OWL, 1: Non-OWL, 2: 1st person
-
-            Optional:
-                players=players.txt  A text file saving info of all 12 players with JSON formatting
-                fps=2                FPS of analyzer (2 by default)
-                start_time=0         Starting time in seconds
-                end_time=0           Ending time in seconds (If both are 0, then the whole video is analyzed)
+            如需帮助请输入 main_cli.py help
             """)
         info['video_path'] = self.argv[1]
         info['output_path'] = self.argv[2]
@@ -73,7 +78,8 @@ class Program(object):
             info['name_players_team_left'] = ['player' + str(i) for i in range(1, 7)]
             info['name_players_team_right'] = ['player' + str(i) for i in range(7, 13)]
         else:
-            data = load(open(player_path, 'r'))
+            with open(player_path, 'r') as f:
+                data = load(f)
             """
             JSON format:
             {
@@ -137,15 +143,24 @@ class Program(object):
         return info
 
     def run(self):
+        current_time = time.time()
         info = self.info()
-        # game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
+        if (info['game_type'] == 0):
+            game_type = OW.GAMETYPE_OWL
+        elif (info['game_type'] == 1):
+            game_type = OW.GAMETYPE_CUSTOM
+        else:
+            game_type = OW.GAMETYPE_1ST
         self.game_instance = game.Game(info['game_type'])
         self.game_instance.set_game_info(info)
         self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
         pool.PROCESS_POOL.close()
         pool.PROCESS_POOL.join()
-        # self.game_instance.output_to_json()
-        # self.game_instance.output_to_excel()
+        self.game_instance.output_to_json()
+        if game_type != OW.GAMETYPE_1ST:
+            # Output to excel not supported yet for this type
+            self.game_instance.output_to_excel()
         log('ok')
+        log('Total time: %d ms' % ((time.time() - current_time) * 1000))
 
 program = Program()

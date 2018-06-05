@@ -1,4 +1,5 @@
 import cv2
+import logging
 import numpy as np
 from skimage import measure
 from . import overwatch as OW
@@ -45,8 +46,9 @@ class Frame(object):
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
 
-        print("--- resize %s ms ---" % ((time.time() - self.current_time) * 1000))
+        logging.debug('resize time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
+
         self.time = frame_time
         self.game = game
         self.game_version = game_version
@@ -56,20 +58,20 @@ class Frame(object):
 
         print(self.time)
         if self.game_type != OW.GAMETYPE_1ST:
-            self.get_players() # 246ms
-            print("--- get_players %s ms ---" % ((time.time() - self.current_time) * 1000))
+            self.get_players() # Costs 246ms on i5
+            logging.debug('get_players time: %d ms', (time.time() - self.current_time) * 1000)
             self.current_time = time.time()
 
-        self.get_killfeeds() # 38ms
-        print("--- killfeeds %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.get_killfeeds() # Costs 38ms on i5
+        logging.debug('get_killfeeds time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
 
-        self.validate() # 3ms
-        print("--- validate %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.validate() # Costs 3ms on i5
+        logging.debug('validate time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
 
-        self.free() # 0ms
-        print("--- free %s ms ---" % ((time.time() - self.current_time) * 1000))
+        self.free() # Costs 0ms on i5
+        logging.debug('free time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
 
     def free(self):
@@ -155,7 +157,7 @@ class Frame(object):
                 return self.game.team_colors
             else:
                 return self.get_team_colors_from_image()
-        elif self.game_type == OW.GAMETYPE_CUSTOM:
+        elif self.game_type == OW.GAMETYPE_CUSTOM or self.game_type == OW.GAMETYPE_1ST:
             return OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
 
     def get_killfeeds(self):
@@ -349,7 +351,8 @@ class Frame(object):
     def dict(self):
         d = {
             'time': self.time,
-            'players': [player.dict() for player in self.players],
             'killfeeds': [killfeed.dict() for killfeed in self.killfeeds]
         }
+        if self.game_type != OW.GAMETYPE_1ST:
+            d['players'] = [player.dict() for player in self.players]
         return d

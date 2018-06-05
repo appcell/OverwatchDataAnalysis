@@ -8,6 +8,7 @@ import math as Math
 import time
 import copy
 import cv2
+import logging
 
 class Game(object):
     """Class of a Game object.
@@ -90,11 +91,8 @@ class Game(object):
         """
         if self.game_type == OW.GAMETYPE_OWL:
             self.team_colors = frame.get_team_colors_from_image()
-        elif self.game_type == OW.GAMETYPE_CUSTOM:
+        elif self.game_type == OW.GAMETYPE_CUSTOM or self.game_type == OW.GAMETYPE_1ST:
             self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
-        elif self.game_type == OW.GAMETYPE_1ST:
-            # TODO
-            self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type - 1][self.game_version]
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -157,10 +155,9 @@ class Game(object):
         """
         current_time = time.time()
         video = VideoLoader(self.video_path)
-        print("--- Loading video %s ms ---" % ((time.time() - current_time) * 1000))
+        logging.debug('Loading video time: %d ms', (time.time() - current_time) * 1000)
         current_time = time.time()
-        # print('bktest show fps')
-        # print(video.fps)
+
         step = int(round(video.fps/self.analyzer_fps))
         step_cnt = 0
         self.is_test = is_test
@@ -171,49 +168,49 @@ class Game(object):
         start_time = start_time if is_full_video is False else 0
         frame_image_index = start_time * video.fps 
         frame_image = video.get_frame_image(frame_image_index)
-        print("--- get_frame_image %s ms ---" % ((time.time() - current_time) * 1000))
+        logging.debug('Loading get_frame_image time: %d ms', (time.time() - current_time) * 1000)
         current_time = time.time()
-        # print("frame_image_index %d video.frame_number %d" % (frame_image_index, video.frame_number))
+
         while frame_image is not None \
             and (frame_image_index < video.frame_number and is_full_video is True) \
             or (frame_image_index < end_time * video.fps and is_full_video is False):
             frame = []
             if self.game_type == OW.GAMETYPE_1ST:
-                print(self.game_type)
                 frame = Frame(frame_image,
                               start_time +
                               (1 / float(self.analyzer_fps)) * step_cnt,
                               self, self.game_version, self.game_type)
             elif self.is_game_version_set:
-                print('Analyzing frame with game version set.')
+                logging.debug('Analyzing frame with game version set.')
                 frame = Frame(frame_image,
                               start_time +
                               (1 / float(self.analyzer_fps)) * step_cnt,
                               self, self.game_version)
             else:
-                print('Analyzing frame without game version set.')
+                logging.debug('Analyzing frame without game version set.')
                 frame = self._set_game_version(
                     frame_image,
                     start_time +(1 / float(self.analyzer_fps)) * step_cnt)
                 if not frame:
-                    print('Invalid frame.')
+                    logging.debug('Invalid frame.')
 
             if frame:
                 self.frames.append(frame)
 
             frame_image_index += step
             step_cnt += 1
-            print("--- Processing frame %s ms ---" % ((time.time() - current_time) * 1000))
+            logging.debug('Processing frame time: %d ms', (time.time() - current_time) * 1000)
             current_time = time.time()
             frame_image = video.get_frame_image(frame_image_index)
-            print("--- get_frame_image for next frame %s ms ---" % ((time.time() - current_time) * 1000))
+            logging.debug('get_frame_image time: %d ms', (time.time() - current_time) * 1000)
             current_time = time.time()
 
         video.close()
-        print("--- Processing video %s ms ---" % ((time.time() - current_time) * 1000))
+        logging.debug('Processing video time: %d ms', (time.time() - current_time) * 1000)
         current_time = time.time()
-        self.postprocess()
-        print("--- Post processing video %s ms ---" % ((time.time() - current_time) * 1000))
+        if self.game_type != OW.GAMETYPE_1ST:
+            self.postprocess()
+            logging.debug('Post processing video time: %d ms', (time.time() - current_time) * 1000)
         current_time = time.time()
 
     def _set_game_version(self, frame_image, frame_time):
@@ -416,6 +413,8 @@ class Game(object):
         """
         for ind in range(1, len(players_list) - 1):
             for ind_player in range(12):
+                if not players_list[ind - 1][ind_player] or not players_list[ind + 1][ind_player]:
+                    return
                 if players_list[ind - 1][ind_player].chara \
                 == players_list[ind + 1][ind_player].chara:
                     players_list[ind][ind_player].chara = players_list[ind - 1][ind_player].chara
@@ -608,6 +607,8 @@ class Game(object):
         player does this, it's only for when he has a mini-D.Va (i.e. with a
         meka down event beforehand). Since now we don't have D.Va status
         detector, we leave this one for later.
+        However, as always, we preserve ult charge recog when charge == 100，
+        since it's the only data sure to be accurate.
 
         Author: Appcell
 
@@ -624,6 +625,17 @@ class Game(object):
         # 1) Remove unnatually small charge nums
         for ind in range(12):
             for ind_frame in range(1, players_list_len - 1):
+                if players_list[ind_frame][ind].ult_charge == 100:
+                    continue
+                # Special occasion: sometimes the analyzer doesn't capture
+                # the frame where ult charge reaches 100, then player used
+                # that ult immediately. In this case, we preserve original
+                # recognition result, then add an artifical ult used event.
+                if players_list[ind_frame][ind].ult_charge < 10 \
+                and players_list[ind_frame - 1][ind].ult_charge > 95:
+                    players_list[ind_frame - 1][ind].is_ult_ready = True
+                    players_list[ind_frame][ind].is_ult_ready = False
+                    continue
                 if players_list[ind_frame][ind].ult_charge \
                 < players_list[ind_frame - 1][ind].ult_charge:
                     if ind_frame < searched_frame_num:
@@ -659,9 +671,12 @@ class Game(object):
                     if (flag_ult_used or flag_player_switched or flag_dva_status_change) is False:
                         players_list[ind_frame][ind].ult_charge \
                             = players_list[ind_frame - 1][ind].ult_charge
+
         # 2) Remove unnatually large charge nums
         for ind in range(12):
             for ind_frame in range(1, players_list_len - 1):
+                if players_list[ind_frame][ind].ult_charge == 100:
+                    continue
                 if players_list[ind_frame][ind].ult_charge \
                 > players_list[ind_frame - 1][ind].ult_charge:
                     unnatural_frame_ind = ind_frame
