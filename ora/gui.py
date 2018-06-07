@@ -165,6 +165,8 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         }
 
     def info(self):
+        # Extract information from GUI. 
+        # Read time configuration, player names and validate user input.
         valid = True
         info = {
             "name_team_left": "left",
@@ -253,22 +255,26 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
 
     def run(self):
         info, valid = self.info()
+        if not valid:
+            print('Invalid user input.')
+            return
+
         game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
         self.game_instance = game.Game(game_type)
-        if valid is True:
-            self.game_instance.set_game_info(info)
-            pool.initPool()
+        self.game_instance.set_game_info(info)
 
-            try:
-                self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
-            except Exception as err:
-                print(err)
-            else:
-                self.game_instance.output_to_json()
-                self.game_instance.output_to_excel()
-                self.show_finish_msg()
-                
-            pool.PROCESS_POOL.close()
-            pool.PROCESS_POOL.join()
+        pool.initPool()
+
+        try:
+            self.game_instance.analyze(info['start_time'], info['end_time'], is_test=True)
+        except Exception as err:
+            print(err)
+        else:
+            self.game_instance.output_to_json()
+            self.game_instance.output_to_excel()
+            self.show_finish_msg()
+            
+        pool.PROCESS_POOL.close()
+        pool.PROCESS_POOL.join()
 
 gui_instance = Gui()
