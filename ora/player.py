@@ -6,8 +6,8 @@ from skimage import measure
 from . import overwatch as OW
 from .utils import image as ImageUtils
 
+import logging
 import time as t
-import matplotlib.pyplot as plt
 
 class Player:
     """Class of a Killfeed object.
@@ -73,15 +73,15 @@ class Player:
 
         # 60ms baseline
         self.get_ult_status() # 106ms or +0ms? 1ms each
-        print("--- get_ult_status %s ms ---" % ((t.time() - self.current_time) * 1000))
+        logging.debug('get_ult_status time: %d ms', (t.time() - self.current_time) * 1000)
         self.current_time = t.time()
 
         self.get_chara() # +130ms 44ms each
-        print("--- get_chara %s ms ---" % ((t.time() - self.current_time) * 1000))
+        logging.debug('get_chara time: %d ms', (t.time() - self.current_time) * 1000)
         self.current_time = t.time()
 
         self.get_ult_charge() # + 50ms 9/16 ms each
-        print("--- get_ult_charge %s ms ---" % ((t.time() - self.current_time) * 1000))
+        logging.debug('get_ult_charge time: %d ms', (t.time() - self.current_time) * 1000)
         self.current_time = t.time()
 
         self.free()
@@ -182,12 +182,6 @@ class Player:
             self.index, self.game_type, self.game_version))
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index, self.game_type, self.game_version))
-        # plt.subplot(211)
-        # plt.imshow(avatar_observed)
-        # plt.subplot(212)
-        # plt.imshow(avatar)
-        # plt.gray()
-        # plt.show()
 
         self._identify_is_observed(team_color)
         
@@ -212,8 +206,6 @@ class Player:
             temp_avatar = ImageUtils.crop(avatar, [loc[1], avatars_ref[
                                         name].shape[0], loc[0], avatars_ref[
                                         name].shape[1]])
-            # current_time = t.time()
-            # 1 or 0.5 ms
             s_ssim = measure.compare_ssim(
                         temp_avatar,
                         avatars_ref[name],
@@ -221,13 +213,10 @@ class Player:
             s_ssim_final = s_ssim_observed if s_ssim_observed > s_ssim else s_ssim
             s_final = s_observed if s_observed > s else s
             loc_final = loc_observed if s_observed > s else loc
-            # print("--- in get char %s ms ---" % ((t.time() - current_time) * 1000))
-            # current_time = t.time()
 
             if s_final*0.4 + s_ssim_final*0.6 > score:
                 score = s_final*0.4 + s_ssim_final*0.6
                 self.chara = name
-
 
         if self.chara is None:
             self.chara = "empty"
@@ -453,9 +442,6 @@ class Player:
                         if max_diff > 40:
                             return
         self.is_observed = True
-        # if max_diff < 40 and self.is_ult_ready is False:
-        #     self.is_observed = True
-        # print("--- is_observed %s ms ---" % ((t.time() - current_time) * 1000))
 
     def _identify_ult_charge_digit(self, digit, digit_refs):
         """Retrieves ultimate charge for current player.

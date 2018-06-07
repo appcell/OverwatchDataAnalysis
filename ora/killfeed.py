@@ -73,7 +73,8 @@ class Killfeed:
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
-
+        # cv2.imshow('t', self.image)
+        # cv2.waitKey(0)
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
@@ -129,7 +130,6 @@ class Killfeed:
             self.is_valid = False
             logging.debug('Did not find any icons')
             return
-
         # Differentiate results from 2 sides first, or it gets seriously wrong
         mean_pos = np.mean([i['pos'] for i in icons_weights])
         icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
@@ -273,11 +273,6 @@ class Killfeed:
             'team': -1,
             'player': -1,
             'pos': player['pos']}
-        # At least red or blue
-        # if self.game_type == OW.GAMETYPE_1ST:
-        #     # No player info is available in 1st recording.
-        #     res['team'] = position
-        #     return res
         color_pos = OW.get_killfeed_team_color_pos(
             player['pos'], position, self.game_type, self.game_version)
         logging.debug('player pos:%d color_pos, y:%d, x:%d', player['pos'], color_pos[0], color_pos[1])

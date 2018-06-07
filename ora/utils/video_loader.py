@@ -22,7 +22,7 @@ class VideoLoader:
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
         ret, frame = self.cap.read()
         if ret:
-            cv2.imwrite("frame%d.jpg" % self.count, frame)
+            # cv2.imwrite("frame%d.jpg" % self.count, frame)
             self.count +=1
             return frame
         else:

@@ -57,18 +57,19 @@ class Frame(object):
         # Gui.gui_instance.show_progress(self.time)
 
         print(self.time)
+        # cv2.imshow('t',self.image)
+        # cv2.waitKey(0)
         if self.game_type != OW.GAMETYPE_1ST:
             self.get_players() # Costs 246ms on i5
             logging.debug('get_players time: %d ms', (time.time() - self.current_time) * 1000)
             self.current_time = time.time()
-
         self.get_killfeeds() # Costs 38ms on i5
         logging.debug('get_killfeeds time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
-
         self.validate() # Costs 3ms on i5
         logging.debug('validate time: %d ms', (time.time() - self.current_time) * 1000)
         self.current_time = time.time()
+
 
         self.free() # Costs 0ms on i5
         logging.debug('free time: %d ms', (time.time() - self.current_time) * 1000)
@@ -106,17 +107,13 @@ class Frame(object):
             None 
         """
         # Multiprocess players
-
         game_type = self.game_type
         game_version = self.game_version
         image = self.image
         ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
         results = []
-
         for i in range(0, 12):
-            # current_time = time.time()
             avatars = self.get_avatars(i) # 12ms each, or 0 after 1st time.
-            # print("--- get_avatars %s ms ---" % ((time.time() - current_time) * 1000))
             team = -1
 
             if i < 6:
@@ -124,13 +121,11 @@ class Frame(object):
             else:
                 team = self.game.team_names[OW.RIGHT]
 
-            self.players[i] = Player(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time)
-            # results.append(pool.PROCESS_POOL.apply_async(Player, 
-            #     args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
-            #     callback=self.player_callback))
-        
-        # for res in results:
-        #     res.wait()
+            results.append(pool.PROCESS_POOL.apply_async(Player, 
+                args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
+                callback=self.player_callback))
+        for res in results:
+            res.wait()
         
     def get_team_colors_from_image(self):
         """Get team colors from this frame.

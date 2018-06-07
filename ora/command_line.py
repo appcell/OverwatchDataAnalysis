@@ -151,7 +151,7 @@ class Program(object):
             game_type = OW.GAMETYPE_CUSTOM
         else:
             game_type = OW.GAMETYPE_1ST
-        self.game_instance = game.Game(info['game_type'])
+        self.game_instance = game.Game(game_type)
         self.game_instance.set_game_info(info)
         self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
         pool.PROCESS_POOL.close()

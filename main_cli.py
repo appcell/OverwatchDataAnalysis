@@ -6,7 +6,7 @@ def main():
     program.run()
 
 if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(logging.DEBUG)
     pool.initPool()
 
     main()
