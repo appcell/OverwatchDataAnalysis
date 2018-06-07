@@ -6,7 +6,8 @@ from skimage import measure
 from . import overwatch as OW
 from .utils import image as ImageUtils
 
-
+import logging
+import time as t
 
 class Player:
     """Class of a Killfeed object.
@@ -68,9 +69,20 @@ class Player:
         self.is_onfire = None
 
         
-        self.get_ult_status()
-        self.get_chara()
-        self.get_ult_charge()
+        self.current_time = t.time()
+
+        # 60ms baseline
+        self.get_ult_status() # 106ms or +0ms? 1ms each
+        logging.debug('get_ult_status time: %d ms', (t.time() - self.current_time) * 1000)
+        self.current_time = t.time()
+
+        self.get_chara() # +130ms 44ms each
+        logging.debug('get_chara time: %d ms', (t.time() - self.current_time) * 1000)
+        self.current_time = t.time()
+
+        self.get_ult_charge() # + 50ms 9/16 ms each
+        logging.debug('get_ult_charge time: %d ms', (t.time() - self.current_time) * 1000)
+        self.current_time = t.time()
 
         self.free()
 
@@ -171,28 +183,23 @@ class Player:
         avatar = ImageUtils.crop(self.image, OW.get_avatar_pos(
             self.index, self.game_type, self.game_version))
 
-        # If player is observed, not sure about this tho
-        avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
-            self.index, self.game_type, self.game_version))
-        max_diff = 0
-        for i in range(avatar_diff.shape[0]):
-            for j in range(avatar_diff.shape[1]):
-                if ImageUtils.color_distance(
-                        avatar_diff[i, j], team_color) > max_diff:
-                    max_diff = ImageUtils.color_distance(
-                        avatar_diff[i, j], team_color)
-        if max_diff < 40 and self.is_ult_ready is False:
-            self.is_observed = True
+        self._identify_is_observed(team_color)
+        
         score = 0
+
+        # + 120ms or 40ms each
         for (name, avatar_ref_observed) in avatars_ref_observed.items():
+            # 0 or 0.5 ms
             s_observed = cv2.matchTemplate(avatar_observed, avatar_ref_observed,
                                   cv2.TM_CCOEFF_NORMED)
             _, s_observed, _, loc_observed = cv2.minMaxLoc(s_observed)
+            # 1ms
             temp_avatar_observed = ImageUtils.crop(
                 avatar_observed, 
                 [loc_observed[1], avatar_ref_observed.shape[0], loc_observed[0], avatar_ref_observed.shape[1]])
             s_ssim_observed = measure.compare_ssim(temp_avatar_observed, avatar_ref_observed, 
                                           multichannel=True)
+            # almost 0ms
             s = cv2.matchTemplate(avatar, avatars_ref[
                                         name], cv2.TM_CCOEFF_NORMED)
             _, s, _, loc = cv2.minMaxLoc(s)
@@ -414,6 +421,27 @@ class Player:
         #     print(self.ult_charge)
         # # print('===')
         return 
+
+    def _identify_is_observed(self, team_color):
+        """
+        # 1ms each
+        # If player is observed, not sure about this tho
+        # not work if ult is ready???
+        """
+        # current_time = t.time()
+        avatar_diff = ImageUtils.crop(self.image, OW.get_avatar_diff_pos(
+            self.index, self.game_type, self.game_version))
+        max_diff = 0
+        if self.is_ult_ready is False:
+            for i in range(avatar_diff.shape[0]):
+                for j in range(avatar_diff.shape[1]):
+                    diff = ImageUtils.color_distance(
+                            avatar_diff[i, j], team_color)
+                    if diff > max_diff:
+                        max_diff = diff
+                        if max_diff > 40:
+                            return
+        self.is_observed = True
 
     def _identify_ult_charge_digit(self, digit, digit_refs):
         """Retrieves ultimate charge for current player.

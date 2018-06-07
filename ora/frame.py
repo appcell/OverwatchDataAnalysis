@@ -1,4 +1,5 @@
 import cv2
+import logging
 import numpy as np
 from skimage import measure
 from . import overwatch as OW
@@ -24,7 +25,7 @@ class Frame(object):
         game: the Game object who fathers all frames
     """
 
-    def __init__(self, frame_image, frame_time, game, game_version=0):
+    def __init__(self, frame_image, frame_time, game, game_version=0, game_type=0):
         """Initialize a Frame object.
 
         Author:
@@ -38,11 +39,16 @@ class Frame(object):
         Returns:
             None 
         """
+        self.current_time = time.time()
         self.is_valid = False
         self.is_replay = False
         self.players = [None] * 12
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
+
+        logging.debug('resize time: %d ms', (time.time() - self.current_time) * 1000)
+        self.current_time = time.time()
+
         self.time = frame_time
         self.game = game
         self.game_version = game_version
@@ -53,11 +59,21 @@ class Frame(object):
         print(self.time)
         # cv2.imshow('t',self.image)
         # cv2.waitKey(0)
-        self.get_players()
+        if self.game_type != OW.GAMETYPE_1ST:
+            self.get_players() # Costs 246ms on i5
+            logging.debug('get_players time: %d ms', (time.time() - self.current_time) * 1000)
+            self.current_time = time.time()
+        self.get_killfeeds() # Costs 38ms on i5
+        logging.debug('get_killfeeds time: %d ms', (time.time() - self.current_time) * 1000)
+        self.current_time = time.time()
+        self.validate() # Costs 3ms on i5
+        logging.debug('validate time: %d ms', (time.time() - self.current_time) * 1000)
+        self.current_time = time.time()
 
-        self.get_killfeeds()
-        self.validate()
-        self.free()
+
+        self.free() # Costs 0ms on i5
+        logging.debug('free time: %d ms', (time.time() - self.current_time) * 1000)
+        self.current_time = time.time()
 
     def free(self):
         """Free RAM by removing images from the Frame instance.
@@ -91,15 +107,13 @@ class Frame(object):
             None 
         """
         # Multiprocess players
-
         game_type = self.game_type
         game_version = self.game_version
         image = self.image
         ult_charge_numbers_ref = self.game.ult_charge_numbers_ref
         results = []
-
         for i in range(0, 12):
-            avatars = self.get_avatars(i)
+            avatars = self.get_avatars(i) # 12ms each, or 0 after 1st time.
             team = -1
 
             if i < 6:
@@ -110,7 +124,6 @@ class Frame(object):
             results.append(pool.PROCESS_POOL.apply_async(Player, 
                 args=(i, avatars, team, image, game_type, game_version, ult_charge_numbers_ref, self.time),
                 callback=self.player_callback))
-        
         for res in results:
             res.wait()
         
@@ -139,7 +152,7 @@ class Frame(object):
                 return self.game.team_colors
             else:
                 return self.get_team_colors_from_image()
-        elif self.game_type == OW.GAMETYPE_CUSTOM:
+        elif self.game_type == OW.GAMETYPE_CUSTOM or self.game_type == OW.GAMETYPE_1ST:
             return OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
 
     def get_killfeeds(self):
@@ -173,7 +186,7 @@ class Frame(object):
 
         Validation by:
         1) Test if there's any players detectable. If none, frame is invalid
-        2) Test if top-right corner is white. If not, frame is invalid
+        2) Test if top-right corner is white for OWL. If not, frame is invalid
         If frame is valid and Game info (i.e. team colors, avatars) are not
         set, set them up.
 
@@ -186,17 +199,20 @@ class Frame(object):
         Returns:
             None 
         """
-        # 1) Test if there's any players detectable. If none, frame is invalid
+        self.is_valid = True
         flag = False
-        for player in self.players:
-            if player.is_dead is False:
-                flag = True
+        # 1) Test if there's any players detectable. If none, frame is invalid
+        # This is only for non 1st person games.
+        if self.game_type != OW.GAMETYPE_1ST:
+            for player in self.players:
+                if player.is_dead is False:
+                    flag = True
+                    break
 
-        if flag is False:
-            self.is_valid = False
-            return
-        else:
-            self.is_valid = True
+            if flag is False:
+                self.is_valid = False
+                return
+
 
         # 2) Test if top-right corner is white. If not, frame is invalid.
         # This is only for OWL games.
@@ -244,7 +260,8 @@ class Frame(object):
         # set, set them up.
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
-            self.game.avatars_ref = self._get_avatars_before_validation()
+            if self.game_type != OW.GAMETYPE_1ST:
+                self.game.avatars_ref = self._get_avatars_before_validation()
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.
@@ -329,7 +346,8 @@ class Frame(object):
     def dict(self):
         d = {
             'time': self.time,
-            'players': [player.dict() for player in self.players],
             'killfeeds': [killfeed.dict() for killfeed in self.killfeeds]
         }
+        if self.game_type != OW.GAMETYPE_1ST:
+            d['players'] = [player.dict() for player in self.players]
         return d

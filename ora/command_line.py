@@ -6,7 +6,7 @@ from . import game
 from . import pool
 from json import load
 from sys import argv
-
+import time
 
 def log(*args):
     print(args)
@@ -138,20 +138,29 @@ class Program(object):
         except ValueError:
             log('Invalid game type!')
 
-        if not (info['game_type'] == 0 or info['game_type'] == 1):
+        if not (info['game_type'] >= 0 and info['game_type'] <= 2):
             raise ValueError('Invalid game type!')
         return info
 
     def run(self):
+        current_time = time.time()
         info = self.info()
-        game_type = OW.GAMETYPE_OWL if info['game_type'] == 0 else OW.GAMETYPE_CUSTOM
+        if (info['game_type'] == 0):
+            game_type = OW.GAMETYPE_OWL
+        elif (info['game_type'] == 1):
+            game_type = OW.GAMETYPE_CUSTOM
+        else:
+            game_type = OW.GAMETYPE_1ST
         self.game_instance = game.Game(game_type)
         self.game_instance.set_game_info(info)
         self.game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
         pool.PROCESS_POOL.close()
         pool.PROCESS_POOL.join()
         self.game_instance.output_to_json()
-        self.game_instance.output_to_excel()
+        if game_type != OW.GAMETYPE_1ST:
+            # Output to excel not supported yet for this type
+            self.game_instance.output_to_excel()
         log('ok')
+        log('Total time: %d ms' % ((time.time() - current_time) * 1000))
 
 program = Program()

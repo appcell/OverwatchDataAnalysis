@@ -1,4 +1,5 @@
 import cv2
+import logging
 import numpy as np
 from operator import itemgetter
 from skimage import measure
@@ -72,7 +73,8 @@ class Killfeed:
         self.image = ImageUtils.crop(frame.image, killfeed_pos)
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
-
+        # cv2.imshow('t', self.image)
+        # cv2.waitKey(0)
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()
@@ -104,7 +106,7 @@ class Killfeed:
         del self.image_with_gap
 
     def get_players(self):
-        """Get 1 (or 2) player(s) info in a killfeed row. ONLY FOR OWL!!!
+        """Get 1 (or 2) player(s) info in a killfeed row. ONLY FOR OWL and 1ST recordings!!!
 
         Crop row image from frame, then do template matching with all given
         avatar references on it. The ones with maximum scores are final 
@@ -126,8 +128,8 @@ class Killfeed:
 
         if not icons_weights:
             self.is_valid = False
+            logging.debug('Did not find any icons')
             return
-
         # Differentiate results from 2 sides first, or it gets seriously wrong
         mean_pos = np.mean([i['pos'] for i in icons_weights])
         icons_weights_left = [i for i in icons_weights if i['pos'] < mean_pos]
@@ -171,6 +173,7 @@ class Killfeed:
                     icons_weights_right[0], OW.RIGHT)
 
         if self.player2['pos'] == -1:
+            logging.warning('should not reach here')
             self.is_valid = False
 
     def _validate_edge(self):
@@ -239,6 +242,10 @@ class Killfeed:
             edge_image = cv2.Canny(self.image, 100, 200)
             # Get the "spanned" edge image.
             edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255
+        elif self.game_type == OW.GAMETYPE_1ST:
+            edge_image = cv2.Canny(self.image, 100, 200)
+            # Get the "spanned" edge image.
+            edge_span = (edge_image.sum(0) + np.roll(edge_image.sum(0), 1))/255           
 
         return edge_span
 
@@ -268,6 +275,7 @@ class Killfeed:
             'pos': player['pos']}
         color_pos = OW.get_killfeed_team_color_pos(
             player['pos'], position, self.game_type, self.game_version)
+        logging.debug('player pos:%d color_pos, y:%d, x:%d', player['pos'], color_pos[0], color_pos[1])
 
         colors_ref = self.frame.get_team_colors()
         dist_left = 1000000
@@ -278,9 +286,10 @@ class Killfeed:
                 color, colors_ref[0])
             dist_right = ImageUtils.color_distance(
                 color, colors_ref[1])
-        elif self.game_type == OW.GAMETYPE_CUSTOM:
+        elif self.game_type == OW.GAMETYPE_CUSTOM or self.game_type == OW.GAMETYPE_1ST:
             # Considering non-OWL games, here we allow some error in edge searching.
             for i in range(color_pos[1] - 2, color_pos[1] + 3):
+                logging.debug('Color is %s', self.image[color_pos[0], i])
                 dist_left_tmp = ImageUtils.color_distance(
                     self.image[color_pos[0], i], colors_ref[0])
                 dist_right_tmp = ImageUtils.color_distance(
@@ -289,11 +298,15 @@ class Killfeed:
                     dist_left = dist_left_tmp
                 if dist_right_tmp < dist_right:
                     dist_right = dist_right_tmp
-
+        logging.debug('dist_left: %d dist_right: %d', dist_left, dist_right)
         if dist_left < dist_right:
             res['team'] = OW.LEFT
         else:
             res['team'] = OW.RIGHT
+        if self.game_type == OW.GAMETYPE_1ST:
+            # No player info is available in 1st recording.
+            logging.debug('%d position avatar is for team:%d', res['pos'], res['team'])
+            return res
         chara = OW.get_chara_name(player['chara'])
         if res['team'] == OW.LEFT:
             res['player'] = next((item.index for item in self.frame.players[
