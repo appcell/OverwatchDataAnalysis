@@ -575,6 +575,8 @@ class Game(object):
         player does this, it's only for when he has a mini-D.Va (i.e. with a
         meka down event beforehand). Since now we don't have D.Va status
         detector, we leave this one for later.
+        However, as always, we preserve ult charge recog when charge == 100，
+        since it's the only data sure to be accurate.
 
         Author: Appcell
 
@@ -591,6 +593,17 @@ class Game(object):
         # 1) Remove unnatually small charge nums
         for ind in range(12):
             for ind_frame in range(1, players_list_len - 1):
+                if players_list[ind_frame][ind].ult_charge == 100:
+                    continue
+                # Special occasion: sometimes the analyzer doesn't capture
+                # the frame where ult charge reaches 100, then player used
+                # that ult immediately. In this case, we preserve original
+                # recognition result, then add an artifical ult used event.
+                if players_list[ind_frame][ind].ult_charge < 10 \
+                and players_list[ind_frame - 1][ind].ult_charge > 95:
+                    players_list[ind_frame - 1][ind].is_ult_ready = True
+                    players_list[ind_frame][ind].is_ult_ready = False
+                    continue
                 if players_list[ind_frame][ind].ult_charge \
                 < players_list[ind_frame - 1][ind].ult_charge:
                     if ind_frame < searched_frame_num:
@@ -626,9 +639,12 @@ class Game(object):
                     if (flag_ult_used or flag_player_switched or flag_dva_status_change) is False:
                         players_list[ind_frame][ind].ult_charge \
                             = players_list[ind_frame - 1][ind].ult_charge
+
         # 2) Remove unnatually large charge nums
         for ind in range(12):
             for ind_frame in range(1, players_list_len - 1):
+                if players_list[ind_frame][ind].ult_charge == 100:
+                    continue
                 if players_list[ind_frame][ind].ult_charge \
                 > players_list[ind_frame - 1][ind].ult_charge:
                     unnatural_frame_ind = ind_frame
