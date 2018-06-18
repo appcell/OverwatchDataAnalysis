@@ -1,0 +1,6 @@
+
+COPY_RIGHT = '''
+    COPYRIGHT
+    
+    '''
+
