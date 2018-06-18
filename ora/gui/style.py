@@ -1,4 +1,6 @@
 
+from default import COPY_RIGHT
+
 background_imgs = {
     'left_group': 'left_bg.png',
     'top_group': 'top_bg.png',
@@ -22,6 +24,7 @@ button_icons = {
     'max_button': 'design_08',
     'close_button': 'design_09'
 }
+
 text_colors = {
     'textUpLeftLabel': '#ffffff',
     'textUpRightLabel': '#3df0d0',
@@ -30,4 +33,9 @@ text_colors = {
     'textDownLeftLabel': '#80bce2',
     'textDownRightLabel': '#80bce2'
 
+}
+
+# set widget text with setPlainText()
+plain_text = {
+    'copy_right_text_edit': COPY_RIGHT,
 }

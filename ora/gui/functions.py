@@ -18,6 +18,10 @@ def set_background_color(widget, color):
     widget.setStyleSheet("background-color: %s" % color)
 
 
+def set_plain_text(widget, text):
+    widget.setPlainText(text)
+
+
 def pic_to_icon(file_name, path='icons'):
     return QIcon(join(SRC_PATH, path, file_name))
 
@@ -26,6 +30,10 @@ def set_full_icon(widget, file_name, path='icons'):
     qicon = pic_to_icon(file_name, path)
     widget.setIcon(qicon)
     widget.setIconSize(QSize(100, 100))
+
+
+def remove_listwidget_item(listwidget):
+    listwidget.takeItem(listwidget.currentRow())
 
 
 def set_qclass_child_widgets_style(widget, qclass, style):

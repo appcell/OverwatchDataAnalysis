@@ -50,6 +50,9 @@
         <pointsize>8</pointsize>
        </font>
       </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
       <property name="accessibleName">
        <string>video_listwidget</string>
       </property>
@@ -723,7 +726,7 @@
      </widget>
     </widget>
     <widget class="QWidget" name="stackedWidgetPage3">
-     <widget class="QPlainTextEdit" name="plainTextEdit">
+     <widget class="QPlainTextEdit" name="copy_right_text_edit">
       <property name="geometry">
        <rect>
         <x>0</x>
