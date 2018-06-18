@@ -20,6 +20,15 @@ class StackedWidget(QtWidgets.QStackedWidget):
 
 class VideoItem(MousePressChangeBackgroundMixin):
     def __init__(self, parent=None, up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
+        """
+        The video item class. You can set text/icon with args when instantiate or by call obj.set_path_text, obj.set_icon, etc.
+        :param parent:
+        :param up_left_str: Path text
+        :param up_right_str: Status text
+        :param down_left_str: Team 1 name
+        :param down_right_str: Team 2 name
+        :param icon_path: The item icon path
+        """
         super(VideoItem, self).__init__()
 
         self.textUpLayout = QtWidgets.QHBoxLayout()
@@ -51,14 +60,12 @@ class VideoItem(MousePressChangeBackgroundMixin):
         self.allQHBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.allQHBoxLayout)
 
-
-        self.setTextDown(down_left_str)
-        self.setLabelText(self.textUpLeftLabel, up_left_str)
-        self.setLabelText(self.textUpRightLabel, up_right_str)
-        self.setLabelText(self.textDownLabelTeam1, "TEAM 1")
-        self.setLabelText(self.textDownLeftLabel, down_left_str)
-        self.setLabelText(self.textDownLabelTeam2, "TEAM 2")
-        self.setLabelText(self.textDownRightLabel, down_right_str)
+        self._set_label_text(self.textUpLeftLabel, up_left_str)
+        self._set_label_text(self.textUpRightLabel, up_right_str)
+        self._set_label_text(self.textDownLabelTeam1, "TEAM 1")
+        self._set_label_text(self.textDownLeftLabel, down_left_str)
+        self._set_label_text(self.textDownLabelTeam2, "TEAM 2")
+        self._set_label_text(self.textDownRightLabel, down_right_str)
 
         self.setStyleSheet('border: None')
 
@@ -68,23 +75,29 @@ class VideoItem(MousePressChangeBackgroundMixin):
             self.iconQLabel.setScaledContents(True)
 
         for w, c in text_colors.items():
-            self.set_text_color(getattr(self, w), c)
+            self._set_text_color(getattr(self, w), c)
 
     @staticmethod
-    def set_text_color(widget, color):
+    def _set_text_color(widget, color):
         widget.setStyleSheet("color: %s" % color)
 
     @staticmethod
-    def setLabelText(label, text):
+    def _set_label_text(label, text):
         label.setText(text)
 
-    def setTextUp(self, text):
-        self.textUpLeftLabel.setText(text)
+    def set_path_text(self, text):
+        self._set_label_text(self.textUpLeftLabel, text)
 
-    def setTextDown(self, text):
-        self.textUpRightLabel.setText(text)
+    def set_status_text(self, text):
+        self._set_label_text(self.textUpRightLabel, text)
 
-    def setIcon(self, img_path):
+    def set_team_left_text(self, text):
+        self._set_label_text(self.textDownLabelTeam1, text)
+
+    def set_team_right_text(self, text):
+        self._set_label_text(self.textDownLabelTeam2, text)
+
+    def set_icon(self, img_path):
         self.iconQLabel.setPixmap(QtGui.QPixmap(img_path))
 
 
