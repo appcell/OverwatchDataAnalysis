@@ -158,7 +158,7 @@ class Sheet:
         """
         Save(self.sheet).save()
 
-    def json(self, filename):
+    def json(self):
         sheet_data = []
         sheet = self.sheet
         for col, cells in enumerate(sheet.rows):
@@ -178,5 +178,4 @@ class Sheet:
                 }
                 data['players'].append(player)
             sheet_data.append(data)
-        with open(filename, 'w') as file:
-            dump(sheet_data, file, ensure_ascii=False, indent=4)
+        return sheet_data

@@ -28,11 +28,11 @@ class Excel(object):
         self.sheet2.new()
         self.sheet3.new()
         self._wb.save(self.game.output_path)
-        if self.game.json:
-            self.json()
+        return self.json()
 
     def json(self):
         file, _ = self.game.output_path.split('.')
-        self.sheet1.json('{}_{}.txt'.format(file, 'sheet1_json'))
-        self.sheet2.json('{}_{}.txt'.format(file, 'sheet2_json'))
-        self.sheet3.json('{}_{}.txt'.format(file, 'sheet3_json'))
+        sheet1_data = self.sheet1.json()
+        sheet2_data = self.sheet2.json()
+        sheet3_data = self.sheet3.json()
+        return [sheet1_data, sheet2_data, sheet3_data]

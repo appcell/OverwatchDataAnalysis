@@ -125,7 +125,7 @@ ABILITY_FORMAT = {
     2: 'E',
     3: 'Ultimate 1',
     4: 'Ultimate 2',
-    5: 'RMB',
+    5: 'Right Click',
     6: 'Passive',
 }
 
@@ -361,7 +361,7 @@ class Sheet:
             d['time'] = time
             d['action'] = set_action(obj)
             d['comments'] = set_comments(d['action'])
-            # d['ability'] = Config.ability[obj.ability]
+            d['ability'] = Config.ability[obj.ability]
             d['subject chara'] = player1['chara']
             d['subject player'] = 'empty' if player1['player'] == -1 else self.game.name_players[player1['player']]
             d['object chara'] = player2['chara']
@@ -452,7 +452,7 @@ class Sheet:
         """
         Save(self.sheet, self.data).save()
 
-    def json(self, filename):
+    def json(self):
         titles = {v: k for k, v in DIMENSIONS.items()}
         sheet_data = []
         for col, cells in enumerate(self.sheet.rows):
@@ -490,8 +490,7 @@ class Sheet:
                 else:
                     data[title] = cell.value
             sheet_data.append(data)
-        with open(filename, 'w') as file:
-            dump(sheet_data, file, ensure_ascii=False, indent=4)
+        return sheet_data
 
     def _get_team(self, cell):
         color = cell.fill.fgColor.__dict__['rgb'][2:]

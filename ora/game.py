@@ -8,6 +8,8 @@ import math as Math
 import time
 import copy
 import cv2
+import zipfile
+import json
 
 class Game(object):
     """Class of a Game object.
@@ -91,7 +93,7 @@ class Game(object):
         if self.game_type == OW.GAMETYPE_OWL:
             self.team_colors = frame.get_team_colors_from_image()
         elif self.game_type == OW.GAMETYPE_CUSTOM:
-            self.team_colors = OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
+            self.team_colors = OW.get_ui_variable("TEAM_COLORS_DEFAULT", self.game_type, self.game_version)
 
     def set_game_info(self, gui_info):
         """Set meta info of this game from user input
@@ -109,6 +111,8 @@ class Game(object):
         """
         filename = os.path.split(gui_info["video_path"])[1]
         self.video_path = gui_info["video_path"]
+        self.output_dir = gui_info["output_path"] + '/'
+        self.output_filename = filename[:filename.index('.')]
         self.output_path = gui_info["output_path"] \
             + '/' \
             + filename[:filename.index('.')] + '.xlsx'
@@ -201,7 +205,7 @@ class Game(object):
                 self.replay_icon_ref = OW.get_replay_icon_ref(self.game_type, self.game_version)
                 return test_frame
         
-    def output_to_excel(self):
+    def output(self):
         """Output the full event list to an Excel file.
 
         Author: KomorebiL
@@ -212,31 +216,22 @@ class Game(object):
         Returns:
             None 
         """
-        Excel(self).save()
-
-    def output_to_json(self):
-        """
-
-        Author: KomorebiL
-
-        Args:
-            None
-
-        Returns:
-            None 
-        """
-        # 这是一个开关
+        json_data = Excel(self).save()
         self.json = True
         if self.json:
-            data = {
+            metadata = {
                 'team_names': self.team_names,
                 'players_name': self.name_players,
                 'frames': [frame.dict() for frame in self.frames],
             }
-            filename, _ = self.output_path.split('.')
-            filename = '{}_{}.txt'.format(filename, 'game')
-            with open(filename, 'w') as f:
-                dump(data, f, ensure_ascii=False, indent=4)
+            zipname = self.output_dir + self.output_filename + "_data.zip"
+            datazip = zipfile.ZipFile(zipname, 'w')
+            datazip.writestr("metainfo.json", json.dumps(metadata), compress_type = zipfile.ZIP_DEFLATED)
+            datazip.writestr("data_sheet1.json", json.dumps(json_data[0]), compress_type = zipfile.ZIP_DEFLATED)
+            datazip.writestr("data_sheet2.json", json.dumps(json_data[1]), compress_type = zipfile.ZIP_DEFLATED)
+            datazip.writestr("data_sheet3.json", json.dumps(json_data[2]), compress_type = zipfile.ZIP_DEFLATED)    
+            datazip.close()
+
 
     def postprocess(self):
         """ Postprocess player & killfeeds, remove incorrect info.
@@ -311,9 +306,8 @@ class Game(object):
             if frame.killfeeds and prev_frame.killfeeds \
                     and frame.killfeeds[0] == prev_frame.killfeeds[-1]:
                 frame.killfeeds.pop(0)
-            frame_before_effect_ind = int(i - (OW.FRAME_VALIDATION_EFFECT_TIME[
-                self.game_type][self.game_version] * self.analyzer_fps) - 1)
-
+            frame_before_effect_ind = int(i - (OW.get_ui_variable("OW.FRAME_VALIDATION_EFFECT_TIME", 
+                self.game_type, self.game_version) * self.analyzer_fps) - 1)
             if frame_before_effect_ind >= 0:
                 frame_before_effect = self.frames[frame_before_effect_ind]
                 if (not frame_before_effect.is_valid) and not frame.is_valid:
@@ -324,8 +318,8 @@ class Game(object):
         # 2) Remove invalid frames
         # For replays, remove also ~0.7s after
         frames_tmp = []
-        after_effect_frames_num = Math.ceil(OW.FRAME_VALIDATION_EFFECT_AFTER_TIME[
-                self.game_type][self.game_version] / (1 / self.analyzer_fps))
+        after_effect_frames_num = Math.ceil(OW.get_ui_variable("OW.FRAME_VALIDATION_EFFECT_TIME", 
+                self.game_type, self.game_version) / (1 / self.analyzer_fps))
         for ind_frame, frame in enumerate(self.frames):
             if frame.is_valid is True:
                 if ind_frame < after_effect_frames_num:

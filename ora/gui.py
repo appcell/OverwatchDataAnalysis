@@ -264,8 +264,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             except Exception as err:
                 print(err)
             else:
-                self.game_instance.output_to_json()
-                self.game_instance.output_to_excel()
+                self.game_instance.output()
                 self.show_finish_msg()
                 
             pool.PROCESS_POOL.close()

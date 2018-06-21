@@ -222,7 +222,7 @@ class Sheet:
                 cell = Config.RIGHT['ult_charge']['charge{}'.format(i - 5)]
             self.set_cell_value(cell, str(player.ult_charge) + '%', 2)
 
-    def json(self, filename):
+    def json(self):
         sheet_data = []
         sheet = self.sheet
         for idx, c in enumerate([Config.LEFT, Config.RIGHT]):
@@ -242,5 +242,4 @@ class Sheet:
                 }
                 data['players'].append(player)
             sheet_data.append(data)
-        with open(filename, 'w') as file:
-            dump(sheet_data, file, ensure_ascii=False, indent=4)
+        return sheet_data
