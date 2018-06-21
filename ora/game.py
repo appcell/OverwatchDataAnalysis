@@ -2,7 +2,6 @@ from . import overwatch as OW
 from .frame import Frame
 from .utils.video_loader import VideoLoader
 from .excel import Excel
-from json import dump
 import os
 import math as Math
 import time
@@ -206,9 +205,9 @@ class Game(object):
                 return test_frame
         
     def output(self):
-        """Output the full event list to an Excel file.
+        """Output the full event list to an Excel file and a .zip with jsons.
 
-        Author: KomorebiL
+        Author: KomorebiL, Appcell
 
         Args:
             None
