@@ -5,6 +5,7 @@
 import threading
 import time
 import tkinter
+import requests
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -159,10 +160,20 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.read_path.config(text=filename)
 
     def check_update(self):
-        version = {
-            'name': 'ORA OWL',
-            'current_version': 0.1,
-        }
+        import configparser
+        config = configparser.ConfigParser()
+        config.read('ora/etc/config.ini')
+
+        current_version = config['version']['client_version']
+        r = requests.get(
+                config['api']['url'] + config['api']['check_update']
+                + current_version
+            ).json()
+
+        if not r['is_latest']:
+            tkinter.messagebox.showinfo('Update Available',
+                'There is a newer version of ORA available, please download at \n{}'.format(r['url']))
+
 
     def info(self):
         valid = True
