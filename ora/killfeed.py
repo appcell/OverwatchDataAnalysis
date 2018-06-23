@@ -580,7 +580,6 @@ class Killfeed:
             range(0, roi_x_max - roi_x_min)))
 
         # If no edges exist, then assist avatar doesn't exist, thus no assists
-        print(edges)
         if not edges:
             return
         edge = edges[-1]
