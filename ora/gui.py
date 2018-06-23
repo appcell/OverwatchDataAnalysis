@@ -2,7 +2,7 @@
 """
 @Author: vega13
 """
-import threading
+import platform
 import time
 import tkinter
 import requests
@@ -38,8 +38,7 @@ class Gui(object):
         self.run_btn.pack()
         self.create_text()
         # check for update
-        self.t = threading.Thread(target=self.check_update)
-        self.t.start()
+        self.root.after(500, self.check_update)
 
     def create_path(self):
         width_msg = 100
@@ -169,10 +168,15 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         config = configparser.ConfigParser()
         config.read('ora/etc/config.ini')
 
+        if platform.system() == "Windows":
+            osname = "win"
+        else:
+            osname = "osx"
+
         current_version = config['version']['client_version']
         r = requests.get(
                 config['api']['url'] + config['api']['check_update']
-                + current_version
+                + osname + '/' + current_version
             ).json()
 
         if not r['is_latest']:
