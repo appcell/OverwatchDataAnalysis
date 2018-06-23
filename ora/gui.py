@@ -2,7 +2,6 @@
 """
 @Author: vega13
 """
-import threading
 import time
 import tkinter
 import requests
@@ -38,8 +37,7 @@ class Gui(object):
         self.run_btn.pack()
         self.create_text()
         # check for update
-        self.t = threading.Thread(target=self.check_update)
-        self.t.start()
+        self.root.after(500, self.check_update)
 
     def create_path(self):
         width_msg = 100
