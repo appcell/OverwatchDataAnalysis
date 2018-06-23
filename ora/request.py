@@ -21,7 +21,7 @@ def client(host='www.baidu.com', port=80):
 def json_request():
     # data = client()
     # json_data = json.loads(data)
-    json_data = {'name': 'ORA OWL', 'current_version': 0.1}
+    json_data = {'name': 'ORA OWL', 'current_version': 0.1.1}
     return json_data
 
 

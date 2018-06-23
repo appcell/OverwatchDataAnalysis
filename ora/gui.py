@@ -21,7 +21,7 @@ class Gui(object):
     def __init__(self):
         
         self.root = tkinter.Tk()
-        self.root.title('Overwatch Replay Analyzer v0.1 Beta')
+        self.root.title('Overwatch Replay Analyzer v0.1.1')
         self.root.geometry('550x350+400+200')
 
         self.read_path = None
