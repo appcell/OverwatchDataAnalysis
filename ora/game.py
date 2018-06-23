@@ -224,12 +224,16 @@ class Game(object):
         if self.json:
             metadata = {
                 'team_names': self.team_names,
-                'players_name': self.name_players,
-                'frames': [frame.dict() for frame in self.frames],
+                'player_names': self.name_players,
+                'game_type': self.game_type,
+                'game_version': self.game_version,
+                'created_at': time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             }
+            framedata = [frame.dict() for frame in self.frames]
             zipname = self.output_dir + self.output_filename + "_data.zip"
             datazip = zipfile.ZipFile(zipname, 'w')
             datazip.writestr("metainfo.json", json.dumps(metadata), compress_type = zipfile.ZIP_DEFLATED)
+            datazip.writestr("frames.json", json.dumps(framedata), compress_type = zipfile.ZIP_DEFLATED)
             datazip.writestr("data_sheet1.json", json.dumps(json_data[0]), compress_type = zipfile.ZIP_DEFLATED)
             datazip.writestr("data_sheet2.json", json.dumps(json_data[1]), compress_type = zipfile.ZIP_DEFLATED)
             datazip.writestr("data_sheet3.json", json.dumps(json_data[2]), compress_type = zipfile.ZIP_DEFLATED)    
