@@ -1,26 +1,9 @@
-// # **********************************************************
-// This is a sample of a .json configuration file.
-// Copy it to /custom or /owl for corresponding game types. 
-// Remember to remove all comments before you run the code.
-// # **********************************************************
-
 {
-    "GAME_TYPE": 0, // 0 = OWL, 1 = CUSTOM
-    "VERSION": 2, // For OWL it's stage number
-
-// # **********************************************************
-// # ==========================================================
-// #           Team Theme Color Pixel Position Defs
-// # ==========================================================
-// # **********************************************************
+    "GAME_TYPE": 0,
+    "VERSION": 2,
     "TEAM_COLOR_PICK_POS_LEFT": [53, 40],
     "TEAM_COLOR_PICK_POS_RIGHT": [54, 1183],
     "TEAM_COLORS_DEFAULT": [[170, 130, 35], [18, 3, 156]],
-// # **********************************************************
-// # ==========================================================
-// #              Ultimate Icon Position Defs
-// # ==========================================================
-// # **********************************************************    
     "ULT_ICON_X_MIN_LEFT": 31,
     "ULT_ICON_X_MIN_RIGHT": 829,
     "ULT_ICON_WIDTH": 33,
@@ -31,16 +14,9 @@
     "ULT_ICON_MAX_PROB_SSIM": 0.6,
     "ULT_ICON_MAX_BRIGHTNESS": 230,
     "ULT_ICON_MAX_DEVIATION": 15,
-
-// # **********************************************************
-// # ==========================================================
-// #              Ultimate Charge Position Defs
-// # ==========================================================
-// # **********************************************************
     "ULT_TF_SHEAR_LEFT": 0.25396,
     "ULT_TF_SHEAR_RIGHT": 0.22,
     "ULT_ADJUST_LOG_INDEX": 1.2,
-// #  Region to read ultimate charge number, pre-shear   
     "ULT_CHARGE_PRE_X_MIN_LEFT": 19,
     "ULT_CHARGE_PRE_X_MIN_RIGHT": 825,
     "ULT_CHARGE_PRE_WIDTH": 65,
@@ -49,10 +25,8 @@
     "ULT_CHARGE_PRE_GAP": 70.6,
     "ULT_CHARGE_PRE_WIDTH_OBSERVED": 65,
     "ULT_CHARGE_PRE_HEIGHT_OBSERVED": 50,
-// #  Region to read ultimate charge number, post-shear, 1st and 2nd number
     "ULT_CHARGE_X_MIN_LEFT": 15,
     "ULT_CHARGE_X_MIN_RIGHT": 4,
-// # For img read-in
     "ULT_CHARGE_WIDTH": 23,
     "ULT_CHARGE_NUMBER_WIDTH": 8,
     "ULT_CHARGE_NUMBER_WIDTH_OBSERVED": 9,
@@ -65,11 +39,6 @@
     "ULT_CHARGE_IMG_HEIGHT": 16,
     "ULT_CHARGE_IMG_HEIGHT_OBSERVED": 18,
     "ULT_CHARGE_SSIM_THRESHOLD": 0.55,
-// # **********************************************************
-// # ==========================================================
-// #               Topbar Avatar Position Defs
-// # ==========================================================
-// # **********************************************************
     "AVATAR_WIDTH_REF": 38,
     "AVATAR_HEIGHT_REF": 30,
     "AVATAR_X_MIN_LEFT": 62,
@@ -84,17 +53,9 @@
     "AVATAR_HEIGHT_OBSERVED": 30,
     "AVATAR_GAP": 71,
     "AVATAR_GAP_OBSERVED": 70.6,
-
-// # For telling difference between observed & non-observed avatars
     "AVATAR_DIFF_Y_MIN": 47,
     "AVATAR_DIFF_HIGHT": 4,
     "AVATAR_DIFF_WIDTH": 28,
-
-// # **********************************************************
-// # ==========================================================
-// #                    Killfeed Row
-// # ==========================================================
-// # **********************************************************
     "KILLFEED_ICON_HEIGHT": 21,
     "KILLFEED_ICON_WIDTH": 31,
     "KILLFEED_ICON_EDGE_HEIGHT_RATIO_LEFT": 0.7,
@@ -113,12 +74,6 @@
     "KILLFEED_TEAM_COLOR_POS_Y": 2,
     "KILLFEED_TEAM_COLOR_POS_X_LEFT": -10,
     "KILLFEED_TEAM_COLOR_POS_X_RIGHT": 10,
-
-// # **********************************************************
-// # ==========================================================
-// #                     Ability
-// # ==========================================================
-// # **********************************************************   
     "ABILITY_ICON_WIDTH": 30,
     "ABILITY_ICON_HEIGHT": 30,
     "ABILITY_ICON_COLOR_FILTER_THRESHOLD": 80,
@@ -129,22 +84,11 @@
     "ABILITY_ICON_X_MIN": -23,
     "ABILITY_SSIM_THRESHOLD": 0.4,
     "IS_HEADSHOT_COLOR_DISTANCE_THRESHOLD": 50,
-// # **********************************************************
-// # ==========================================================
-// #                     Assist
-// # ==========================================================
-// # **********************************************************   
-
     "ASSIST_GAP": 18,
     "ASSIST_ICON_HEIGHT": 18,
     "ASSIST_ICON_WIDTH": 12,
     "ASSIST_ICON_X_OFFSET": 8,
     "ASSIST_ICON_EDGE_HEIGHT_RATIO_LEFT": 0.6,
-// # **********************************************************
-// # ==========================================================
-// #                   Frame Validation
-// # ==========================================================
-// # **********************************************************
     "FRAME_VALIDATION_POS": [0, 15, 0, 70],
     "FRAME_VALIDATION_COLOR_MEAN": 230,
     "FRAME_VALIDATION_COLOR_STD": 10,

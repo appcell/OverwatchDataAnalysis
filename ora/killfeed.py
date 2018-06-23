@@ -564,7 +564,7 @@ class Killfeed:
         # better resolution.
 
         # Get the "spanned" edge image.
-        edge_image = cv2.Canny(self.image, 100, 200)
+        edge_image = cv2.Canny(self.image, 300, 500)
         roi_x_min = self.player1['pos'] + \
             OW.get_ui_variable("KILLFEED_ICON_WIDTH", self.game_type, self.game_version) + 4
         roi_x_max = self.player2['pos'] - OW.get_ui_variable("ABILITY_GAP_NORMAL", self.game_type, self.game_version)
@@ -580,6 +580,7 @@ class Killfeed:
             range(0, roi_x_max - roi_x_min)))
 
         # If no edges exist, then assist avatar doesn't exist, thus no assists
+        print(edges)
         if not edges:
             return
         edge = edges[-1]

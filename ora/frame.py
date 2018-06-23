@@ -51,8 +51,7 @@ class Frame(object):
         # Gui.gui_instance.show_progress(self.time)
 
         print(self.time)
-        # cv2.imshow('t',self.image)
-        # cv2.waitKey(0)
+        
         self.get_players()
 
         self.get_killfeeds()

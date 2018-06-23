@@ -1,4 +1,6 @@
 {
+    "GAME_TYPE": 0,
+    "VERSION": 0,
     "TEAM_COLOR_PICK_POS_LEFT": [53, 40],
     "TEAM_COLOR_PICK_POS_RIGHT": [54, 1183],
     "TEAM_COLORS_DEFAULT": [[170, 130, 35], [18, 3, 156]],

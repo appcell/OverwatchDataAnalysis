@@ -117,6 +117,10 @@ class Game(object):
             + filename[:filename.index('.')] + '.xlsx'
 
         self.analyzer_fps = gui_info["fps"]
+        self.game_version = gui_info["game_version"]
+        if self.game_type == OW.GAMETYPE_OWL:
+            self.is_game_version_set = True
+            
         if gui_info["name_team_left"]:
             self.team_names[0] = gui_info["name_team_left"]
         else:
