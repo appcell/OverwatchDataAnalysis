@@ -2,6 +2,7 @@
 """
 @Author: vega13
 """
+import platform
 import time
 import tkinter
 import requests
@@ -162,10 +163,15 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         config = configparser.ConfigParser()
         config.read('ora/etc/config.ini')
 
+        if platform.system() == "Windows":
+            osname = "win"
+        else:
+            osname = "osx"
+
         current_version = config['version']['client_version']
         r = requests.get(
                 config['api']['url'] + config['api']['check_update']
-                + current_version
+                + osname + '/' + current_version
             ).json()
 
         if not r['is_latest']:
