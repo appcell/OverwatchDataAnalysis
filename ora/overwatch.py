@@ -136,6 +136,8 @@ ABILITY_Q_1 = 3
 ABILITY_Q_2 = 4
 ABILITY_RIGHT_CLICK = 5
 ABILITY_PASSIVE = 6
+# For those abilities with version changes
+ABILITY_E2 = 7 # e.g. Hanzo
 
 ABILITY_LIST = {
     ANA: [1, 2],
@@ -144,7 +146,7 @@ ABILITY_LIST = {
     DOOMFIST: [1, 2, 3, 5],
     DVA: [1, 2, 3, 4],
     GENJI: [1, 3],
-    HANZO: [1, 2, 3],
+    HANZO: [1, 2, 3, 7],
     JUNKRAT: [1, 2, 3, 6],
     LUCIO: [5],
     MCCREE: [2, 3],

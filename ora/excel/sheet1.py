@@ -127,6 +127,7 @@ ABILITY_FORMAT = {
     4: 'Ultimate 2',
     5: 'Right Click',
     6: 'Passive',
+    7: 'E2'
 }
 
 
