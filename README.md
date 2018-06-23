@@ -75,7 +75,7 @@ Paypal: https://www.paypal.me/yzhuappcell
 
 Or,
 
-![6](./docs/intro/donation.png)
+![6](./docs/intro/donation.jpg)
 
 All donations will be used on server maintainance and further development. Thank you for your help & support!
 
@@ -160,6 +160,6 @@ Paypal: https://www.paypal.me/yzhuappcell
 
 或者：
 
-![6](./docs/intro/donation.png)
+![6](./docs/intro/donation.jpg)
 
 所有捐款将被用于服务器维护以及未来研发。感谢您的使用和测试！
