@@ -131,7 +131,7 @@ class Gui(object):
         game_type.insert(0, '0')
         game_type.pack()
         game_version = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
-        game_version.insert(0, '1')
+        game_version.insert(0, '0')
         game_version.pack()
 
         self.time_inputs_frame = right_frame
