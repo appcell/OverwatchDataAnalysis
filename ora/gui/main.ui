@@ -68,8 +68,11 @@
       <property name="wordWrap">
        <bool>true</bool>
       </property>
+      <property name="selectionRectVisible">
+       <bool>true</bool>
+      </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="player_left0_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -82,7 +85,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="player_right0_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -95,7 +98,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_3">
+     <widget class="QLineEdit" name="player_right1_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -108,7 +111,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_4">
+     <widget class="QLineEdit" name="player_left1_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -121,7 +124,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_5">
+     <widget class="QLineEdit" name="player_right2_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -134,7 +137,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_6">
+     <widget class="QLineEdit" name="player_left2_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -147,7 +150,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_8">
+     <widget class="QLineEdit" name="start_time_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -163,7 +166,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_9">
+     <widget class="QLineEdit" name="end_time_lineedit">
       <property name="geometry">
        <rect>
         <x>840</x>
@@ -176,7 +179,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_10">
+     <widget class="QLineEdit" name="player_left5_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -189,7 +192,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_11">
+     <widget class="QLineEdit" name="player_left3_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -202,7 +205,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_12">
+     <widget class="QLineEdit" name="player_right5_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -215,7 +218,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_13">
+     <widget class="QLineEdit" name="player_left4_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -228,7 +231,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_14">
+     <widget class="QLineEdit" name="player_right4_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -241,7 +244,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_15">
+     <widget class="QLineEdit" name="player_right3_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -254,7 +257,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_16">
+     <widget class="QLineEdit" name="player_left6_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -267,7 +270,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_17">
+     <widget class="QLineEdit" name="player_right6_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -306,7 +309,7 @@
        <string>Type of game</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="type_owl_radiobutton">
       <property name="geometry">
        <rect>
         <x>818</x>
@@ -319,7 +322,7 @@
        <string>OWL</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_2">
+     <widget class="QRadioButton" name="type_custom_radiobutton">
       <property name="geometry">
        <rect>
         <x>886</x>
@@ -361,7 +364,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_18">
+     <widget class="QLineEdit" name="team_left_lineedit">
       <property name="geometry">
        <rect>
         <x>712</x>
@@ -374,7 +377,7 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_19">
+     <widget class="QLineEdit" name="team_right_lineedit">
       <property name="geometry">
        <rect>
         <x>842</x>
@@ -648,30 +651,30 @@
      <zorder>video_setting_group</zorder>
      <zorder>video_title_group</zorder>
      <zorder>video_listwidget</zorder>
-     <zorder>lineEdit</zorder>
-     <zorder>lineEdit_2</zorder>
-     <zorder>lineEdit_3</zorder>
-     <zorder>lineEdit_4</zorder>
-     <zorder>lineEdit_5</zorder>
-     <zorder>lineEdit_6</zorder>
-     <zorder>lineEdit_8</zorder>
-     <zorder>lineEdit_9</zorder>
-     <zorder>lineEdit_10</zorder>
-     <zorder>lineEdit_11</zorder>
-     <zorder>lineEdit_12</zorder>
-     <zorder>lineEdit_13</zorder>
-     <zorder>lineEdit_14</zorder>
-     <zorder>lineEdit_15</zorder>
-     <zorder>lineEdit_16</zorder>
-     <zorder>lineEdit_17</zorder>
+     <zorder>player_left0_lineedit</zorder>
+     <zorder>player_right0_lineedit</zorder>
+     <zorder>player_right1_lineedit</zorder>
+     <zorder>player_left1_lineedit</zorder>
+     <zorder>player_right2_lineedit</zorder>
+     <zorder>player_left2_lineedit</zorder>
+     <zorder>start_time_lineedit</zorder>
+     <zorder>end_time_lineedit</zorder>
+     <zorder>player_left5_lineedit</zorder>
+     <zorder>player_left3_lineedit</zorder>
+     <zorder>player_right5_lineedit</zorder>
+     <zorder>player_left4_lineedit</zorder>
+     <zorder>player_right4_lineedit</zorder>
+     <zorder>player_right3_lineedit</zorder>
+     <zorder>player_left6_lineedit</zorder>
+     <zorder>player_right6_lineedit</zorder>
      <zorder>label_6</zorder>
      <zorder>label_7</zorder>
-     <zorder>radioButton</zorder>
-     <zorder>radioButton_2</zorder>
+     <zorder>type_owl_radiobutton</zorder>
+     <zorder>type_custom_radiobutton</zorder>
      <zorder>label_8</zorder>
      <zorder>publish_box</zorder>
-     <zorder>lineEdit_18</zorder>
-     <zorder>lineEdit_19</zorder>
+     <zorder>team_left_lineedit</zorder>
+     <zorder>team_right_lineedit</zorder>
      <zorder>label_10</zorder>
      <zorder>label_11</zorder>
      <zorder>label_12</zorder>

@@ -84,6 +84,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         self.tab_listwidget.setIconSize(QSize(100, 100))
         self._init_widget()
         self._init_connect()
+        self._init_propety()
         self._init_default()
 
     def _init_widget(self):
@@ -93,6 +94,17 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
     def _init_connect(self):
         self.tab_listwidget.itemClicked.connect(self._tab_listwidget_item_clicked)
         self.video_listwidget.customContextMenuRequested.connect(self._video_list_context_menu)
+
+        self.team_left_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('left'))
+        self.team_right_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('right'))
+
+    def _init_propety(self):
+
+        # set player's text to property like self.player_left0_text
+        for widget in get_qclass_child_widgets(self.team_setting_group, QtWidgets.QLineEdit):
+            name = widget.objectName
+            if name.startswith('player_'):
+                setattr(self, name.rstrip('lineedit') + 'text', widget.text())
 
     def _init_default(self):
         self.tab_listwidget.setCurrentRow(0)
@@ -119,6 +131,42 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         menu = QtWidgets.QMenu()
         menu.addAction('删除', lambda _ :remove_listwidget_item(self.video_listwidget))
         menu.exec_(QtGui.QCursor.pos())
+
+    def _team_name_edit_finished(self, team='left'):
+        current_video_item = self.current_video_item
+        if team == 'left':
+            current_video_item.set_team_left_text(self.input_team_left_text)
+        else:
+            current_video_item.set_team_right_text(self.input_team_right_text)
+
+    @property
+    def input_team_left_text(self):
+        return self.team_left_lineedit.text()
+
+    @property
+    def input_team_right_text(self):
+        return self.team_right_lineedit.text()
+
+    @property
+    def current_video_item(self):
+        item = self.video_listwidget.currentItem()
+        return self.video_listwidget.itemWidget(item)
+
+    @property
+    def is_published(self):
+        return self.publish_box.isChecked()
+
+    @property
+    def is_owl(self):
+        return True if self.type_owl_radiobutton.isChecked() else False
+
+    @property
+    def start_time(self):
+        return self.start_time_lineedit.text()
+
+    @property
+    def end_time(self):
+        return self.end_time_lineedit.text()
 
 
 if __name__ == '__main__':
