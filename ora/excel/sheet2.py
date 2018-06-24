@@ -121,14 +121,15 @@ class Sheet:
         self.game = game
 
     def new(self):
-        start, final = self.frames[0], self.frames[-1]
-        self._append_player(start.players)
-        self._append_chara(start.players, 'start')
-        self._append_chara(final.players, 'final')
-        self._append_ult_charge(final.players)
-        self._set_cell_team()
-        self._set_cell_title()
-        self._set_cell_width_and_height()
+        if len(self.frames) > 0:
+            start, final = self.frames[0], self.frames[-1]
+            self._append_player(start.players)
+            self._append_chara(start.players, 'start')
+            self._append_chara(final.players, 'final')
+            self._append_ult_charge(final.players)
+            self._set_cell_team()
+            self._set_cell_title()
+            self._set_cell_width_and_height()
 
     def _append_player(self, players):
         """
@@ -223,6 +224,8 @@ class Sheet:
             self.set_cell_value(cell, str(player.ult_charge) + '%', 2)
 
     def json(self):
+        if len(self.frames) <= 0:
+            return []
         sheet_data = []
         sheet = self.sheet
         for idx, c in enumerate([Config.LEFT, Config.RIGHT]):

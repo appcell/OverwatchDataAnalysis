@@ -321,8 +321,9 @@ class Sheet:
         if self.game.team_colors is None:
             Config.team_colors[0] = utils.to_hex([255, 255, 255])
             Config.team_colors[1] = utils.to_hex([70, 70, 70])
-        Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
-        Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
+        else:
+            Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
+            Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
 
         self.data = []
 

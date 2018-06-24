@@ -109,12 +109,15 @@ class Game(object):
             None 
         """
         filename = os.path.split(gui_info["video_path"])[1]
+
         self.video_path = gui_info["video_path"]
         self.output_dir = gui_info["output_path"] + '/'
         self.output_filename = filename[:filename.index('.')]
         self.output_path = gui_info["output_path"] \
             + '/' \
             + filename[:filename.index('.')] + '.xlsx'
+
+        print(self.output_path)
 
         self.analyzer_fps = gui_info["fps"]
         self.game_version = gui_info["game_version"]

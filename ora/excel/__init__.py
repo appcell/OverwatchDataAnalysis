@@ -31,7 +31,6 @@ class Excel(object):
         return self.json()
 
     def json(self):
-        file, _ = self.game.output_path.split('.')
         sheet1_data = self.sheet1.json()
         sheet2_data = self.sheet2.json()
         sheet3_data = self.sheet3.json()
