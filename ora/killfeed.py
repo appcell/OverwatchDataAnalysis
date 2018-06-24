@@ -73,6 +73,9 @@ class Killfeed:
         self.image_with_gap = ImageUtils.crop(
             frame.image, killfeed_with_gap_pos)
 
+        # cv2.imshow('t', self.image)
+        # cv2.waitKey(0)
+
         self.get_players()
         self.get_ability_and_assists()
         self.get_headshot()

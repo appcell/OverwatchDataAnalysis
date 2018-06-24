@@ -67,7 +67,17 @@ You can join us on Discord: https://discord.gg/hnvc3yG
 
 Or for contacting, send an email to: info@owdata.org
 
-Thank you for your help & support!
+## Donation
+
+ORA is a free project, but we would still appreciate donation to maintain our server. You can donate by,
+
+Paypal: https://www.paypal.me/yzhuappcell
+
+Or,
+
+![6](./docs/intro/donation.jpg)
+
+All donations will be used on server maintainance and further development. Thank you for your help & support!
 
 
 * * *
@@ -141,6 +151,15 @@ Issue应包括：
 
 或发邮件至: info@owdata.org
 
+## 赞助我们
 
+ORA is a free project, but we would still appreciate donation to maintain our server. You can donate by,
+尽管ORA是一个免费项目，我们仍然需要捐款来维持服务器的运行。您可以通过以下方式对ORA进行赞助：
 
-感谢您的使用和测试！
+Paypal: https://www.paypal.me/yzhuappcell
+
+或者：
+
+![6](./docs/intro/donation.jpg)
+
+所有捐款将被用于服务器维护以及未来研发。感谢您的使用和测试！
