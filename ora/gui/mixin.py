@@ -7,9 +7,24 @@ from functions import set_background_color
 
 
 class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, normal_color="#143048'", selected_color="#111111"):
         super(MousePressChangeBackgroundMixin, self).__init__()
         self.setMouseTracking(True)
+        self.normal_color = normal_color
+        self.selected_color = selected_color
+
+    @property
+    def _color(self):
+        return '#' + ''.join([str(hex(c)[2:]) for c in self.palette().color(self.backgroundRole()).toRgb().getRgb()[:3]])
+
+    def is_selected(self):
+        return True if self._color == self.selected_color else False
+
+    def _set_color(self, color):
+        self.setStyleSheet("background-color: %s" % color)
+        for c in self.children():
+            if isinstance(c, QtWidgets.QLabel):
+                c.setStyleSheet("background-color: %s" % color)
 
     def enterEvent(self, QMouseEvent):
         pass
@@ -18,17 +33,12 @@ class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
         pass
 
     def mousePressEvent(self, QMouseEvent):
-        self.setStyleSheet("background-color: %s" % "#11283E")
-        for c in self.children():
-            if isinstance(c, QtWidgets.QLabel):
-                c.setStyleSheet("background-color: %s" % "#11283E")
+        color = self.normal_color if self.is_selected() else self.selected_color
+        self._set_color(color)
 
     def mouseReleaseEvent(self, QMouseEvent):
-        self.setStyleSheet("background-color: %s" % "#14304A")
-        for c in self.children():
-            if isinstance(c, QtWidgets.QLabel):
-                c.setStyleSheet("background-color: %s" % "#14304A")
-
+        color = self._color
+        self._set_color(color)
 
 
 class WindowDragMixin(object):
