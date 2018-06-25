@@ -27,7 +27,7 @@ class Killfeed:
         is_valid: tell if the killfeed is valid, mostly for convenience only
         is_headshot: if the elimination is by a headshot
         frame: the Frame instance who fathers this killfeed
-        game_type: type of this game, can be OW.CAMETYPE_OWL or
+        game_type: type of this game, can be OW.GAMETYPE_OWL or
             OW.GAMETYPE_CUSTOM
         image: image of killfeed row, without gap
         image_with_gap: image of killfeed row, with gap
