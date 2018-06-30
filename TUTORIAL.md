@@ -1,3 +1,63 @@
+# Tutorial of Python environment setting up with Windows
+
+## Install Anaconda Python 3.x
+
+Click https://www.anaconda.com/download/ . If you work with a 64-bit CPU, choose as below:
+
+(Click on No, thanks when asked for email address)
+
+![6](./docs/screenshots/6.png)
+
+Run the installation. Remember to modify your PATH when installing, as shown in the screenshot below, you should tick on both options:
+
+![6](./docs/screenshots/8.png)
+
+Then just clcik on "Next" till the end.
+
+After installation, you can test if it's successful. With Windows 10, input `cmd` into search box on your task bar, then click on the first result:
+
+![4](./docs/screenshots/4.png)
+
+Then, input `python --version` in console, press "Enter" and you'll get the result:
+
+![5](./docs/screenshots/5.png)
+
+If the output looks similar, then you've installed Anaconda Python 3.x successfully.
+
+## Install OpenCV for Python
+
+Input `pip install opencv-python` in console, if you get the shown output here, you've successfully installed OpenCV:
+
+![9](./docs/screenshots/9.png)
+
+## Download ORA code
+
+Click on the URL below (Attention: the URL is for Test branch!)：
+
+https://github.com/appcell/OverwatchDataAnalysis/tree/test
+
+Click `Clone or Download`， choose `Download Zip`:
+
+![10](./docs/screenshots/10.png)
+
+Unzip the zip file into a folder without special characters in the path:
+
+![11](./docs/screenshots/11.png)
+
+And here you get the code.
+
+## Run the code
+
+In folder `OverwatchDataAnalysis-dev`, press `shift + mouse right click` on a blank area, then choose `Open Powershell window here`
+
+![12](./docs/screenshots/12.png)
+
+In the prompt Powershell console, input `python main.py`, then you can run the code smoothly.
+
+![13](./docs/screenshots/13.png)
+
+
+
 # Windows 下 Python 运行环境搭建教程
 
 ## 安装Anaconda Python 2.x
