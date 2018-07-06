@@ -1,0 +1,355 @@
+// A huge array containing all events in the timeline. Comparing to frames.json, this file records only eliminations & chara switches.
+// One element includes:
+// {
+//       "subject":{  // Info of the eliminator
+//          "team":"Team A",  // Name of the team
+//          "player":"Player3",  // Name of the player
+//          "chara":"Roadhog"  // Name of the character
+//       },
+//       "object":{  // Info of the eliminator
+//          "team":"Team B",  
+//          "player":"Player7",
+//          "chara":"Zenyatta"
+//       },
+//       "assist":{  // Info of at most 5 assist players
+//          "1":{
+//             "player":"",  // Name of player
+//             "hero":""  // Name of chara
+//          },
+//          "2":{
+//             "player":"",
+//             "hero":""
+//          },
+//          "3":{
+//             "player":"",
+//             "hero":""
+//          },
+//          "4":{
+//             "player":"",
+//             "hero":""
+//          },
+//          "5":{
+//             "player":"",
+//             "hero":""
+//          }
+//       },
+//       "time":"00:00:20.5",  // Timestamp of current frame, in hh:mm:ss.ms format
+//       "action":"Eliminate",  // Type of action, can be "Eliminate", "Resurrect", "Demech", "Suicide", "Hero switch"
+//       "ability":"Plain Attack", // Ability used for elimination, can be 'Plain Attack', 'Shift', 'E', 'Ultimate 1', 'Ultimate 2', 'Right Click', 'Passive', 'E2'
+//       "critical kill":"", // "Y" if the elimination is by a critical attack, empty string if not.
+//       "comments":""  // for Hero switch: "Switch from {} to {}", with 2 chara names. For Demech: "MEKA destroyed"
+//    }
+[
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player3",
+         "chara":"Roadhog"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player7",
+         "chara":"Zenyatta"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:20.5",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team B",
+         "player":"Player11",
+         "chara":"Roadhog"
+      },
+      "object":{
+         "team":"Team A",
+         "player":"Player5",
+         "chara":"Zarya"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:21.0",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player2",
+         "chara":"Zenyatta"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player11",
+         "chara":"Roadhog"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:21.0",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"Y",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player2",
+         "chara":"Zenyatta"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player12",
+         "chara":"Sombra"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:23.0",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team B",
+         "player":"Player9",
+         "chara":"Lucio"
+      },
+      "object":{
+         "team":"Team A",
+         "player":"Player2",
+         "chara":"Zenyatta"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:24.0",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player3",
+         "chara":"Roadhog"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player9",
+         "chara":"Lucio"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:25.5",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"Y",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player6",
+         "chara":"Sombra"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player8",
+         "chara":"Zarya"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:28.5",
+      "action":"Eliminate",
+      "ability":"Plain Attack",
+      "critical kill":"",
+      "comments":""
+   },
+   {
+      "subject":{
+         "team":"Team A",
+         "player":"Player1",
+         "chara":"Lucio"
+      },
+      "object":{
+         "team":"Team B",
+         "player":"Player10",
+         "chara":"Mei"
+      },
+      "assist":{
+         "1":{
+            "player":"",
+            "hero":""
+         },
+         "2":{
+            "player":"",
+            "hero":""
+         },
+         "3":{
+            "player":"",
+            "hero":""
+         },
+         "4":{
+            "player":"",
+            "hero":""
+         },
+         "5":{
+            "player":"",
+            "hero":""
+         }
+      },
+      "time":"00:00:31.0",
+      "action":"Eliminate",
+      "ability":"Right Click",
+      "critical kill":"",
+      "comments":""
+   }
+]

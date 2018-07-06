@@ -1,0 +1,23 @@
+{
+   "team_names":[    // Name of 2 teams, array containing 2 strings. 0-th element for team on the left, 1st element for team on the right
+      "Team A",
+      "Team B"
+   ],
+   "player_names":[ // Name of 12 players, array containing 12 strings. [0, 5] for team on the left, [6, 11] for team on the right
+      "Player1",
+      "Player2",
+      "Player3",
+      "Player4",
+      "Player5",
+      "Player6",
+      "Player7",
+      "Player8",
+      "Player9",
+      "Player10",
+      "Player11",
+      "Player12"
+   ],
+   "game_type":1,  // Type of game, 0 is OWL, 1 is custom game. Other values are invalid
+   "game_version":0,  // Version number of game UI
+   "created_at":"2018-06-23 14:56:35"  // Creation time of the analysis result
+}

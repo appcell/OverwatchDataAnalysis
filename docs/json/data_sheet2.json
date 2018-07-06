@@ -1,0 +1,100 @@
+// An array containing 2 objects recording starting & final line-up of both teams. 
+
+[
+   {
+      "team":"Team A",  // Name of team left
+      "team_status":"away", // Status of team left, can be "away" or "home"
+      "players":[
+         {
+            "index":1,  // Index of player, ranges from 1 to 12
+            "name":"Player1",  // Name of player
+            "starting lineup":"Lucio",  // Chara the player initially played with
+            "final lineup":"Lucio", // Chara the player played with at last moment
+            "KDA":""
+         },
+         {
+            "index":2,
+            "name":"Player2",
+            "starting lineup":"Zenyatta",
+            "final lineup":"Zenyatta",
+            "KDA":""
+         },
+         {
+            "index":3,
+            "name":"Player3",
+            "starting lineup":"Roadhog",
+            "final lineup":"Roadhog",
+            "KDA":""
+         },
+         {
+            "index":4,
+            "name":"Player4",
+            "starting lineup":"Soldier: 76",
+            "final lineup":"Soldier: 76",
+            "KDA":""
+         },
+         {
+            "index":5,
+            "name":"Player5",
+            "starting lineup":"Zarya",
+            "final lineup":"Zarya",
+            "KDA":""
+         },
+         {
+            "index":6,
+            "name":"Player6",
+            "starting lineup":"Sombra",
+            "final lineup":"Sombra",
+            "KDA":""
+         }
+      ]
+   },
+   {
+      "team":"Team B",
+      "team_status":"home",
+      "players":[
+         {
+            "index":7,
+            "name":"Player7",
+            "starting lineup":"Zenyatta",
+            "final lineup":"Zenyatta",
+            "KDA":""
+         },
+         {
+            "index":8,
+            "name":"Player8",
+            "starting lineup":"Zarya",
+            "final lineup":"Zarya",
+            "KDA":""
+         },
+         {
+            "index":9,
+            "name":"Player9",
+            "starting lineup":"Lucio",
+            "final lineup":"Lucio",
+            "KDA":""
+         },
+         {
+            "index":10,
+            "name":"Player10",
+            "starting lineup":"Mei",
+            "final lineup":"Mei",
+            "KDA":""
+         },
+         {
+            "index":11,
+            "name":"Player11",
+            "starting lineup":"Roadhog",
+            "final lineup":"Roadhog",
+            "KDA":""
+         },
+         {
+            "index":12,
+            "name":"Player12",
+            "starting lineup":"Sombra",
+            "final lineup":"Sombra",
+            "KDA":""
+         }
+      ]
+   }
+]
