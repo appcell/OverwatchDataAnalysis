@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1089</width>
+    <width>1085</width>
     <height>789</height>
    </rect>
   </property>
@@ -472,9 +472,9 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>12</x>
+         <x>2</x>
          <y>-2</y>
-         <width>255</width>
+         <width>265</width>
          <height>35</height>
         </rect>
        </property>
@@ -538,9 +538,9 @@
       <widget class="QLabel" name="label_9">
        <property name="geometry">
         <rect>
-         <x>12</x>
+         <x>2</x>
          <y>4</y>
-         <width>207</width>
+         <width>267</width>
          <height>37</height>
         </rect>
        </property>
@@ -780,10 +780,10 @@
    <widget class="QGroupBox" name="top_group">
     <property name="geometry">
      <rect>
-      <x>118</x>
-      <y>0</y>
-      <width>973</width>
-      <height>91</height>
+      <x>104</x>
+      <y>-2</y>
+      <width>989</width>
+      <height>97</height>
      </rect>
     </property>
     <property name="accessibleName">
@@ -816,7 +816,7 @@
     <widget class="QPushButton" name="help_button">
      <property name="geometry">
       <rect>
-       <x>700</x>
+       <x>714</x>
        <y>2</y>
        <width>65</width>
        <height>85</height>
@@ -846,7 +846,7 @@
     <widget class="QPushButton" name="min_button">
      <property name="geometry">
       <rect>
-       <x>764</x>
+       <x>778</x>
        <y>2</y>
        <width>65</width>
        <height>83</height>
@@ -867,7 +867,7 @@
     <widget class="QPushButton" name="max_button">
      <property name="geometry">
       <rect>
-       <x>828</x>
+       <x>842</x>
        <y>2</y>
        <width>71</width>
        <height>85</height>
@@ -888,7 +888,7 @@
     <widget class="QPushButton" name="close_button">
      <property name="geometry">
       <rect>
-       <x>900</x>
+       <x>912</x>
        <y>4</y>
        <width>65</width>
        <height>81</height>

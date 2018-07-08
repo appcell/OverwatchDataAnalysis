@@ -98,6 +98,9 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         self.team_left_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('left'))
         self.team_right_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('right'))
 
+        self.save_button.clicked.connect(self.save_button_clicked)
+        self.analyze_button.clicked.connect(self.analyze_button_clicked)
+
     def _init_propety(self):
 
         # set player's text to property like self.player_left0_text
@@ -129,7 +132,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
     def _video_list_context_menu(self):
         menu = QtWidgets.QMenu()
-        menu.addAction('删除', lambda _ :remove_listwidget_item(self.video_listwidget))
+        menu.addAction('删除', lambda _:remove_listwidget_item(self.video_listwidget))
         menu.exec_(QtGui.QCursor.pos())
 
     def _team_name_edit_finished(self, team='left'):
@@ -138,6 +141,19 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
             current_video_item.set_team_left_text(self.input_team_left_text)
         else:
             current_video_item.set_team_right_text(self.input_team_right_text)
+
+    def select_video(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, u'Select Video', filter="* (*.*)")
+        self._set_new_video(filename)
+
+    def _set_new_video(self, path):
+        pass
+
+    def save_button_clicked(self):
+        pass
+
+    def analyze_button_clicked(self):
+        pass
 
     @property
     def input_team_left_text(self):
