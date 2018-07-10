@@ -19,7 +19,7 @@ class StackedWidget(QtWidgets.QStackedWidget):
 
 
 class VideoItem(MousePressChangeBackgroundMixin):
-    def __init__(self, parent=None, up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
+    def __init__(self, parent=None, path='', up_left_str='', up_right_str='', down_left_str='', down_right_str='', icon_path=''):
         """
         The video item class. You can set text/icon with args when instantiate or by call obj.set_path_text, obj.set_icon, etc.
         :param parent:
@@ -30,6 +30,7 @@ class VideoItem(MousePressChangeBackgroundMixin):
         :param icon_path: The item icon path
         """
         super(VideoItem, self).__init__()
+        print(path)
 
         self.textUpLayout = QtWidgets.QHBoxLayout()
         self.textUpLeftLabel = FullLabel()

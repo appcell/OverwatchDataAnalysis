@@ -88,8 +88,8 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         self._init_default()
 
     def _init_widget(self):
-        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
-        self._add_custome_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        self._add_custome_item(self.video_listwidget, VideoItem, '', '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        self._add_custome_item(self.video_listwidget, VideoItem, '', '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
 
     def _init_connect(self):
         self.tab_listwidget.itemClicked.connect(self._tab_listwidget_item_clicked)
@@ -100,6 +100,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
         self.save_button.clicked.connect(self.save_button_clicked)
         self.analyze_button.clicked.connect(self.analyze_button_clicked)
+        self.analyze_button.clicked.connect(self.select_video)  # TODO: need connect to add video button
 
     def _init_propety(self):
 
@@ -137,20 +138,19 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
     def _team_name_edit_finished(self, team='left'):
         current_video_item = self.current_video_item
-        if team == 'left':
-            current_video_item.set_team_left_text(self.input_team_left_text)
-        else:
-            current_video_item.set_team_right_text(self.input_team_right_text)
+        setattr(current_video_item, 'set_team_%s_text' % team, getattr(self, 'input_team_%s_text' % team))
 
     def select_video(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, u'Select Video', filter="* (*.*)")
         self._set_new_video(filename)
 
     def _set_new_video(self, path):
-        pass
+        self._add_custome_item(self.video_listwidget, VideoItem, path, path, 'WAITING', 'Shanghai Dragons',
+                               'Dallas Fuel', 'replay.png')
 
     def save_button_clicked(self):
-        pass
+        dirname = QtWidgets.QFileDialog.getExistingDirectory(self, u'Select Folder')
+        self.path_lineedit.setText(dirname)
 
     def analyze_button_clicked(self):
         pass
