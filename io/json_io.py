@@ -12,7 +12,7 @@ def un_zip(path):
     Args:
         path:zip文件路径
     Returns:
-        None
+        data
 
     '''
     zip_file = zipfile.ZipFile(path)
@@ -23,7 +23,8 @@ def un_zip(path):
     for names in zip_file.namelist():
         zip_file.extract(names, path[0:-4] + "_files/")
     zip_file.close()
-    _get_data(path[0:-4] + "_files/")
+    data = _get_data(path[0:-4] + "_files/")
+    return data
 
 def _get_data(path):
     '''
@@ -35,10 +36,11 @@ def _get_data(path):
     Args:
         path:解压后文件夹路径
     Returns:
-        None
+        data {0: {'time': 0.0, 'players': [{'index': 1, 'team': 'Team A', 'chara': 'lucio', 'is_ult_ready': False, 'is_dead': False, 'ult_charge': 1, 'dva_status': 2},...
 
     '''
     json_dict = {}
+    data=[]
     f_list = os.listdir(path)
     for i in f_list:
         # 筛选出json文件
@@ -48,7 +50,8 @@ def _get_data(path):
             if not type(arr) == dict:
                 for line  in range(len(arr)):
                     json_dict[line] = arr[line]
-        print(json_dict)
+                data.append(json_dict)
+    return(data)
 
 
 #  时 分 秒 转为 秒
@@ -63,18 +66,19 @@ def get_eliminate(start,end):
           start:开始时间
           end: 结束时间
       Returns:
-          None
+          data_list
       '''
     file = open('UITEST_data_files\\data_sheet1.json', 'r')
     arr = json.load(file)
     for line in range(len(arr)):
         json_dict[line] = arr[line]
-
+    data_list=[]
     for i in json_dict:
         time_arr = json_dict[i]['time'].split(':')
         time_s = time_format_s(int(time_arr[0]),int(time_arr[1]),float(time_arr[2]))
         if time_s>=start and time_s<=end and json_dict[i]['action']=='Eliminate':
-            print(json_dict[i])
+            data_list.append(json_dict[i])
+    return data_list
 
 def get_arr_eliminate(data,start,end):
     '''
@@ -102,4 +106,4 @@ def get_arr_eliminate(data,start,end):
 # arr = json.load(file)
 # get_arr_eliminate(arr,21,30)
 
-# un_zip('UITEST_data.zip')
+# print(un_zip('UITEST_data.zip'))
