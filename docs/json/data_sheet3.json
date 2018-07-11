@@ -1,0 +1,8919 @@
+// Array of all frames containing health & ult charge data.
+// One frame:
+// 	  {
+//       "time":"00:00:00.0",  // timestamp of current frame, in hh:mm:ss.ms format
+//       "players":[  // Array of 12 players
+//          {
+//             "chara":"Lucio",  // Name of chara
+//             "hps":100,  // Health of chara
+//             "ults":1,  // Ult charge percentage of chara
+//             "team":"Team A",  // Name of the team the player belongs to
+//             "index":1  // Index of player, ranges from 1 to 12
+//          },
+//          ...  // 12 players in total
+//       ]
+//    },
+
+
+[
+   {
+      "time":"00:00:00.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:00.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:01.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:01.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:02.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:02.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:03.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:03.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:04.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:04.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:05.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:05.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:06.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:06.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:07.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:07.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":0,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:08.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:08.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:09.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:09.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:10.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:10.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:11.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:11.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:12.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:12.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":1,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:13.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:13.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:14.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:14.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:15.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:15.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:16.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:16.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:17.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":5,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:17.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":2,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":8,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":9,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":3,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:18.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":8,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":9,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:18.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":8,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":9,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":9,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":4,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:19.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":8,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":10,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":9,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":10,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:19.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":8,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":5,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:20.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":3,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":22,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:20.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":6,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:21.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":20,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:21.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":18,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":21,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":18,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:22.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":24,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:22.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":17,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":26,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:23.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":18,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":20,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":7,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":26,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:23.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":18,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":20,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:24.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:24.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":26,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":8,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:25.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":26,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:25.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":27,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":22,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":21,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":17,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:26.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":27,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":17,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:26.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":27,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":18,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:27.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":28,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":23,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":24,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":19,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:27.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":19,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:28.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":27,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":14,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:28.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":30,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":25,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":16,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:29.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:29.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:30.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:30.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":5,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:31.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":4,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":0,
+            "ults":19,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:31.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:32.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:32.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":11,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:33.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":0,
+            "ults":22,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:33.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":26,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:34.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":0,
+            "ults":38,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:34.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:35.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:35.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":9,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":0,
+            "ults":31,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:36.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:36.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:37.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":12,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:37.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":43,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":47,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:38.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":47,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:38.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":47,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":0,
+            "ults":27,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:39.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:39.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":10,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:40.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:40.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":13,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":34,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:41.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":0,
+            "ults":18,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:41.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":44,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:42.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:42.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":48,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":34,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":27,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:43.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:43.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":11,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:44.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:44.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":38,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":14,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":35,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:45.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:45.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":45,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":35,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":28,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":31,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:46.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:46.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":49,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":30,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:47.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:47.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":15,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":36,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":12,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:48.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":13,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:48.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":39,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":13,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":36,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":32,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:49.0",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":13,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":29,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   },
+   {
+      "time":"00:00:49.5",
+      "players":[
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":42,
+            "team":"Team A",
+            "index":1
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":46,
+            "team":"Team A",
+            "index":2
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":50,
+            "team":"Team A",
+            "index":3
+         },
+         {
+            "chara":"Soldier: 76",
+            "hps":100,
+            "ults":41,
+            "team":"Team A",
+            "index":4
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":16,
+            "team":"Team A",
+            "index":5
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":37,
+            "team":"Team A",
+            "index":6
+         },
+         {
+            "chara":"Zenyatta",
+            "hps":100,
+            "ults":13,
+            "team":"Team B",
+            "index":7
+         },
+         {
+            "chara":"Zarya",
+            "hps":100,
+            "ults":37,
+            "team":"Team B",
+            "index":8
+         },
+         {
+            "chara":"Lucio",
+            "hps":100,
+            "ults":38,
+            "team":"Team B",
+            "index":9
+         },
+         {
+            "chara":"Mei",
+            "hps":100,
+            "ults":40,
+            "team":"Team B",
+            "index":10
+         },
+         {
+            "chara":"Roadhog",
+            "hps":100,
+            "ults":39,
+            "team":"Team B",
+            "index":11
+         },
+         {
+            "chara":"Sombra",
+            "hps":100,
+            "ults":33,
+            "team":"Team B",
+            "index":12
+         }
+      ]
+   }
+]

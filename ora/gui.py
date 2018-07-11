@@ -2,9 +2,10 @@
 """
 @Author: vega13
 """
-import threading
+import platform
 import time
 import tkinter
+import requests
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -20,7 +21,7 @@ class Gui(object):
     def __init__(self):
         
         self.root = tkinter.Tk()
-        self.root.title('Overwatch Replay Analyzer v0.1 Beta')
+        self.root.title('Overwatch Replay Analyzer v0.1.2')
         self.root.geometry('550x350+400+200')
 
         self.read_path = None
@@ -37,8 +38,7 @@ class Gui(object):
         self.run_btn.pack()
         self.create_text()
         # check for update
-        self.t = threading.Thread(target=self.check_update)
-        self.t.start()
+        self.root.after(500, self.check_update)
 
     def create_path(self):
         width_msg = 100
@@ -108,10 +108,12 @@ class Gui(object):
         label_end_time = tkinter.Label(left_frame, text="End time in seconds (0 = analyze till the end):")
         label_fps = tkinter.Label(left_frame, text='FPS of analyzer:')
         label_game_type = tkinter.Label(left_frame, text='Game type (0 = OWL, 1 = Custom game):')
+        label_game_version = tkinter.Label(left_frame, text='OWL stage number(0=preseason, 1, 2, 3, 4):')
         label_start_time.pack()
         label_end_time.pack()
         label_fps.pack()
         label_game_type.pack()
+        label_game_version.pack()
 
         right_frame = tkinter.Frame(time_inputs_frame)
         right_frame.pack(side=RIGHT)
@@ -128,6 +130,9 @@ class Gui(object):
         game_type = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
         game_type.insert(0, '0')
         game_type.pack()
+        game_version = tkinter.Entry(right_frame, bg='lightBlue', fg='black')
+        game_version.insert(0, '0')
+        game_version.pack()
 
         self.time_inputs_frame = right_frame
     def create_text(self):
@@ -159,10 +164,25 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
         self.read_path.config(text=filename)
 
     def check_update(self):
-        version = {
-            'name': 'ORA OWL',
-            'current_version': 0.1,
-        }
+        import configparser
+        config = configparser.ConfigParser()
+        config.read('ora/etc/config.ini')
+
+        if platform.system() == "Windows":
+            osname = "win"
+        else:
+            osname = "osx"
+
+        current_version = config['version']['client_version']
+        r = requests.get(
+                config['api']['url'] + config['api']['check_update']
+                + osname + '/' + current_version
+            ).json()
+
+        if not r['is_latest']:
+            tkinter.messagebox.showinfo('Update Available',
+                'There is a newer version of ORA available, please download at \n{}'.format(r['url']))
+
 
     def info(self):
         valid = True
@@ -176,7 +196,8 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             "start_time": 0,
             "end_time": 0,
             "fps": 0,
-            "game_type": 0
+            "game_type": 0,
+            "game_version": 1
         }
         frame_left = self.left_frame.pack_slaves()
         frame_right = self.right_frame.pack_slaves()
@@ -221,9 +242,21 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             tkinter.messagebox.showinfo('Error', 'Invalid game type!')
             valid = False
             return [info, valid]
+
+        try:
+            info['game_version'] = int(time_inputs_frame[4].get())
+        except ValueError:
+            tkinter.messagebox.showinfo('Error', 'Invalid owl stage number!')
+            valid = False
+            return [info, valid]
             
         if not (info['game_type'] == 0 or info['game_type'] == 1):
             tkinter.messagebox.showinfo('Error', 'Invalid game type!')
+            valid = False
+            return [info, valid]
+
+        if not (info['game_version'] >= 0 or info['game_version'] < 5):
+            tkinter.messagebox.showinfo('Error', 'Invalid OWL stage number!')
             valid = False
             return [info, valid]
 
@@ -264,8 +297,7 @@ You can contact the author or report issues by: https://github.com/appcell/Overw
             except Exception as err:
                 print(err)
             else:
-                self.game_instance.output_to_json()
-                self.game_instance.output_to_excel()
+                self.game_instance.output()
                 self.show_finish_msg()
                 
             pool.PROCESS_POOL.close()
