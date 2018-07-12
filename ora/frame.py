@@ -51,8 +51,7 @@ class Frame(object):
         # Gui.gui_instance.show_progress(self.time)
 
         print(self.time)
-        # cv2.imshow('t',self.image)
-        # cv2.waitKey(0)
+        
         self.get_players()
 
         self.get_killfeeds()
@@ -140,7 +139,8 @@ class Frame(object):
             else:
                 return self.get_team_colors_from_image()
         elif self.game_type == OW.GAMETYPE_CUSTOM:
-            return OW.TEAM_COLORS_DEFAULT[self.game_type][self.game_version]
+            return OW.get_ui_variable("TEAM_COLORS_DEFAULT", 
+                self.game_type, self.game_version)
 
     def get_killfeeds(self):
         """Get killfeed info in this frame.
@@ -211,9 +211,9 @@ class Frame(object):
                     np.mean(validation_roi[:, :, 1]),
                     np.mean(validation_roi[:, :, 2])]
 
-            if std < OW.FRAME_VALIDATION_COLOR_STD[self.game_type][self.game_version] \
+            if std < OW.get_ui_variable("FRAME_VALIDATION_COLOR_STD", self.game_type, self.game_version) \
                     and np.mean(mean) \
-                        > OW.FRAME_VALIDATION_COLOR_MEAN[self.game_type][self.game_version] \
+                        > OW.get_ui_variable("FRAME_VALIDATION_COLOR_MEAN", self.game_type, self.game_version) \
                     and flag is True:
                 self.is_valid = True
             else:
@@ -233,7 +233,7 @@ class Frame(object):
                 replay_icon_preseason, self.game.replay_icon_ref, multichannel=True)
 
             max_val = max_val if max_val > max_val_preseason else max_val_preseason
-            if max_val < OW.FRAME_VALIDATION_REPLAY_PROB[self.game_type][self.game_version]:
+            if max_val < OW.get_ui_variable("FRAME_VALIDATION_REPLAY_PROB", self.game_type, self.game_version):
                 self.is_valid = True
             else:
                 self.is_valid = False
@@ -270,11 +270,11 @@ class Frame(object):
 
         # Create background image with team color
         bg_image_left = ImageUtils.create_bg_image(
-            team_colors[OW.LEFT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version],
-            OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
+            team_colors[OW.LEFT], OW.get_ui_variable("AVATAR_WIDTH_REF", self.game_type, self.game_version),
+            OW.get_ui_variable("AVATAR_HEIGHT_REF", self.game_type, self.game_version))
         bg_image_right = ImageUtils.create_bg_image(
-            team_colors[OW.RIGHT], OW.AVATAR_WIDTH_REF[self.game_type][self.game_version], 
-            OW.AVATAR_HEIGHT_REF[self.game_type][self.game_version])
+            team_colors[OW.RIGHT], OW.get_ui_variable("AVATAR_WIDTH_REF", self.game_type, self.game_version), 
+            OW.get_ui_variable("AVATAR_HEIGHT_REF", self.game_type, self.game_version))
         avatars_ref_observed = OW.get_avatars_ref_observed(self.game_type, self.game_version)
 
         # Overlay transparent reference avatar on background

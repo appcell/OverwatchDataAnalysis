@@ -127,8 +127,10 @@ class Sheet:
         if self.game.team_colors is None:
             Config.team_colors[0] = utils.to_hex([255, 255, 255])
             Config.team_colors[1] = utils.to_hex([70, 70, 70])
-        Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
-        Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
+        else:
+            Config.team_colors[0] = utils.to_hex(self.game.team_colors[0])
+            Config.team_colors[1] = utils.to_hex(self.game.team_colors[1])
+
 
     def new(self):
         frames = self.game.frames
@@ -158,7 +160,7 @@ class Sheet:
         """
         Save(self.sheet).save()
 
-    def json(self, filename):
+    def json(self):
         sheet_data = []
         sheet = self.sheet
         for col, cells in enumerate(sheet.rows):
@@ -178,5 +180,4 @@ class Sheet:
                 }
                 data['players'].append(player)
             sheet_data.append(data)
-        with open(filename, 'w') as file:
-            dump(sheet_data, file, ensure_ascii=False, indent=4)
+        return sheet_data
