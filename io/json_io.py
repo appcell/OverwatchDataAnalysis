@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import  zipfile
 import os
 import json
@@ -96,10 +98,41 @@ def get_arr_eliminate(data,start,end):
         if time_s>=start and time_s<=end and i['action']=='Eliminate':
             eliminate_arr.append(i)
     return eliminate_arr
-
+def get_regimentnumbyendtime(end):
+    '''
+    输出data_sheet1中从开始到指定时间的团战波数
+    团战标准：两次击杀间隔为14s以上，则取两者中点为团战开始
+      Author:
+          xiyu
+      Args:
+          end: 结束时间(秒，浮点数)
+      Returns:
+          n:从开始到指定时间的团战波数
+    '''
+    eliminate_arr=[]
+    file = open('UITEST_data_files\\data_sheet1.json', 'r')
+    arr = json.load(file)
+    for i in arr:
+        time_arr = i['time'].split(':')
+        time_s = time_format_s(int(time_arr[0]), int(time_arr[1]), float(time_arr[2]))
+        if time_s>=0 and time_s<=end and (i['action']=='Eliminate' or i['action']=='Demech'):
+            i['time']=time_s
+            eliminate_arr.append(i)
+    if len(eliminate_arr)<1:
+        n = 0
+    elif len(eliminate_arr)==1:
+        n = 1
+    else :
+        n = 1
+        for line in range(1,len(eliminate_arr)):
+            if eliminate_arr[line]['time']-eliminate_arr[line-1]['time']>14:
+                n = n + 1
+    return n
 # get_eliminate(20.5,33.0)
 # file = open('UITEST_data_files\\data_sheet1.json', 'r')
 # arr = json.load(file)
 # get_arr_eliminate(arr,21,30)
+# n=get_regimentnumbyendtime(77.0)
+# print n
 
 # un_zip('UITEST_data.zip')
