@@ -103,7 +103,7 @@ def get_regimentnumbyendtime(end):
     输出data_sheet1中从开始到指定时间的团战波数
     团战标准：两次击杀间隔为14s以上，则取两者中点为团战开始
       Author:
-          xiyu
+          ForYou
       Args:
           end: 结束时间(秒，浮点数)
       Returns:
