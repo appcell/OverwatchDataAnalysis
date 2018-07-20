@@ -29,7 +29,7 @@ class SingleMatchStats:
         self.data_sheet3 = json.loads(archive.read('data_sheet3.json'))
         self.elims = self.get_eliminations()
         self.teamfight_separations = self.get_teamfight_separations()
-        self.player_info,self.ults=self.get_ults()
+        self.player_info,self.ults = self.get_ults()
 
     def get_eliminations(self, start_time=0, end_time=0):
         """Get all eliminatins in a given time range.
