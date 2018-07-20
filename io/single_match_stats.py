@@ -128,7 +128,7 @@ class SingleMatchStats:
         return res
 
 
-    def get_ults(self, start_time=0, end_time=0):
+    def get_ults(self, start_time = 0, end_time = 0):
         '''
                 根据data_sheet3.json 输入开始时间和结束时间 输出该时间段内每个英雄的大招能量变化
                 Author:
@@ -184,7 +184,7 @@ class SingleMatchStats:
                     end:停止时间
                     data:包含每个英雄大招能量变化的array
                 Returns:
-                    arr_data {'start_time': 20.0, 'end_time': 40.0, 'ult_info': [{'team': 0, 'player': 'Player1', 'ult_varitation': 38},....]}
+                    res {'start_time': 20.0, 'end_time': 40.0, 'ult_info': [{'team': 0, 'player': 'Player1', 'ult_varitation': 38},....]}
                 '''
 
         data = data.copy()
