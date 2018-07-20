@@ -94,7 +94,7 @@ class SingleMatchStats:
             Index of team-fight happening at 'time'.
         """
         if len(self.teamfight_separations) <= 1:
-            return 0
+            return 1
         else:
             for ind_timestamp in range(1, len(self.teamfight_separations)):
                 if time < self.teamfight_separations[ind_timestamp] \
@@ -114,7 +114,7 @@ class SingleMatchStats:
             None
 
         Returns:
-            A list of all separation timestamps between each teamfight.
+            A list of all timestamps marking separations between each teamfight.
         """
         res = [0]
         if len(self.elims) > 1:
