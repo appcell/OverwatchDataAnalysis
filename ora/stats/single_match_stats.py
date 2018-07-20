@@ -98,7 +98,7 @@ class SingleMatchStats:
         else:
             for ind_timestamp in range(1, len(self.teamfight_separations)):
                 if time < self.teamfight_separations[ind_timestamp] \
-                and time < self.teamfight_separations[ind_timestamp - 1]:
+                and time > self.teamfight_separations[ind_timestamp - 1]:
                     return ind_timestamp
             if time > self.teamfight_separations[-1]:
                 return len(self.teamfight_separations) + 1
