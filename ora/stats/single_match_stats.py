@@ -7,6 +7,22 @@ sys.path.append('../utils')
 from utils import StatsUtils
 
 class SingleMatchStats:
+    """Class of a SingleMatchStats object.
+
+    Retrieves and stores all stats listed in 
+    competitive_stats_rating_list.xlsx.
+
+    Attributes:
+        data_metainfo: Raw data in metainfo.json in dict format
+        data_frames: Raw data in frames.json in dict format
+        data_sheet1: Raw data in data_sheet1.json in dict format
+        data_sheet1: Raw data in data_sheet2.json in dict format
+        data_sheet1: Raw data in data_sheet3.json in dict format
+        elims: List of all eliminations in the game, with 'time' expressed in
+               seconds, not in hh:mm:ss
+        teamfight_separations: List of teamfight separation points
+    """
+
     def __init__(self, zip_path):
         """Parse JSON zip pack and return corresponding dicts
 
@@ -31,6 +47,8 @@ class SingleMatchStats:
 
     def get_eliminations(self, start_time=0, end_time=0):
         """Get all eliminatins in a given time range.
+
+        If start_time == 0 and end_time == 0, return full elim list.
 
         Author:
             Appcell
