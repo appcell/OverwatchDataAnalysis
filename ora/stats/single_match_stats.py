@@ -6,6 +6,7 @@ import json
 sys.path.append('../utils')
 from utils import stats
 
+
 class SingleMatchStats:
     """Class of a SingleMatchStats object.
 
@@ -40,8 +41,8 @@ class SingleMatchStats:
         self.data_metainfo = json.loads(archive.read('metainfo.json'))
         self.data_frames = json.loads(archive.read('frames.json'))
         self.data_sheet1 = json.loads(archive.read('data_sheet1.json'))
-        self.data_sheet2 = json.loads(archive.read('data_sheet1.json'))
-        self.data_sheet3 = json.loads(archive.read('data_sheet1.json'))
+        self.data_sheet2 = json.loads(archive.read('data_sheet2.json'))
+        self.data_sheet3 = json.loads(archive.read('data_sheet3.json'))
         self.elims = self.get_eliminations()
         self.teamfight_separations = self.get_teamfight_separations()
 
@@ -144,3 +145,87 @@ class SingleMatchStats:
         return res
 
 
+    def get_ults(self,start_time, end_time):
+        """输出时间段内的data_sheet3
+
+        Author:
+            maocili
+
+        Args:
+            start_time : 开始时间
+            end_time : 结束时间
+
+        Returns:
+            res : 包含data_sheet3的list
+        """
+
+        res=[]
+
+        for i,data in enumerate(self.data_sheet3):
+            if not type(data['time']) == float:
+                time_arr = data['time'].split(':')
+                curr_time = stats.hms_to_seconds(time_arr[0],
+                                                      time_arr[1], time_arr[2])
+                data['time'] = curr_time
+            if start_time <= data['time'] and end_time >= data['time']:
+                res.append(data)
+            elif end_time <= data['time']:
+                break
+
+        return res
+
+
+    def get_arr_varitation(self, start_time, end_time):
+
+        """根据self.data_sheet3 输出时间段中的大招能量变化
+
+        Author:
+            maocili
+
+        Args:
+            start_time : 开始时间
+            end_time : 结束时间
+
+        Returns:
+            res : 包含大招能量变化的dict
+        """
+
+        res = {
+            'start_time': start_time,
+            'end_time': end_time,
+            'ult_charge': []
+        }
+
+        start = self.get_ults(start_time,start_time)
+        end = self.get_ults(end_time,end_time)
+
+        for i in end:
+            for index,player in enumerate(i['players']):
+                end[0]['players'][index]['ults'] = end[0]['players'][index]['ults'] - start[0]['players'][index]['ults']
+
+        end[0]['time'] = [start_time,end_time]
+        return end
+
+
+    def get_ult_vary(self, data, start_time, end_time):
+
+        """在data的基础上加上新时间段的变化
+
+                Author:
+                    maocili
+
+                Args:
+                    data : 时间段的大招能量变化
+                    start_time : 开始时间
+                    end_time : 结束时间
+
+                Returns:
+                    res : 两个时间段的大招能量变化
+                """
+
+        new_data= self.get_arr_varitation(start_time,end_time)[0]
+
+        for index,player in enumerate(new_data['players']):
+            new_data['players'][index]['ults'] = new_data['players'][index]['ults'] + data[0]['players'][index]['ults']
+        new_data['time'] = [data[0]['time'], new_data['time']]
+        return new_data
