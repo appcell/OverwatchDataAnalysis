@@ -4,7 +4,7 @@ import zipfile
 import json
 
 sys.path.append('../utils')
-from utils import StatsUtils
+from utils import stats
 
 class SingleMatchStats:
     """Class of a SingleMatchStats object.
@@ -65,14 +65,14 @@ class SingleMatchStats:
             for event in self.data_sheet1:
                 if event['action'] == 'Eliminate':
                     time_arr = event['time'].split(':')
-                    curr_time = StatsUtils.hms_to_seconds(time_arr[0], 
+                    curr_time = stats.hms_to_seconds(time_arr[0],
                         time_arr[1], time_arr[2])
                     event['time'] = curr_time
                     res.append(event)
         else:
             for event in self.data_sheet1:
                 time_arr = event['time'].split(':')
-                curr_time = StatsUtils.hms_to_seconds(time_arr[0], 
+                curr_time = stats.hms_to_seconds(time_arr[0],
                     time_arr[1], time_arr[2])
                 if curr_time >= start_time and curr_time >= end_time \
                 and self.event['action'] == 'Eliminate':
