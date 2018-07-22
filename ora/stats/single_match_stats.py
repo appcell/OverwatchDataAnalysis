@@ -393,7 +393,7 @@ class SingleMatchStats:
         Returns:
             float: the avgtime of all teamfight
         """
-        fight_time = [fight[-1]['time']-fight[0]['time'] for fight in self.teamfight]
+        fight_time = [fight[-1]['time']-fight[0]['time']+7 for fight in self.teamfight]
         return sum(fight_time)/len(fight_time)
 
     def get_count_teamfight(self):
