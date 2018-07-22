@@ -22,6 +22,7 @@ class SingleMatchStats:
         elims: List of all eliminations in the game, with 'time' expressed in
                seconds, not in hh:mm:ss
         teamfight_separations: List of teamfight separation points
+        teamfight: List of all event in teamfight
     """
 
     def __init__(self, zip_path):
@@ -45,6 +46,7 @@ class SingleMatchStats:
         self.data_sheet3 = json.loads(archive.read('data_sheet3.json'))
         self.elims = self.get_eliminations()
         self.teamfight_separations = self.get_teamfight_separations()
+        self.teamfight = self.get_all_teamfight()
 
     def get_eliminations(self, start_time=0, end_time=0):
         """Get all eliminatins in a given time range.
@@ -174,7 +176,6 @@ class SingleMatchStats:
 
         return res
 
-
     def get_arr_varitation(self, start_time, end_time):
 
         """根据self.data_sheet3 输出时间段中的大招能量变化
@@ -206,7 +207,6 @@ class SingleMatchStats:
         end[0]['time'] = [start_time,end_time]
         return end
 
-
     def get_ult_vary(self, data, start_time, end_time):
 
         """在data的基础上加上新时间段的变化
@@ -229,3 +229,183 @@ class SingleMatchStats:
             new_data['players'][index]['ults'] = new_data['players'][index]['ults'] + data[0]['players'][index]['ults']
         new_data['time'] = [data[0]['time'], new_data['time']]
         return new_data
+    
+    def get_total_time(self):
+        """get the time of the game
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            float : the timestamps of the game
+        """
+        return self.data_frames[-1]['time']
+
+    def get_all_eliminations(self):
+        """get the total eliminations
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+            
+        Returns:
+            int: number of total eliminations
+        """
+    
+        return len(self.elims)
+    
+    def get_all_deaths(self):
+        """get the total deaths
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            int: number of total deaths
+        """
+        death_num = 0
+        
+        for events in self.data_sheet1:
+            if events['action'] == 'Eliminate' or events['action'] == 'Suicide':
+                death_num += 1
+            elif events['action'] == 'Resurrect':
+                death_num -= 1
+        
+        return death_num
+    
+    def get_most_elim_player(self):
+        """get the most eliminations players
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            dict: the player with most elims(number,name,the number of eliminations)
+        """
+        mep_dict = {}
+        for events in self.elims:
+            if events['action'] == 'Eliminate':
+                if events['subject']['player'] in mep_dict:
+                    mep_dict[events['subject']['player']] += 1
+                else:
+                    mep_dict[events['subject']['player']] = 1
+        name = max(mep_dict,key=mep_dict.get)
+        for i in range(12):
+            if name == self.data_metainfo['player_names'][i]:
+                index_of_player = i
+                break
+        res = {
+            'index' :index_of_player,
+            'player' :name,
+            'elims' :mep_dict[name]
+        }
+    
+        return res
+    
+    def get_most_kda_player(self):
+        """get the most kd-rate players
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            str: the player have most kd-rate
+        """
+        player_dict = {}
+        for events in self.data_sheet1:
+            if events['action'] == 'Eliminate':
+                if events['subject']['player'] in player_dict:
+                    player_dict[events['subject']['player']]['elim'] += 1
+                else:
+                    player_dict[events['subject']['player']] = {
+                        'elim':1,
+                        'dead':0
+                    }
+                if events['object']['player'] in player_dict:
+                    player_dict[events['object']['player']]['dead'] += 1
+                else:
+                    player_dict[events['object']['player']] = {
+                        'elim':0,
+                        'dead':1
+                    }
+        mkp_dict = {}
+        for player in player_dict:
+            if player_dict[player]['dead'] == 0:
+                player_dict[player]['dead'] = 1
+            mkp_dict[player] = player_dict[player]['elim']/player_dict[player]['dead']
+        
+        return max(mkp_dict,key=mkp_dict.get)
+    
+    def get_all_teamfight(self):
+        """get the teamfight in whole game
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            list: the list of all teamfights
+        """
+        if self.teamfight_separations == [0]:
+            sep = [0,self.get_total_time()]
+        res = []
+        start_time_target = 0
+        end_time_target = 1
+        one_fight = []
+        for event in self.elims:
+            if event['action'] == 'Eliminate' and \
+                    event['time'] >= sep[start_time_target] and \
+                    event['time'] <= sep[end_time_target]:
+                one_fight.append(event)
+            elif event['time'] >= sep[end_time_target]:
+                start_time_target += 1
+                end_time_target += 1
+                res.append(one_fight)
+                one_fight = []
+        res.append(one_fight)
+        return res
+            
+    def get_avgtime_teamfight(self):
+        """get the avg teamfight time in whole game
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            float: the avgtime of all teamfight
+        """
+        fight_time = [fight[-1]['time']-fight[0]['time'] for fight in self.teamfight]
+        return sum(fight_time)/len(fight_time)
+
+    def get_count_teamfight(self):
+        """get the teamfights' count
+
+        Author:
+            ngc7293
+
+        Args:
+            None
+
+        Returns:
+            int: the  count of teamfight
+        """
+        return len(self.teamfight)
