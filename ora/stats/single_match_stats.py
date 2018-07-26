@@ -3,6 +3,7 @@ import os
 import sys
 import zipfile
 import json
+from copy import deepcopy
 
 sys.path.append('../utils')
 from utils import stats
@@ -45,7 +46,7 @@ class SingleMatchStats:
         self.demechs = self.get_demechs()
         self.teamfight_separations = self.get_teamfight_separations()
         self.teamfight = self.get_all_teamfight()
-        self.playerArr = self.get_init_plarer_basic_data()
+        self.player_arr = self.get_init_player_basic_data()
 
     def get_eliminations(self, start_time=0, end_time=0):
         """Get all eliminatins in a given time range.
@@ -366,7 +367,7 @@ class SingleMatchStats:
         """
         return len(self.teamfight)
 
-    def get_init_plarer_basic_data(self):
+    def get_init_player_basic_data(self):
         '''
         根据data_sheet2初始化各个选手基本数据
         Author:
@@ -374,7 +375,7 @@ class SingleMatchStats:
         Args：
         None
         Returns：
-        playerArr：以选手player为单位的数组，共12个，每个player中包括以下内容：
+        player_arr：以选手player为单位的数组，共12个，每个player中包括以下内容：
              team：队伍名称
              team_status：队伍进攻或防守
              index：编号从左往右
@@ -439,7 +440,7 @@ class SingleMatchStats:
         '''
         heros = {'chara':'','Eliminate':0,'assist':0,'Resurrect':0,'die':0,'Suicide':0,'Resurrected':0,'critical die':0,'critical kill':0,'assist die':0,'EliminateDetail':[],'assistDetail':[],'dieDetail':[]}
         total = {'totalhero':1,'totalEliminate':0,'totalassist':0,'totalResurrect':0,'totaldie':0,'totalSuicide':0,'totalResurrected':0,'totalcritical die':0,'totalcritical kill':0,'totalassist die':0,'totalDemech':0,'totalDemechassist':0,'totalDemechdie':0,'totalDemechcritical die':0,'totalDemechcritical kill':0,'totalDemechassist die':0,'totalEliminateDetail':[],'totalassistDetail':[],'totaldieDetail':[]}
-        playerArr = []
+        player_arr = []
         for teamindex, teamvalue in enumerate(self.data_sheet2):
             for player in teamvalue['players']:
                 hero = player['starting lineup']
@@ -450,8 +451,8 @@ class SingleMatchStats:
                 player['team_status'] = teamvalue['team_status']
                 for key in total:
                     player[key] = total[key]
-                playerArr.append(player)
-        return playerArr
+                player_arr.append(player)
+        return player_arr
 
     def get_resurrects(self, start_time=0, end_time=0):
         """Get all resurrects in a given time range.
@@ -554,139 +555,167 @@ class SingleMatchStats:
         Args：
         start_time开始时间end_time结束时间data原数据
         Returns：
-        同get_init_plarer_basic_data()返回值
+        同get_init_player_basic_data()返回值
         '''
+        #提供了data原有数据就在原有数据累加，没有提供则在初始化的选手信息self.player_arr上添加
         if data == 0:
-            playerArr = self.playerArr
+            player_arr = self.player_arr
         else:
-            playerArr = data
+            player_arr = data
+        #提供了开始和结束时间则取时间内的击杀事件加工，没有提供则默认全部击杀事件
         if end_time == 0 and start_time == 0:
             eliminations = self.elims
         else:
             eliminations = self.get_eliminations(start_time,end_time)
         heros = {'chara':'','Eliminate':0,'assist':0,'Resurrect':0,'die':0,'Suicide':0,'Resurrected':0,'critical die':0,'critical kill':0,'assist die':0,'EliminateDetail':[],'assistDetail':[],'dieDetail':[]}
+        #遍历提供的击杀事件，从其中提取信息
         for index, value in enumerate(eliminations):
-            for index1, value1 in enumerate(playerArr):
-                if value1['name'] == value['subject']['player']:
-                    playerArr[index1]['totalEliminate'] = playerArr[index1]['totalEliminate']+1
+            #遍历选手列表，找到信息对应的选手，循环中主要处理三类信息 1：击杀者  2：助攻  3：被击杀者
+            for playerindex, playervalue in enumerate(player_arr):
+                # 1：击杀者相关信息(1a 总击杀 1b爆头总击杀 1c 总击杀明细 1d 使用英雄击杀相关)
+                if playervalue['name'] == value['subject']['player']:
+                    # 1a 总击杀
+                    player_arr[playerindex]['totalEliminate'] +=1
+                    # 1b 爆头总击杀
                     if value['critical kill'] =='Y':
-                        playerArr[index1]['totalcritical kill'] = playerArr[index1]['totalcritical kill']+1
-                    heroEliminate = 0
-                    for  index3 , value3 in enumerate(value1['totalEliminateDetail']):
-                        if value3['chara'] == value['object']['chara']:
-                            heroEliminate = 1
-                            playerArr[index1]['totalEliminateDetail'][index3]['num'] = playerArr[index1]['totalEliminateDetail'][index3]['num']+1
+                        player_arr[playerindex]['totalcritical kill'] += 1
+                    # 1c 总击杀明细 (敌方哪个英雄 几次)
+                    hero_eliminate = 0
+                    for  obj_hero_index , obj_hero_value in enumerate(playervalue['totalEliminateDetail']):
+                        if obj_hero_value['chara'] == value['object']['chara']:
+                            hero_eliminate = 1
+                            player_arr[playerindex]['totalEliminateDetail'][obj_hero_index]['num'] += 1
                             break
-                    if heroEliminate == 0:
-                        newheroEliminate = {'chara':value['object']['chara'],'num':1}
-                        playerArr[index1]['totalEliminateDetail'].append(newheroEliminate)
+                    # 击杀明细列表中 无此英雄则新增
+                    if hero_eliminate == 0:
+                        newhero_eliminate = {'chara':value['object']['chara'],'num':1}
+                        player_arr[playerindex]['totalEliminateDetail'].append(newhero_eliminate)
+                    # 1d 使用英雄击杀相关
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] == value['subject']['chara']:
+                    #遍历已使用英雄
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        #和选手总击杀类似，这里处理选手不同英雄的击杀数据
+                        if used_hero_value['chara'] == value['subject']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Eliminate'] = playerArr[index1]['heros'][index2]['Eliminate']+1
+                            player_arr[playerindex]['heros'][used_hero_index]['Eliminate'] += 1
                             if value['critical kill'] == 'Y':
-                                playerArr[index1]['heros'][index2]['critical kill'] = playerArr[index1]['heros'][index2]['critical kill']+1
-                            heroEliminate = 0
-                            for  index4 , value4 in enumerate(value1['heros']['EliminateDetail']):
-                                if value4['chara'] == value['object']['chara']:
-                                    heroEliminate = 1
-                                    playerArr[index1]['heros'][index2]['EliminateDetail'][index4]['num'] = playerArr[index1]['heros'][index2]['EliminateDetail'][index4]['num']+1
+                                player_arr[playerindex]['heros'][used_hero_index]['critical kill'] += 1
+                            hero_eliminate = 0
+                            #击杀敌方英雄详情
+                            for  hero_action_detail_index , hero_action_detail_value in enumerate(playervalue['heros']['EliminateDetail']):
+                                if hero_action_detail_value['chara'] == value['object']['chara']:
+                                    hero_eliminate = 1
+                                    player_arr[playerindex]['heros'][used_hero_index]['EliminateDetail'][hero_action_detail_index]['num'] += 1
                                     break
-                            if heroEliminate == 0:
-                                newheroEliminate = {'chara':value['object']['chara'],'num':1}
-                                playerArr[index1]['heros'][index2]['EliminateDetail'].append(newheroEliminate)
+                            if hero_eliminate == 0:
+                                newhero_eliminate = {'chara':value['object']['chara'],'num':1}
+                                player_arr[playerindex]['heros'][used_hero_index]['EliminateDetail'].append(newhero_eliminate)
                             break
+                    #未使用过此英雄则新增
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['subject']['chara']
                         newhero['Eliminate'] = 1
-                        newheroEliminate = {'chara':value['object']['chara'],'num':1}
-                        newhero['EliminateDetail'].append(newheroEliminate)
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
+                        newhero_eliminate = {'chara':value['object']['chara'],'num':1}
+                        newhero['EliminateDetail'].append(newhero_eliminate)
+                        player_arr[playerindex]['totalhero'] +=  1
                         if value['critical kill'] == 'Y':
                             newhero['critical kill'] = 1
-                        playerArr[index1]['heros'].append(newhero)
-                totalassistdie = 0
+                        player_arr[playerindex]['heros'].append(newhero)
+                # 2：助攻相关信息 total_assist_die字段记录这次击杀事件造成几个助攻，累加在选手的assist die和totalassist die上，assist die/die 可以看出敌方队伍集火目标
+                total_assist_die = 0
                 for assistplayer in value['assist']:
-                    if value1['name'] == assist[assistplayer]['player']:
-                        totalassistdie = totalassistdie + 1
-                        playerArr[index1]['totalassist'] = playerArr[index1]['totalassist']+1
+                    #遍历助攻列表 处理选手的 2a总助攻 2b总助攻明细 2c不同英雄助攻信息 
+                    if playervalue['name'] == assist[assistplayer]['player']:
+                        total_assist_die += 1
+                        # 2a 总助攻
+                        player_arr[playerindex]['totalassist'] += 1
+                        # 2b 总助攻明细
                         heroassist = 0
-                        for  index3 , value3 in enumerate(value1['totalassistDetail']):
-                            if value3['chara'] == value['object']['chara']:
+                        for  obj_hero_index , obj_hero_value in enumerate(playervalue['totalassistDetail']):
+                            if obj_hero_value['chara'] == value['object']['chara']:
                                 heroassist = 1
-                                playerArr[index1]['totalassistDetail'][index3]['num'] = playerArr[index1]['totalassistDetail'][index3]['num']+1
+                                player_arr[playerindex]['totalassistDetail'][obj_hero_index]['num'] += 1
                                 break
                         if heroassist == 0:
                             newheroassist = {'chara':value['object']['chara'],'num':1}
-                            playerArr[index1]['totalassistDetail'].append(newheroassist)
+                            player_arr[playerindex]['totalassistDetail'].append(newheroassist)
+                        # 2c 遍历英雄更新助攻信息
                         heroisexsit = 0
-                        for  index2, value2 in enumerate(value1['heros']):
-                            if value2['chara'] == assist[assistplayer]['hero']:
+                        for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                            if used_hero_value['chara'] == assist[assistplayer]['hero']:
                                 heroisexsit = 1
-                                playerArr[index1]['heros'][index2]['assist'] = playerArr[index1]['heros'][index2]['assist']+1
+                                player_arr[playerindex]['heros'][used_hero_index]['assist'] += 1
+                                #助攻击杀敌方英雄信息
                                 heroassist = 0
-                                for  index4 , value4 in enumerate(value1['heros']['assistDetail']):
-                                    if value4['chara'] == value['object']['chara']:
+                                for  hero_action_detail_index , hero_action_detail_value in enumerate(playervalue['heros']['assistDetail']):
+                                    if hero_action_detail_value['chara'] == value['object']['chara']:
                                         heroassist = 1
-                                        playerArr[index1]['heros'][index2]['assistDetail'][index4]['num'] = playerArr[index1]['heros'][index2]['assistDetail'][index4]['num']+1
+                                        player_arr[playerindex]['heros'][used_hero_index]['assistDetail'][hero_action_detail_index]['num'] += 1
                                         break
                                 if heroassist == 0:
                                     newheroassist = {'chara':value['object']['chara'],'num':1}
-                                    playerArr[index1]['heros'][index2]['assistDetail'].append(newheroassist)
+                                    player_arr[playerindex]['heros'][used_hero_index]['assistDetail'].append(newheroassist)
                                 break
+                        #使用英雄不存在则新增
                         if heroisexsit == 0:
                             newhero = deepcopy(heros)
                             newhero['chara'] = assist[assistplayer]['hero']
                             newhero['assist'] = 1
                             newheroassist = {'chara':value['object']['chara'],'num':1}
                             newhero['assistDetail'].append(newheroassist)
-                            playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
-                            playerArr[index1]['heros'].append(newhero)
-                if value1['name'] == value['object']['player']:
-                    playerArr[index1]['totaldie'] = playerArr[index1]['totaldie'] + 1
-                    playerArr[index1]['totalassist die'] = playerArr[index1]['totalassist die'] + totalassistdie
+                            player_arr[playerindex]['totalhero'] +=  1
+                            player_arr[playerindex]['heros'].append(newhero)
+                # 3：被击杀者信息(3a 总死亡 3b总被助攻 3c 总被爆头击杀 3d 被击杀明细 3e 被击杀英雄相关)
+                if playervalue['name'] == value['object']['player']:
+                    #3a 总死亡
+                    player_arr[playerindex]['totaldie'] += 1
+                    #3b 总被助攻数
+                    player_arr[playerindex]['totalassist die'] += total_assist_die
+                    #3c 总被爆头击杀数
                     if value['critical kill'] == 'Y':
-                        playerArr[index1]['totalcritical die'] =playerArr[index1]['totalcritical die'] + 1
+                        player_arr[playerindex]['totalcritical die'] += 1
+                    #3d 被击杀明细 (造成击杀的敌方英雄构成及次数)
                     herodie = 0
-                    for  index3 , value3 in enumerate(value1['totaldieDetail']):
-                        if value3['chara'] == value['subject']['chara']:
+                    for  obj_hero_index , obj_hero_value in enumerate(playervalue['totaldieDetail']):
+                        if obj_hero_value['chara'] == value['subject']['chara']:
                             herodie = 1
-                            playerArr[index1]['totaldieDetail'][index3]['num'] = playerArr[index1]['totaldieDetail'][index3]['num']+1
+                            player_arr[playerindex]['totaldieDetail'][obj_hero_index]['num'] += 1
                             break
                     if herodie == 0:
-                        newherodie = {'chara':value['object']['chara'],'num':1}
-                        playerArr[index1]['totaldieDetail'].append(newherodie)
+                        newherodie = {'chara':value['subject']['chara'],'num':1}
+                        player_arr[playerindex]['totaldieDetail'].append(newherodie)
+                    #3e 被击杀英雄(死亡构成) 数据结构与总数据类似
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] ==  value['object']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        if used_hero_value['chara'] ==  value['object']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['die'] = playerArr[index1]['heros'][index2]['die'] + 1
-                            playerArr[index1]['heros'][index2]['assist die'] = playerArr[index1]['heros'][index2]['assist die'] + totalassistdie
+                            player_arr[playerindex]['heros'][used_hero_index]['die'] += 1
+                            player_arr[playerindex]['heros'][used_hero_index]['assist die'] += total_assist_die
                             if value['critical kill'] == 'Y':
-                                playerArr[index1]['heros'][index2]['critical die'] = playerArr[index1]['heros'][index2]['critical die'] + 1
+                                player_arr[playerindex]['heros'][used_hero_index]['critical die'] += 1
                             herodie = 0
-                            for  index4 , value4 in enumerate(value1['heros']['dieDetail']):
-                                if value4['chara'] == value['subject']['chara']:
+                            for  hero_action_detail_index , hero_action_detail_value in enumerate(playervalue['heros']['dieDetail']):
+                                if hero_action_detail_value['chara'] == value['subject']['chara']:
                                     herodie = 1
-                                    playerArr[index1]['heros'][index2]['dieDetail'][index4]['num'] = playerArr[index1]['heros'][index2]['dieDetail'][index4]['num'] + 1
+                                    player_arr[playerindex]['heros'][used_hero_index]['dieDetail'][hero_action_detail_index]['num'] += 1
                                     break
                             if herodie == 0:
-                                newherodie = {'chara':value['object']['chara'],'num':1}
-                                playerArr[index1]['heros'][index2]['dieDetail'].append(newherodie)
+                                newherodie = {'chara':value['subject']['chara'],'num':1}
+                                player_arr[playerindex]['heros'][used_hero_index]['dieDetail'].append(newherodie)
                             break
+                    #被击杀的英雄不存在则新增
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['object']['chara']
                         newhero['die'] = 1
                         newherodie = {'chara':value['subject']['chara'],'num':1}
                         newhero['dieDetail'].append(newherodie)
-                        newhero['assist die'] = totalassistdie
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
+                        newhero['assist die'] = total_assist_die
+                        player_arr[playerindex]['totalhero'] += 1
                         if value['critical kill'] == 'Y':
                             newhero['critical die'] = 1
-                        playerArr[index1]['heros'].append(newhero)
+                        player_arr[playerindex]['heros'].append(newhero)
 
     def get_player_basic_resurrects(self,start_time=0,end_time=0,data=0):
         '''
@@ -696,47 +725,53 @@ class SingleMatchStats:
         Args：
         start_time开始时间end_time结束时间data原数据
         Returns：
-        同get_init_plarer_basic_data()返回值
+        同get_init_player_basic_data()返回值
         '''
+        #提供了data原有数据就在原有数据累加，没有提供则在初始化的选手信息self.player_arr上添加
         if data == 0:
-            playerArr = self.playerArr
+            player_arr = self.player_arr
         else:
-            playerArr = data
+            player_arr = data
+        #提供了开始和结束时间则取时间内的复活事件加工，没有提供则默认全部复活事件
         if end_time == 0 and start_time == 0:
             resurrects = self.resurrects
         else:
             resurrects = self.get_resurrects(start_time,end_time)
         heros = {'chara':'','Eliminate':0,'assist':0,'Resurrect':0,'die':0,'Suicide':0,'Resurrected':0,'critical die':0,'critical kill':0,'assist die':0,'EliminateDetail':[],'assistDetail':[],'dieDetail':[]}
+        #遍历提供的复活事件
         for index, value in enumerate(resurrects):
-            for index1, value1 in enumerate(playerArr):
-                if value1['name'] == value['subject']['player']:
-                    playerArr[index1]['totalResurrect'] = playerArr[index1]['totalResurrect'] + 1
+            #遍历选手列表 更新 1 复活数据  2 被复活数据
+            for playerindex, playervalue in enumerate(player_arr):
+                #复活数据 和击杀数据一样做了英雄分组 1是为了保持数据格式的一致性，2是防止出另外具有复活技能的英雄 
+                if playervalue['name'] == value['subject']['player']:
+                    player_arr[playerindex]['totalResurrect'] += 1
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] ==  value['subject']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        if used_hero_value['chara'] ==  value['subject']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Resurrect'] = playerArr[index1]['heros'][index2]['Resurrect'] + 1
+                            player_arr[playerindex]['heros'][used_hero_index]['Resurrect'] += 1
                             break
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['subject']['chara']
                         newhero['Resurrect'] = 1
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
-                        playerArr[index1]['heros'].append(newhero)
-                if value1['name'] == value['object']['player']:
-                    playerArr[index1]['totalResurrected'] = playerArr[index1]['totalResurrected'] + 1
+                        player_arr[playerindex]['totalhero'] += 1
+                        player_arr[playerindex]['heros'].append(newhero)
+                #被复活数据
+                if playervalue['name'] == value['object']['player']:
+                    player_arr[playerindex]['totalResurrected'] += 1
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] == value['object']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        if used_hero_value['chara'] == value['object']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Resurrected'] = playerArr[index1]['heros'][index2]['Resurrected']+1
+                            player_arr[playerindex]['heros'][used_hero_index]['Resurrected'] += 1
                             break
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['object']['chara']
                         newhero['Resurrected'] = 1
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
-                        playerArr[index1]['heros'].append(newhero)
+                        player_arr[playerindex]['totalhero'] += 1
+                        player_arr[playerindex]['heros'].append(newhero)
 
     def get_player_basic_suicides(self,start_time=0,end_time=0,data=0):
         '''
@@ -746,33 +781,37 @@ class SingleMatchStats:
         Args：
         start_time开始时间end_time结束时间data原数据
         Returns：
-        同get_init_plarer_basic_data()返回值
+        同get_init_player_basic_data()返回值
         '''
+        #提供了data原有数据就在原有数据累加，没有提供则在初始化的选手信息self.player_arr上添加
         if data == 0:
-            playerArr = self.playerArr
+            player_arr = self.player_arr
         else:
-            playerArr = data
+            player_arr = data
+        #提供了开始和结束时间则取时间内的自杀事件加工，没有提供则默认全部自杀事件
         if end_time == 0 and start_time == 0:
             suicides = self.suicides
         else:
             suicides = self.get_suicides(start_time,end_time)
         heros = {'chara':'','Eliminate':0,'assist':0,'Resurrect':0,'die':0,'Suicide':0,'Resurrected':0,'critical die':0,'critical kill':0,'assist die':0,'EliminateDetail':[],'assistDetail':[],'dieDetail':[]}
+        #遍历提供的自杀事件
         for index, value in enumerate(suicides):
-            for index1, value1 in enumerate(playerArr):
-                if value1['name'] == value['object']['player']:
-                    playerArr[index1]['totalSuicide'] = playerArr[index1]['totalSuicide']+1
+            #遍历选手列表 更新自杀数据
+            for playerindex, playervalue in enumerate(player_arr):
+                if playervalue['name'] == value['object']['player']:
+                    player_arr[playerindex]['totalSuicide'] += 1
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] == value['object']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        if used_hero_value['chara'] == value['object']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Suicide'] = playerArr[index1]['heros'][index2]['Suicide'] + 1
+                            player_arr[playerindex]['heros'][used_hero_index]['Suicide'] += 1
                             break
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['object']['chara']
                         newhero['Suicide'] = 1
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero']+1
-                        playerArr[index1]['heros'].append(newhero)
+                        player_arr[playerindex]['totalhero'] += 1
+                        player_arr[playerindex]['heros'].append(newhero)
 
     def get_player_basic_demechs(self,start_time=0,end_time=0,data=0):
         '''
@@ -782,76 +821,84 @@ class SingleMatchStats:
         Args：
         start_time开始时间end_time结束时间data原数据
         Returns：
-        同get_init_plarer_basic_data()返回值
+        同get_init_player_basic_data()返回值
         '''
+        #提供了data原有数据就在原有数据累加，没有提供则在初始化的选手信息self.player_arr上添加
         if data == 0:
-            playerArr = self.playerArr
+            player_arr = self.player_arr
         else:
-            playerArr = data
+            player_arr = data
+        #提供了开始和结束时间则取时间内的击杀机甲事件加工，没有提供则默认全部击杀机甲事件
         if end_time == 0 and start_time == 0:
             demechs = self.demechs
         else:
             demechs = self.get_suicides(start_time,end_time)
         heros = {'chara':'','Eliminate':0,'assist':0,'Resurrect':0,'die':0,'Suicide':0,'Resurrected':0,'critical die':0,'critical kill':0,'assist die':0,'EliminateDetail':[],'assistDetail':[],'dieDetail':[]}
+        #遍历提供的击杀机甲事件 此函数与击杀事件get_player_basic_eliminates类似，注释会从简
         for index, value in enumerate(demechs):
-            for index1, value1 in enumerate(playerArr):
-                if value1['name'] == value['subject']['player']:
-                    playerArr[index1]['totalDemech'] = playerArr[index1]['totalDemech']+1
+            #遍历选手列表 处理选手的 1 拆机甲 2 助攻拆机甲 3 被拆机甲
+            for playerindex, playervalue in enumerate(player_arr):
+                # 1：拆机甲相关数据 拆机甲总数 爆头拆机甲总数  不同英雄拆机甲数据
+                if playervalue['name'] == value['subject']['player']:
+                    player_arr[playerindex]['totalDemech'] += 1
                     if value['critical kill'] == 'Y':
-                        playerArr[index1]['totalDemechcritical kill'] = playerArr[index1]['totalDemechcritical kill']+1
+                        player_arr[playerindex]['totalDemechcritical kill'] += 1
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] ==  value['subject']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        if used_hero_value['chara'] ==  value['subject']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Demech'] = playerArr[index1]['heros'][index2]['Demech'] + 1
+                            player_arr[playerindex]['heros'][used_hero_index]['Demech'] += 1
                             if value['critical kill'] == 'Y':
-                                playerArr[index1]['heros'][index2]['Demechcritical kill'] = playerArr[index1]['heros'][index2]['Demechcritical kill']+1
+                                player_arr[playerindex]['heros'][used_hero_index]['Demechcritical kill'] += 1
                             break
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['subject']['chara']
                         newhero['Demech'] = 1
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero']+1
+                        player_arr[playerindex]['totalhero'] += 1
                         if value['critical kill'] == 'Y':
                             newhero['Demechcritical kill'] = 1
-                        playerArr[index1]['heros'].append(newhero)
-                totalDemechassistdie = 0
+                        player_arr[playerindex]['heros'].append(newhero)
+                #2：助攻拆机甲数据 遍历助攻列表 处理选手的 总助攻  不同英雄助攻信息
+                total_demech_assistdie = 0
                 for assistplayer in value['assist']:
-                    if value1['name'] == assist[assistplayer]['player']:
-                        totalDemechassistdie = totalDemechassistdie + 1
-                        playerArr[index1]['totalDemechassist'] = playerArr[index1]['totalDemechassist'] + 1
+                    if playervalue['name'] == assist[assistplayer]['player']:
+                        total_demech_assistdie += 1
+                        player_arr[playerindex]['totalDemechassist'] += 1
                         heroisexsit = 0
-                        for  index2, value2 in enumerate(value1['heros']):
-                            if value2['chara'] ==  assist[assistplayer]['hero']:
+                        for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                            if used_hero_value['chara'] == assist[assistplayer]['hero']:
                                 heroisexsit = 1
-                                playerArr[index1]['heros'][index2]['Demechassist'] = playerArr[index1]['heros'][index2]['Demechassist'] + 1
+                                player_arr[playerindex]['heros'][used_hero_index]['Demechassist'] += 1
                                 break
                         if heroisexsit == 0:
                             newhero = deepcopy(heros)
                             newhero['chara'] = assist[assistplayer]['hero']
                             newhero['Demechassist'] = 1
-                            playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
-                            playerArr[index1]['heros'].append(newhero)
-                if value1['name'] == value['object']['player']:
-                    playerArr[index1]['totalDemechdie'] = playerArr[index1]['totalDemechdie'] + 1
-                    playerArr[index1]['totalDemechassist die'] = playerArr[index1]['totalDemechassist die']+totalDemechassistdie
+                            player_arr[playerindex]['totalhero'] += 1
+                            player_arr[playerindex]['heros'].append(newhero)
+                #3:被拆机甲信息(总死亡 总被助攻 总被爆头击杀 被击杀英雄此处专指dva)
+                if playervalue['name'] == value['object']['player']:
+                    player_arr[playerindex]['totalDemechdie'] += 1
+                    player_arr[playerindex]['totalDemechassist die'] += total_demech_assistdie
                     if value['critical kill'] == 'Y':
-                        playerArr[index1]['totalDemechcritical die'] = playerArr[index1]['totalDemechcritical die'] + 1
+                        player_arr[playerindex]['totalDemechcritical die'] += 1
                     heroisexsit = 0
-                    for  index2, value2 in enumerate(value1['heros']):
-                        if value2['chara'] ==  value['object']['chara']:
+                    for  used_hero_index, used_hero_value in enumerate(playervalue['heros']):
+                        #判断存疑 如果机甲的chara是 meta 这里面需要修改为dva 如果不是meta则不需要修改
+                        if used_hero_value['chara'] ==  value['object']['chara']:
                             heroisexsit = 1
-                            playerArr[index1]['heros'][index2]['Demechdie'] = playerArr[index1]['heros'][index2]['Demechdie'] + 1
-                            playerArr[index1]['heros'][index2]['Demechassist die'] = playerArr[index1]['heros'][index2]['Demechassist die'] + totalDemechassistdie
+                            player_arr[playerindex]['heros'][used_hero_index]['Demechdie'] += 1
+                            player_arr[playerindex]['heros'][used_hero_index]['Demechassist die'] += total_demech_assistdie
                             if value['critical kill'] == 'Y':
-                                playerArr[index1]['heros'][index2]['Demechcritical die'] =playerArr[index1]['heros'][index2]['Demechcritical die'] + 1
+                                player_arr[playerindex]['heros'][used_hero_index]['Demechcritical die'] += 1
                             break
                     if heroisexsit == 0:
                         newhero = deepcopy(heros)
                         newhero['chara'] = value['object']['chara']
                         newhero['Demechdie'] = 1
-                        newhero['Demechassist die'] = totalDemechassistdie
-                        playerArr[index1]['totalhero'] = playerArr[index1]['totalhero'] + 1
+                        newhero['Demechassist die'] = total_demech_assistdie
+                        player_arr[playerindex]['totalhero'] += 1
                         if value['critical kill'] == 'Y':
                             newhero['Demechcritical die'] = 1
-                        playerArr[index1]['heros'].append(newhero)
+                        player_arr[playerindex]['heros'].append(newhero)
