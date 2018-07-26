@@ -48,21 +48,22 @@ class SingleMatchStats:
         self.teamfight = self.get_all_teamfight()
         self.player_arr = self.get_init_player_basic_data()
 
-    def get_eliminations(self, start_time=0, end_time=0):
-        """Get all eliminatins in a given time range.
-        If start_time == 0 and end_time == 0, return full elim list.
+    def _get_actions(self, action,start_time=0, end_time=0,data=0):
+        """通过action字段获取相应事件段里面的action列表
         Author:
-            Appcell
+            ForYou
         Args:
+            action:事件类型
             start_time: start of the time range given in seconds
             end_time: end of the time range given in seconds
         Returns:
-            A list of all eliminatins in a given time range.
+            对应action的事件list
         """
-        res = []
+        if data == 0:
+            res =[]
         if end_time == 0 and start_time == 0:
             for event in self.data_sheet1:
-                if event['action'] == 'Eliminate':
+                if event['action'] == action:
                     time_arr = event['time'].split(':')
                     curr_time = stats.hms_to_seconds(time_arr[0],
                         time_arr[1], time_arr[2])
@@ -74,10 +75,24 @@ class SingleMatchStats:
                 curr_time = stats.hms_to_seconds(time_arr[0],
                     time_arr[1], time_arr[2])
                 if curr_time >= start_time and curr_time >= end_time \
-                and self.event['action'] == 'Eliminate':
+                and self.event['action'] == action:
                     event['time'] = curr_time
                     res.append(event)
         return res
+
+
+    def get_eliminations(self, start_time=0, end_time=0):
+        """Get all eliminatins in a given time range.
+        If start_time == 0 and end_time == 0, return full elim list.
+        Author:
+            Appcell
+        Args:
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all eliminatins in a given time range.
+        """
+        return self._get_actions('Eliminate',start_time,end_time)
 
     def get_eliminations_incremented(self, data, start_time, end_time):
         """Append eliminations in given time range onto existed array
@@ -91,8 +106,88 @@ class SingleMatchStats:
         Returns:
             A list of all eliminatins in a given time range appended to original list.
         """
-        return data.append(self.get_eliminations(start_time, end_time))
+        return self._get_actions('Eliminate',start_time,end_time,data)
 
+    def get_resurrects(self, start_time=0, end_time=0):
+        """Get all resurrects in a given time range.
+        If start_time == 0 and end_time == 0, return full resurrect list.
+        Author:
+            ForYou
+        Args:
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all resurrects in a given time range.
+        """
+        return self._get_actions('Resurrect',start_time,end_time)
+
+    def get_resurrects_incremented(self, data, start_time, end_time):
+        """Append resurrects in given time range onto existed array
+        
+        Author:
+            ForYou
+        Args:
+            data: list of given resurrects data
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all resurrects in a given time range appended to original list.
+        """
+        return self._get_actions('Resurrect',start_time,end_time,data)
+
+    def get_suicides(self, start_time=0, end_time=0):
+        """Get all suicides in a given time range.
+        If start_time == 0 and end_time == 0, return full suicide list.
+        Author:
+            ForYou
+        Args:
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all suicides in a given time range.
+        """
+        return self._get_actions('Suicide',start_time,end_time)
+
+    def get_suicides_incremented(self, data, start_time, end_time):
+        """Append suicides in given time range onto existed array
+        
+        Author:
+            ForYou
+        Args:
+            data: list of given suicides data
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all suicides in a given time range appended to original list.
+        """
+        return self._get_actions('Suicide',start_time,end_time,data)
+
+    def get_demechs(self, start_time=0, end_time=0):
+        """Get all demechs in a given time range.
+        If start_time == 0 and end_time == 0, return full demech list.
+        Author:
+            ForYou
+        Args:
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all demechs in a given time range.
+        """
+        return self._get_actions('Demech',start_time,end_time)
+
+    def get_demechs_incremented(self, data, start_time, end_time):
+        """Append demechs in given time range onto existed array
+        
+        Author:
+            ForYou
+        Args:
+            data: list of given demechs data
+            start_time: start of the time range given in seconds
+            end_time: end of the time range given in seconds
+        Returns:
+            A list of all demechs in a given time range appended to original list.
+        """
+        return self._get_actions('Demech',start_time,end_time,data)
 
     def get_teamfight_index(self, time):
         """Get index of team-fight happening at given timestamp.
@@ -453,99 +548,6 @@ class SingleMatchStats:
                     player[key] = total[key]
                 player_arr.append(player)
         return player_arr
-
-    def get_resurrects(self, start_time=0, end_time=0):
-        """Get all resurrects in a given time range.
-        If start_time == 0 and end_time == 0, return full resurrect list.
-        Author:
-            ForYou
-        Args:
-            start_time: start of the time range given in seconds
-            end_time: end of the time range given in seconds
-        Returns:
-            A list of all resurrects in a given time range.
-        """
-        res = []
-        if end_time == 0 and start_time == 0:
-            for event in self.data_sheet1:
-                if event['action'] == 'Resurrect':
-                    time_arr = event['time'].split(':')
-                    curr_time = stats.hms_to_seconds(time_arr[0],
-                        time_arr[1], time_arr[2])
-                    event['time'] = curr_time
-                    res.append(event)
-        else:
-            for event in self.data_sheet1:
-                time_arr = event['time'].split(':')
-                curr_time = stats.hms_to_seconds(time_arr[0],
-                    time_arr[1], time_arr[2])
-                if curr_time >= start_time and curr_time >= end_time \
-                and self.event['action'] == 'Resurrect':
-                    event['time'] = curr_time
-                    res.append(event)
-        return res
-
-    def get_suicides(self, start_time=0, end_time=0):
-        """Get all suicides in a given time range.
-        If start_time == 0 and end_time == 0, return full suicide list.
-        Author:
-            ForYou
-        Args:
-            start_time: start of the time range given in seconds
-            end_time: end of the time range given in seconds
-        Returns:
-            A list of all suicides in a given time range.
-        """
-        res = []
-        if end_time == 0 and start_time == 0:
-            for event in self.data_sheet1:
-                if event['action'] == 'Suicide':
-                    time_arr = event['time'].split(':')
-                    curr_time = stats.hms_to_seconds(time_arr[0],
-                        time_arr[1], time_arr[2])
-                    event['time'] = curr_time
-                    res.append(event)
-        else:
-            for event in self.data_sheet1:
-                time_arr = event['time'].split(':')
-                curr_time = stats.hms_to_seconds(time_arr[0],
-                    time_arr[1], time_arr[2])
-                if curr_time >= start_time and curr_time >= end_time \
-                and self.event['action'] == 'Suicide':
-                    event['time'] = curr_time
-                    res.append(event)
-        return res
-
-    def get_demechs(self, start_time=0, end_time=0):
-        """Get all demechs in a given time range.
-        If start_time == 0 and end_time == 0, return full demech list.
-        Author:
-            ForYou
-        Args:
-            start_time: start of the time range given in seconds
-            end_time: end of the time range given in seconds
-        Returns:
-            A list of all demechs in a given time range.
-        """
-        res = []
-        if end_time == 0 and start_time == 0:
-            for event in self.data_sheet1:
-                if event['action'] == 'Demech':
-                    time_arr = event['time'].split(':')
-                    curr_time = stats.hms_to_seconds(time_arr[0],
-                        time_arr[1], time_arr[2])
-                    event['time'] = curr_time
-                    res.append(event)
-        else:
-            for event in self.data_sheet1:
-                time_arr = event['time'].split(':')
-                curr_time = stats.hms_to_seconds(time_arr[0],
-                    time_arr[1], time_arr[2])
-                if curr_time >= start_time and curr_time >= end_time \
-                and self.event['action'] == 'Demech':
-                    event['time'] = curr_time
-                    res.append(event)
-        return res
 
     def get_player_basic_eliminates(self,start_time=0,end_time=0,data=0):
         '''
