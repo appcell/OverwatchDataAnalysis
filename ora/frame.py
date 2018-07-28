@@ -245,6 +245,50 @@ class Frame(object):
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
             self.game.avatars_ref = self._get_avatars_before_validation()
+            # 5) If game paused.For CUSTOM only(maybe).
+            if self.game_type == OW.GAMETYPE_CUSTOM:
+                self.is_paused = self.detect_paised(self.image)
+
+    def detect_paused(self, image):
+            image = self.preprocess(image)
+            region = self.find_region(image)
+            if region:
+                return True
+            else:
+                return False
+
+    def find_blue_region(self, image):
+            region = []
+            binary, contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            for i in range(len(contours)):
+                cnt = contours[i]
+                area = cv2.contourArea(cnt)
+                if (area < 12000):
+                    continue
+                rect = cv2.minAreaRect(cnt)
+                box = cv2.boxPoints(rect)
+                box = np.int0(box)
+                height = abs(box[0][1] - box[2][1])
+                width = abs(box[0][0] - box[2][0])
+                if (height > width * 1.2):
+                    continue
+                region.append(box)
+            return region
+
+    def preprocess(self, image):
+            # BGR to HSV
+            HSV = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+            # default blue color range
+            lower_blue = np.array([95, 170, 89])
+            upper_blue = np.array([101, 211, 119])
+            mask = cv2.inRange(HSV, lower_blue, upper_blue)
+            ret, binary = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY)
+            element1 = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 9))
+            element2 = cv2.getStructuringElement(cv2.MORPH_RECT, (24, 6))
+            dilation = cv2.dilate(binary, element2, iterations=1)
+            erosion = cv2.erode(dilation, element1, iterations=1)
+            dilation = cv2.dilate(erosion, element2, iterations=3)
+            return dilation
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.
