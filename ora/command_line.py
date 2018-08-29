@@ -58,7 +58,7 @@ class Program(object):
         """
         result['need_help'] = """
             Please input with proper amount of arguments.
-            如需帮助请输入 main_cli.py help
+            If you need any help, please type: main_cli.py help
         """
         result['lack'] = "optional lack of token '='"
         result['json'] = """
