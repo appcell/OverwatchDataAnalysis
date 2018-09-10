@@ -99,7 +99,7 @@ class FrameStats:
         self.frame = frame
         if last_frame_data:
             self.last_frame_data = deepcopy(last_frame_data)
-            self.players = self.last_frame_data.players
+            self.players = self.last_frame_data['players']
             return
 
         self.last_frame_data = None
@@ -118,14 +118,16 @@ class FrameStats:
         self._update_player_deaths(player)
         self._update_player_resurrects(player)
         self._update_player_resurrected(player)
+        self._update_player_critical_elims(player)
+        self._update_player_ratio_critical_elim(player)# 必须得在_update_player_elims和_update_player_critical_elims后面
 
     def _update_player_charas(self, player_ind):
         hero = []
         for elim_ind, elim in enumerate(self.frame):
-            if elim.subject.player == player_ind:
-                hero.append(elim.subject.chara)
-            if elim.object.player == player_ind:
-                hero.append(elim.object.chara)
+            if elim['subject']['player'] == player_ind:
+                hero.append(elim['subject']['chara'])
+            if elim['object']['player'] == player_ind:
+                hero.append(elim['object'].['chara'])
             for player in elim['assist']:
                 if elim[player]['player'] == player_ind:
                     hero.append(elim[player]['hero'])
@@ -134,23 +136,32 @@ class FrameStats:
 
     def _update_player_elims(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
-            if elim.action == "Eliminate" and elim.subject.player == player_ind:
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind:
                 self.players[player_ind].elims += 1
 
     def _update_player_deaths(self, player_ind):
         for death_ind, death in enumerate(self.frame):
-            if death.action == "Eliminate" and death.object.player == player_ind:
+            if death['action'] == "Eliminate" and death['object']['player'] == player_ind:
                 self.players[player_ind].deaths += 1
 
     def _update_player_resurrects(self, player_ind):
         for resurrect_ind, resurrect in enumerate(self.frame):
-            if resurrect.action == "Resurrect" and resurrect.subject.player == player_ind:
+            if resurrect['action'] == "Resurrect" and resurrect['subject']['player'] == player_ind:
                 self.players[player_ind].resurrects += 1
 
     def _update_player_resurrected(self, player_ind):
         for resurrect_ind, resurrect in enumerate(self.frame):
-            if resurrect.action == "Resurrect" and resurrect.object.player == player_ind:
+            if resurrect['action'] == "Resurrect" and resurrect['object']['player'] == player_ind:
                 self.players[player_ind].resurrected += 1
+
+    def _update_player_critical_elims(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind and elim['critical kill'] == 'Y':
+                self.players[player_ind].critical_elims += 1
+
+    def _update_player_ratio_critical_elim(self, player_ind): # 输出为%前的整数 不含%
+        self.players[player_ind].ratio_critical_elim = self.players[player_ind].critical_elims*100/\
+                                                       self.players[player_ind].elims
 
 
 
