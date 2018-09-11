@@ -111,7 +111,6 @@ class FrameStats:
         self.time = 0
         self.tf_index = 0 # index of current teamfight
 
-
     def _update_player(self, player):
         self._update_player_charas(player)
         self._update_player_elims(player)
@@ -119,7 +118,7 @@ class FrameStats:
         self._update_player_resurrects(player)
         self._update_player_resurrected(player)
         self._update_player_critical_elims(player)
-        self._update_player_ratio_critical_elim(player)# 必须得在_update_player_elims和_update_player_critical_elims后面
+        self._update_player_ratio_critical_elim(player)  # 必须得在_update_player_elims和_update_player_critical_elims后面
 
     def _update_player_charas(self, player_ind):
         hero = []
@@ -127,7 +126,7 @@ class FrameStats:
             if elim['subject']['player'] == player_ind:
                 hero.append(elim['subject']['chara'])
             if elim['object']['player'] == player_ind:
-                hero.append(elim['object'].['chara'])
+                hero.append(elim['object']['chara'])
             for player in elim['assist']:
                 if elim[player]['player'] == player_ind:
                     hero.append(elim[player]['hero'])
@@ -159,8 +158,8 @@ class FrameStats:
             if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind and elim['critical kill'] == 'Y':
                 self.players[player_ind].critical_elims += 1
 
-    def _update_player_ratio_critical_elim(self, player_ind): # 输出为%前的整数 不含%
-        self.players[player_ind].ratio_critical_elim = self.players[player_ind].critical_elims*100/\
+    def _update_player_ratio_critical_elim(self, player_ind):  # 输出为%前的整数 不含%
+        self.players[player_ind].ratio_critical_elim = self.players[player_ind].critical_elims*100 / \
                                                        self.players[player_ind].elims
 
 
