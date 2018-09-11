@@ -4,6 +4,7 @@ import sys
 import zipfile
 import json
 from copy import deepcopy
+import ora.overwatch as OW
 
 sys.path.append('../utils')
 from utils import stats
@@ -100,6 +101,7 @@ class FrameStats:
         if last_frame_data:
             self.last_frame_data = deepcopy(last_frame_data)
             self.players = self.last_frame_data['players']
+            self.time = self.last_frame_data['time']
             return
 
         self.last_frame_data = None
@@ -119,6 +121,14 @@ class FrameStats:
         self._update_player_resurrected(player)
         self._update_player_critical_elims(player)
         self._update_player_ratio_critical_elim(player)  # 必须得在_update_player_elims和_update_player_critical_elims后面
+        self._update_player_elims_per_10min(player)  # 得在_update_player_elims后执行
+        self._update_player_deaths_per_10min(player)  # 得在_update_player_deaths后执行
+        self._update_player_dps_elims(player)
+        self._update_player_tank_elims(player)
+        self._update_player_healer_elims(player)
+        self._update_player_elimed_by_dps(player)
+        self._update_player_elimed_by_tank(player)
+        self._update_player_elimed_by_healer(player)
 
     def _update_player_charas(self, player_ind):
         hero = []
@@ -155,12 +165,56 @@ class FrameStats:
 
     def _update_player_critical_elims(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind and elim['critical kill'] == 'Y':
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind\
+                    and elim['critical kill'] == 'Y':
                 self.players[player_ind].critical_elims += 1
 
     def _update_player_ratio_critical_elim(self, player_ind):  # 输出为%前的整数 不含%
         self.players[player_ind].ratio_critical_elim = self.players[player_ind].critical_elims*100 / \
                                                        self.players[player_ind].elims
+
+    def _update_player_elims_per_10min(self, player_ind):
+        self.players[player_ind].elims_per_10min = self.players[player_ind].elims*10*60/self.time
+
+    def _update_player_deaths_per_10min(self, player_ind):
+        self.players[player_ind].deaths_per_10min = self.players[player_ind].deaths*10*60/self.time
+
+    def _update_player_dps_elims(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.dps:
+                self.players[player_ind].dps_elims += 1
+
+    def _update_player_tank_elims(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.tank:
+                self.players[player_ind].tank_elims += 1
+
+    def _update_player_healer_elims(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.healer:
+                self.players[player_ind].healer_elims += 1
+
+    def _update_player_elimed_by_dps(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.dps:
+                self.players[player_ind].elimed_by_dps += 1
+
+    def _update_player_elimed_by_tank(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.tank:
+                self.players[player_ind].elimed_by_tank += 1
+
+    def _update_player_elimed_by_healer(self, player_ind):
+        for elim_ind, elim in enumerate(self.frame):
+            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
+                    and elim['subject']['chara'] in OW.healer:
+                self.players[player_ind].elimed_by_healer += 1
+
 
 
 
