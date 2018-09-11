@@ -182,37 +182,37 @@ class FrameStats:
     def _update_player_dps_elims(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.dps:
+                    and elim['subject']['chara'] in OW.DPS_LIST:
                 self.players[player_ind].dps_elims += 1
 
     def _update_player_tank_elims(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.tank:
+                    and elim['subject']['chara'] in OW.TANK_LIST:
                 self.players[player_ind].tank_elims += 1
 
     def _update_player_healer_elims(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.healer:
+                    and elim['subject']['chara'] in OW.SUPPORT_LIST:
                 self.players[player_ind].healer_elims += 1
 
     def _update_player_elimed_by_dps(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.dps:
+                    and elim['subject']['chara'] in OW.DPS_LIST:
                 self.players[player_ind].elimed_by_dps += 1
 
     def _update_player_elimed_by_tank(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.tank:
+                    and elim['subject']['chara'] in OW.TANK_LIST:
                 self.players[player_ind].elimed_by_tank += 1
 
     def _update_player_elimed_by_healer(self, player_ind):
         for elim_ind, elim in enumerate(self.frame):
             if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.healer:
+                    and elim['subject']['chara'] in OW.SUPPORT_LIST:
                 self.players[player_ind].elimed_by_healer += 1
 
 
