@@ -15,35 +15,181 @@ def time_to_frame(time):
 
 class PlayerStats:
 
-    def __init__(self, index):
-        self.index = index
-        self.num_charas_used = 0
-        self.charas_list = []
-        self.elims = 0
-        self.deaths = 0
-        self.resurrects = 0
-        self.resurrected = 0
-        self.ult_charge = 0
-        self.avg_elims_during_tf = 0
-        self.avg_deaths_during_tf = 0
-        self.avg_elim_ind_during_tf = 0
-        self.avg_death_ind_during_tf = 0
-        self.elims_per_10min = 0
-        self.deaths_per_10min = 0
-        self.dps_elims = 0
-        self.elimed_by_dps = 0
-        self.tank_elims = 0
-        self.elimed_by_tank = 0
-        self.healer_elims = 0
-        self.elimed_by_healer = 0
-        self.first_elims = 0
-        self.first_elimed = 0
-        self.critical_elims = 0
-        self.ratio_critical_elim = 0
-        self.immediate_elimed = 0
-        self.ult_elim =  0
+    def __init__(self, index, frame_index = 0, tf_index = 0, prev_data = None):
 
+        if prev_data != None:
+            self = deepcopy(prev_data)
+        else:
+            self.num_charas_used = 0
+            self.charas_list = []
+
+            self.elims = 0
+            self.deaths = 0
+            self.resurrects = 0
+            self.resurrected = 0
+            self.ult_charge = 0
+
+            self.tf_elims_list = [0]
+            self.tf_deaths_list = [0]
+            self.tf_elim_index_list = [0]
+            self.tf_death_index_list = [0]
+            self.avg_tf_elims = 0
+            self.avg_tf_deaths = 0
+            self.avg_tf_elim_index = 0
+            self.avg_tf_death_index = 0
+
+            self.first_elims = 0
+            self.first_elimed = 0
+
+            self.elims_per_10min = 0
+            self.deaths_per_10min = 0
+            self.dps_elims = 0
+            self.elimed_by_dps = 0
+            self.tank_elims = 0
+            self.elimed_by_tank = 0
+            self.healer_elims = 0
+            self.elimed_by_healer = 0
+
+            self.critical_elims = 0
+            self.ratio_critical_elim = 0
+
+
+        self.index = index
+        self.tf_index = tf_index
+        self.frame_index = frame_index
+        self.prev_data = prev_data
         return
+
+    def update(self):
+        self._update_charas()
+        self._update_elims()
+        self._update_deaths()
+        self._update_resurrects()
+        self._update_resurrected()
+        self._update_ult_charge()
+
+        self._update_critical_elims()
+
+        # 必须得在_update_elims和_update_critical_elims后面
+        # 输出为%前的整数 不含%
+        self._update_ratio_critical_elim()
+
+        # 得在_update_elims后执行
+        self._update_elims_per_10min()
+
+        # 得在_update_deaths后执行
+        self._update_deaths_per_10min()
+
+        self._update_dps_elims()
+        self._update_tank_elims()
+        self._update_support_elims()
+        self._update_elimed_by_dps()
+        self._update_elimed_by_tank()
+        self._update_elimed_by_support()
+
+    def _update_tf(self):
+        if self.tf_index != self.prev_data.tf_index:
+            self.tf_elims_list.append(0)
+            self.tf_deaths_list.append(0)
+            self.tf_elim_index_list.append(0)
+            self.tf_death_index_list.append(0)
+        flag_first_elim = False
+        flag_first_death = False
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index:
+                self.tf_elims_list[-1] += 1
+                if self.tf_index != self.prev_data.tf_index:
+                    flag_first_elim = True
+            if event["action"] == "Eliminate" and event['object']['player'] == self.index:
+                self.tf_deaths_list[-1] += 1
+                if self.tf_index != self.prev_data.tf_index:
+                    flag_first_elim = True
+
+
+    def _update_charas(self):
+        curr_chara = FrameData[self.frame_index]["players"][self.index]["chara"]
+        if num_charas_used > 0:
+            if curr_chara != charas_list[-1]:
+                charas_list.append(curr_chara)
+                if ~(curr_chara in charas_list):
+                    num_charas_used += 1
+        else:
+            num_charas_used += 1
+            charas_list.append(curr_chara)
+
+    def _update_elims(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index:
+                self.elims += 1
+
+    def _update_deaths(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['object']['player'] == self.index:
+                self.deaths += 1
+
+    def _update_resurrects(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Resurrect" and event['subject']['player'] == self.index:
+                self.resurrects += 1
+
+    def _update_resurrected(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Resurrect" and event['object']['player'] == self.index:
+                self.resurrected += 1
+
+    def _update_ult_charge():
+        self.ult_charge = FrameData[self.frame_index]["players"][self.index]["ult_charge"]
+
+    def _update_critical_elims(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index \
+            and elim['critical kill'] == 'Y':
+                self.critical_elims += 1
+
+    def _update_ratio_critical_elim(self):
+        self.ratio_critical_elim = self.critical_elims * 100 / self.elims
+
+    def _update_elims_per_10min(self):
+        self.elims_per_10min = self.elims * 10 * 60/self.time
+
+    def _update_deaths_per_10min(self):
+        self.deaths_per_10min = self.deaths * 10 * 60/self.time
+
+    def _update_dps_elims(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+                    and event['subject']['chara'] in OW.DPS_LIST:
+                self.dps_elims += 1
+
+    def _update_tank_elims(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+                    and event['subject']['chara'] in OW.TANK_LIST:
+                self.tank_elims += 1
+
+    def _update_support_elims(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+                    and event['subject']['chara'] in OW.SUPPORT_LIST:
+                self.support_elims += 1
+
+    def _update_elimed_by_dps(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+                    and event['subject']['chara'] in OW.DPS_LIST:
+                self.elimed_by_dps += 1
+
+    def _update_elimed_by_tank(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+                    and event['subject']['chara'] in OW.TANK_LIST:
+                self.elimed_by_tank += 1
+
+    def _update_elimed_by_support(self):
+        for event in EventsData[self.frame_index]:
+            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+                    and event['subject']['chara'] in OW.SUPPORT_LIST:
+                self.elimed_by_healer += 1
 
 class BasicStats:
 
@@ -114,106 +260,8 @@ class FrameStats:
         self.tf_index = 0 # index of current teamfight
 
     def _update_player(self, player):
-        self._update_player_charas(player)
-        self._update_player_elims(player)
-        self._update_player_deaths(player)
-        self._update_player_resurrects(player)
-        self._update_player_resurrected(player)
-        self._update_player_critical_elims(player)
-        self._update_player_ratio_critical_elim(player)  # 必须得在_update_player_elims和_update_player_critical_elims后面
-        self._update_player_elims_per_10min(player)  # 得在_update_player_elims后执行
-        self._update_player_deaths_per_10min(player)  # 得在_update_player_deaths后执行
-        self._update_player_dps_elims(player)
-        self._update_player_tank_elims(player)
-        self._update_player_healer_elims(player)
-        self._update_player_elimed_by_dps(player)
-        self._update_player_elimed_by_tank(player)
-        self._update_player_elimed_by_healer(player)
 
-    def _update_player_charas(self, player_ind):
-        hero = []
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['subject']['player'] == player_ind:
-                hero.append(elim['subject']['chara'])
-            if elim['object']['player'] == player_ind:
-                hero.append(elim['object']['chara'])
-            for player in elim['assist']:
-                if elim[player]['player'] == player_ind:
-                    hero.append(elim[player]['hero'])
-        self.players[player_ind].charas_list = list(set(self.players[player_ind].charas_list + hero))
-        self.players[player_ind].num_charas_used = len(self.players[player_ind].charas_list)
 
-    def _update_player_elims(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind:
-                self.players[player_ind].elims += 1
-
-    def _update_player_deaths(self, player_ind):
-        for death_ind, death in enumerate(self.frame):
-            if death['action'] == "Eliminate" and death['object']['player'] == player_ind:
-                self.players[player_ind].deaths += 1
-
-    def _update_player_resurrects(self, player_ind):
-        for resurrect_ind, resurrect in enumerate(self.frame):
-            if resurrect['action'] == "Resurrect" and resurrect['subject']['player'] == player_ind:
-                self.players[player_ind].resurrects += 1
-
-    def _update_player_resurrected(self, player_ind):
-        for resurrect_ind, resurrect in enumerate(self.frame):
-            if resurrect['action'] == "Resurrect" and resurrect['object']['player'] == player_ind:
-                self.players[player_ind].resurrected += 1
-
-    def _update_player_critical_elims(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind\
-                    and elim['critical kill'] == 'Y':
-                self.players[player_ind].critical_elims += 1
-
-    def _update_player_ratio_critical_elim(self, player_ind):  # 输出为%前的整数 不含%
-        self.players[player_ind].ratio_critical_elim = self.players[player_ind].critical_elims*100 / \
-                                                       self.players[player_ind].elims
-
-    def _update_player_elims_per_10min(self, player_ind):
-        self.players[player_ind].elims_per_10min = self.players[player_ind].elims*10*60/self.time
-
-    def _update_player_deaths_per_10min(self, player_ind):
-        self.players[player_ind].deaths_per_10min = self.players[player_ind].deaths*10*60/self.time
-
-    def _update_player_dps_elims(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.DPS_LIST:
-                self.players[player_ind].dps_elims += 1
-
-    def _update_player_tank_elims(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.TANK_LIST:
-                self.players[player_ind].tank_elims += 1
-
-    def _update_player_healer_elims(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['subject']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.SUPPORT_LIST:
-                self.players[player_ind].healer_elims += 1
-
-    def _update_player_elimed_by_dps(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.DPS_LIST:
-                self.players[player_ind].elimed_by_dps += 1
-
-    def _update_player_elimed_by_tank(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.TANK_LIST:
-                self.players[player_ind].elimed_by_tank += 1
-
-    def _update_player_elimed_by_healer(self, player_ind):
-        for elim_ind, elim in enumerate(self.frame):
-            if elim['action'] == "Eliminate" and elim['object']['player'] == player_ind \
-                    and elim['subject']['chara'] in OW.SUPPORT_LIST:
-                self.players[player_ind].elimed_by_healer += 1
 
 
 
