@@ -4,6 +4,7 @@ import sys
 import zipfile
 import json
 from copy import deepcopy
+from statistics import mean
 import ora.overwatch as OW
 
 sys.path.append('../utils')
@@ -87,27 +88,75 @@ class PlayerStats:
         self._update_elimed_by_tank()
         self._update_elimed_by_support()
 
+        self._update_tf()
+        self._update_avg_tf_elims()
+        self._update_avg_tf_deaths()
+        self._update_avg_elim_index()
+        self._update_avg_death_index()
+        
     def _update_tf(self):
         if self.tf_index != self.prev_data.tf_index:
             self.tf_elims_list.append(0)
             self.tf_deaths_list.append(0)
             self.tf_elim_index_list.append(0)
             self.tf_death_index_list.append(0)
+
         flag_first_elim = False
         flag_first_death = False
+
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index:
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index:
                 self.tf_elims_list[-1] += 1
-                if self.tf_index != self.prev_data.tf_index:
+                if tf_elim_index_list[-1] == 0:
                     flag_first_elim = True
-            if event["action"] == "Eliminate" and event['object']['player'] == self.index:
+            if event["action"] == "Eliminate" and event['object']['player_ind'] == self.index:
                 self.tf_deaths_list[-1] += 1
-                if self.tf_index != self.prev_data.tf_index:
+                if tf_death_index_list[-1] == 0:
                     flag_first_elim = True
 
+        # Go over previous frames, calculate team-wise elim/death index
+        if flag_first_elim:
+            total_team_tf_elim = 0
+            starting_frame_ind = TeamfightStats.data[self.tf_index]["starting_frame"]
+            if self.tf_index == len(TeamfightStats.data) - 1:
+                ending_frame_ind = len(EventsData) - 1
+            for frame_ind in range(starting_frame_ind, self.frame_index):
+                frame = EventsData[frame_ind]
+                for event in frame:
+                    if event["action"] == "Eliminate" \
+                    and ((event['subject']['player_ind'] < 6 and self.index < 6) \
+                    or (event['subject']['player_ind'] >= 6 and self.index >= 6)):
+                     total_team_tf_elim += 1
+            self.tf_elim_index_list[-1] = total_team_tf_elim + 1
+
+        if flag_first_death:
+            total_team_tf_death = 0
+            starting_frame_ind = TeamfightStats.data[self.tf_index]["starting_frame"]
+            if self.tf_index == len(TeamfightStats.data) - 1:
+                ending_frame_ind = len(EventsData) - 1
+            for frame_ind in range(starting_frame_ind, self.frame_index):
+                frame = EventsData[frame_ind]
+                for event in frame:
+                    if event["action"] == "Eliminate" \
+                    and ((event['object']['player_ind'] < 6 and self.index < 6) \
+                    or (event['oject']['player_ind'] >= 6 and self.index >= 6)):
+                     total_team_tf_death += 1
+            self.tf_death_index_list[-1] = total_team_tf_death + 1
+
+    def _update_avg_tf_elims(self):
+        return mean(self.tf_elims_list)
+
+    def _update_avg_tf_deaths(self):
+        return mean(self.tf_deaths_list)
+
+    def _update_avg_elim_index(self):
+        return mean(self.tf_elim_index_list)
+
+    def _update_avg_death_index(self):
+        return mean(self.tf_death_index_list)
 
     def _update_charas(self):
-        curr_chara = FrameData[self.frame_index]["players"][self.index]["chara"]
+        curr_chara = FramesData[self.frame_index]["players"][self.index]["chara"]
         if num_charas_used > 0:
             if curr_chara != charas_list[-1]:
                 charas_list.append(curr_chara)
@@ -119,30 +168,30 @@ class PlayerStats:
 
     def _update_elims(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index:
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index:
                 self.elims += 1
 
     def _update_deaths(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['object']['player'] == self.index:
+            if event["action"] == "Eliminate" and event['object']['player_ind'] == self.index:
                 self.deaths += 1
 
     def _update_resurrects(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Resurrect" and event['subject']['player'] == self.index:
+            if event["action"] == "Resurrect" and event['subject']['player_ind'] == self.index:
                 self.resurrects += 1
 
     def _update_resurrected(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Resurrect" and event['object']['player'] == self.index:
+            if event["action"] == "Resurrect" and event['object']['player_ind'] == self.index:
                 self.resurrected += 1
 
     def _update_ult_charge():
-        self.ult_charge = FrameData[self.frame_index]["players"][self.index]["ult_charge"]
+        self.ult_charge = FramesData[self.frame_index]["players"][self.index]["ult_charge"]
 
     def _update_critical_elims(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index \
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index \
             and elim['critical kill'] == 'Y':
                 self.critical_elims += 1
 
@@ -157,37 +206,37 @@ class PlayerStats:
 
     def _update_dps_elims(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.DPS_LIST:
                 self.dps_elims += 1
 
     def _update_tank_elims(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.TANK_LIST:
                 self.tank_elims += 1
 
     def _update_support_elims(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['subject']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['subject']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.SUPPORT_LIST:
                 self.support_elims += 1
 
     def _update_elimed_by_dps(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['object']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.DPS_LIST:
                 self.elimed_by_dps += 1
 
     def _update_elimed_by_tank(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['object']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.TANK_LIST:
                 self.elimed_by_tank += 1
 
     def _update_elimed_by_support(self):
         for event in EventsData[self.frame_index]:
-            if event["action"] == "Eliminate" and event['object']['player'] == self.index\
+            if event["action"] == "Eliminate" and event['object']['player_ind'] == self.index\
                     and event['subject']['chara'] in OW.SUPPORT_LIST:
                 self.elimed_by_healer += 1
 
