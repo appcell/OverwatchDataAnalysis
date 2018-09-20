@@ -13,11 +13,60 @@ from utils import stats
 def time_to_frame(time):
     pass
 
+class SingleTeamFightStats:
+
+    def __init__(self, start_frame=0, end_frame=0):
+
+        self.start_frame = start_frame
+        self.end_frame = end_frame
+        self.start_time = FramesData[start_frame]["time"]
+        self.end_time = FramesData[end_frame]["time"]
+        self.turning_point = 0
+        self.ults_used_per_team = [0, 0]
+        self.ults_used_total = 0
+        self.elims_list = []
+        return
+
+    def update(self):
+        pass
+
+    def _update_elims_list(self):
+        total_team_tf_elim = 0
+        starting_frame_ind = TeamfightStats.data[self.tf_index].start_frame
+        if self.tf_index == len(TeamfightStats.data) - 1:
+            ending_frame_ind = len(EventsData) - 1
+        for frame_ind in range(starting_frame_ind, self.frame_index):
+            frame = EventsData[frame_ind]
+            for event in frame:
+                if event["action"] == "Eliminate" \
+                and ((event['subject']['player_ind'] < 6 and self.index < 6) \
+                or (event['subject']['player_ind'] >= 6 and self.index >= 6)):
+                 total_team_tf_elim += 1
+        self.tf_elim_index_list[-1] = total_team_tf_elim + 1
+
+    def _update_ults_used(self):
+        pass
+
+    def _update_turning_point(self):
+        pass
+
+
+class TeamfightStats:
+
+    def __init__(self):
+        self.data = []
+        return
+
+    def _new_teamfight(self):
+        self.data.append(SingleTeamFightStats())
+        return
+
+    def _split_teamfights(self):
+        pass
+
 
 class PlayerStats:
-
     def __init__(self, index, frame_index = 0, tf_index = 0, prev_data = None):
-
         if prev_data != None:
             self = deepcopy(prev_data)
         else:
@@ -53,7 +102,6 @@ class PlayerStats:
 
             self.critical_elims = 0
             self.ratio_critical_elim = 0
-
 
         self.index = index
         self.tf_index = tf_index
@@ -117,7 +165,7 @@ class PlayerStats:
         # Go over previous frames, calculate team-wise elim/death index
         if flag_first_elim:
             total_team_tf_elim = 0
-            starting_frame_ind = TeamfightStats.data[self.tf_index]["starting_frame"]
+            starting_frame_ind = TeamfightStats.data[self.tf_index].start_frame
             if self.tf_index == len(TeamfightStats.data) - 1:
                 ending_frame_ind = len(EventsData) - 1
             for frame_ind in range(starting_frame_ind, self.frame_index):
@@ -131,7 +179,7 @@ class PlayerStats:
 
         if flag_first_death:
             total_team_tf_death = 0
-            starting_frame_ind = TeamfightStats.data[self.tf_index]["starting_frame"]
+            starting_frame_ind = TeamfightStats.data[self.tf_index].start_frame
             if self.tf_index == len(TeamfightStats.data) - 1:
                 ending_frame_ind = len(EventsData) - 1
             for frame_ind in range(starting_frame_ind, self.frame_index):
@@ -144,16 +192,16 @@ class PlayerStats:
             self.tf_death_index_list[-1] = total_team_tf_death + 1
 
     def _update_avg_tf_elims(self):
-        return mean(self.tf_elims_list)
+        self.avg_tf_elims = mean(self.tf_elims_list)
 
     def _update_avg_tf_deaths(self):
-        return mean(self.tf_deaths_list)
+        self.avg_tf_deaths = mean(self.tf_deaths_list)
 
     def _update_avg_elim_index(self):
-        return mean(self.tf_elim_index_list)
+        self.avg_tf_elim_index = mean(self.tf_elim_index_list)
 
     def _update_avg_death_index(self):
-        return mean(self.tf_death_index_list)
+        self.avg_tf_death_index = mean(self.tf_death_index_list)
 
     def _update_charas(self):
         curr_chara = FramesData[self.frame_index]["players"][self.index]["chara"]
@@ -268,26 +316,7 @@ class BasicStats:
 
         return
 
-class SingleTeamFightStats:
 
-    def __init__(self, start_time=0, end_time=0):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.turning_point = 0
-        self.ults_used_per_team = [0, 0]
-        self.ults_used_total = 0
-        self.elims_list = []
-        return
-
-class TeamfightStats:
-
-    def __init__(self):
-        self.data = []
-        return
-
-    def _new_teamfight(self):
-        self.data.append(SingleTeamFightStats())
-        return
 
 
 class FrameStats:
