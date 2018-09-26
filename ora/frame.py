@@ -40,6 +40,7 @@ class Frame(object):
         """
         self.is_valid = False
         self.is_replay = False
+        self.is_paused = False
         self.players = [None] * 12
         self.killfeeds = []
         self.image = ImageUtils.resize(frame_image, OW.DEFAULT_SCREEN_WIDTH, OW.DEFAULT_SCREEN_HEIGHT)
@@ -245,6 +246,92 @@ class Frame(object):
         if self.is_valid is True and self.game.team_colors is None:
             self.game.set_team_colors(self)
             self.game.avatars_ref = self._get_avatars_before_validation()
+
+        # 5) If game paused.For CUSTOM only(maybe).
+        if self.game_type == OW.GAMETYPE_CUSTOM:
+            self.is_paused = self._detect_paused()
+
+    def _detect_paused(self):
+        """detect paused in this frame.
+
+        Author:
+            HoPun
+
+        Args:
+            None
+
+        Returns:
+            Bool
+        """
+        image = self._image_color_preprocess(self.image)
+        region = self._find_blue_region(image)
+        if region:
+            return True
+        else:
+            return False
+
+    def _image_color_preprocess(self, image):
+        """对该针图片进行预处理
+        1）BGR转HSV
+        2）获取蓝色部分mask
+        3）二值化,蓝色部分转化为白色,其他转化为黑色
+        4）依次作膨胀、腐蚀、膨胀操作，让轮廓突出并去掉细节
+
+        Author:
+            HoPun
+
+        Args:
+            image:待处理的图片
+
+        Returns:
+            dilation:处理后的图片
+        """
+        # BGR to HSV
+        HSV = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        # default blue color range
+        lower_blue = np.array(OW.get_ui_variable("LOWER_BLUE_RANGE", self.game_type, self.game_version))
+        upper_blue = np.array(OW.get_ui_variable("UPPER_BLUE_RANGE", self.game_type, self.game_version))
+        mask = cv2.inRange(HSV, lower_blue, upper_blue)
+        ret, binary = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY)
+        element1 = cv2.getStructuringElement(cv2.MORPH_RECT,
+                                             (OW.get_ui_variable("ELEMENT1_WIDTH", self.game_type, self.game_version),
+                                              OW.get_ui_variable("ELEMENT1_HEIGHT", self.game_type, self.game_version)))
+        element2 = cv2.getStructuringElement(cv2.MORPH_RECT,
+                                             (OW.get_ui_variable("ELEMENT2_WIDTH", self.game_type, self.game_version),
+                                              OW.get_ui_variable("ELEMENT2_HEIGHT", self.game_type, self.game_version)))
+        dilation = cv2.dilate(binary, element2, iterations=1)
+        erosion = cv2.erode(dilation, element1, iterations=1)
+        dilation = cv2.dilate(erosion, element2, iterations=3)
+        return dilation
+
+    def _find_blue_region(self, image):
+        """查找和筛选蓝色区域
+
+        Author:
+            HoPun
+
+        Args:
+            image:预处理后的图片
+
+        Returns:
+            region:查找到的区域
+        """
+        region = []
+        binary, contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        for i in range(len(contours)):
+            cnt = contours[i]
+            area = cv2.contourArea(cnt)
+            if area < OW.get_ui_variable("CONTOURS_MIN_AREA", self.game_type, self.game_version):
+                continue
+            rect = cv2.minAreaRect(cnt)
+            box = cv2.boxPoints(rect)
+            box = np.int0(box)
+            height = abs(box[0][1] - box[2][1])
+            width = abs(box[0][0] - box[2][0])
+            if height > width * OW.get_ui_variable("WIDTH_TO_HEIGHT_RATIO", self.game_type, self.game_version):
+                continue
+            region.append(box)
+        return region
 
     def _get_avatars_before_validation(self):
         """Get fused avatar icons for this frame.
