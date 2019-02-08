@@ -6,8 +6,11 @@
 /credentials
 /gui
 /ui_design/source
+/ui_design/images
+/ui_design/ui_design
 .idea/
 *.DS_Store
 *.pyc
 *.orig
 __pycache__/
+

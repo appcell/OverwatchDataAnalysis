@@ -1,12 +1,13 @@
 
-from os.path import join
-
-from PyQt5.Qt import QIcon
-
+from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from widget import *
+from style import *
+from functions import *
 
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+windowui, QtBaseClass = uic.loadUiType('main.ui')
 
-SRC_PATH = 'D:/GitHub/OverwatchDataAnalysis/ui_design/images'
+SRC_PATH = './images'
 
 
 class UiFunc(object):
@@ -28,130 +29,166 @@ class UiFunc(object):
         return widget
 
     @staticmethod
-    def _get_icon(file_name):
-        return QIcon(join(SRC_PATH, 'icons', file_name))
+    def _add_custome_item(listwidget, item_class, *args):
+        citem = item_class(listwidget, *args)
+        # citem.setObjectName('DyItem')
+        item = QtWidgets.QListWidgetItem(listwidget)
+        item.setSizeHint(citem.sizeHint())
+        listwidget.addItem(item)
+        listwidget.setItemWidget(item, citem)
 
     @staticmethod
-    def _set_background_img(widget, file_name):
-        widget.setStyleSheet("background-image: url(%s)" % (SRC_PATH + '/bgs/' + file_name))
+    def _set_hover_icon(widget, normal_file, hover_file):
+        set_full_icon(widget, normal_file, 'widgets')
+        widget.setAttribute(Qt.WA_Hover, True)
+        widget.setStyleSheet('background-image: url(%s)' % (SRC_PATH + '/widgets/' + hover_file))
 
 
-class UiWidget(UiFunc):
-    def line_edit_with_label(self, text=''):
-        label = TextLabel(self)
-        line_edit = LineEdit(self)
-        self._set_background_img(line_edit, '')
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.addWidget(label)
-        layout.addWidget(line_edit)
-        self.layout.addChildLayout(layout)
-
-    def label_with_radio_buttons(self):
-        label = TextLabel()
-        button0 = RadioButton()
-        button1 = RadioButton()
-        button_group = QtWidgets.QButtonGroup()
-        button_group.addButton(button0)
-        button_group.addButton(button1)
-        layout = QtWidgets.QHBoxLayout(self)
-        layout.addWidget(label)
-        layout.addWidget(button0)
-        layout.addWidget(button1)
-
-    def label_with_check_button(self):
-        label = TextLabel()
-        button = CheckButton()
-
-
-class MainUiBaseWidget(MainWindow, UiWidget, WindowDragMixin, ControlButtonMixin):
+class BeautiUi(windowui, WindowDragMixin, ControlButtonMixin):
     def __init__(self):
-        super(MainUiBaseWidget, self).__init__()
-        # MainWindow.__init__(self)
-        # UiFunc.__init__(self)
-        self._init_widget()
-        self._init_connect()
+        super(BeautiUi, self).__init__()
+        self.setupUi(self)
 
-    def _init_widget(self):
-        self.layout = QtWidgets.QGridLayout()
-        self.setLayout(self.layout)
-        self._init_base_widget()
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.set_control_button(self.min_button, self.max_button, self.close_button)
 
-    def _init_connect(self):
-        self.tab_listwidget.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(self.tab_listwidget.currentRow()))
-        self.set_control_button(self.min_button, self.max_button, self.close_button, '[]', '{}')
-        # ControlButtonMixin.__init__(self.min_button, self.max_button, self.exit_button)
+        self.tab_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
+        # self.tab_listwidget.setSpacing(50)
+        self.video_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
 
-    def _init_base_widget(self):
-        self.tab_layout = QtWidgets.QVBoxLayout()
-        # self.tab_layout.setGeometry((0, 0, 120, 620))
-        self._add_widget_item(self, self.tab_layout, PicLabel, geometry=(0, 0, 120, 67))
-        self.tab_listwidget = self._add_widget_item(self, self.tab_layout, ListWidget, geometry=(0, 67, 120, 620))
-        self._set_background_img(self.tab_listwidget, 'left_bg.png')
-        self._add_list_item(self.tab_listwidget, TabItem, "ANALYSIS", 'replay.png')
-        self._add_list_item(self.tab_listwidget, TabItem, "VIDEO PALY", 'replay.png')
-        self._add_list_item(self.tab_listwidget, TabItem, "SETTINGS", 'replay.png')
+        self._set_style()
 
-        self.top_layout = QtWidgets.QHBoxLayout()
-        self.top_group = QtWidgets.QGroupBox(self)
-        self.top_group.setLayout(self.top_layout)
-        self._set_background_img(self.top_group, 'top_bg.png')
-        self.back_button = self._add_widget_item(self.top_group, self.top_layout, ClickButton, geometry=(140, 0, 47, 67), icon_path=self._get_icon('design_03'))
-        self.help_button = self._add_widget_item(self, self.top_layout, ClickButton, geometry=(1000, 0, 47, 67), icon_path=self._get_icon('design_05'))
-        self.min_button = self._add_widget_item(self, self.top_layout, ClickButton, geometry=(1050, 0, 47, 67), icon_path=self._get_icon('design_07'))
-        self.max_button = self._add_widget_item(self, self.top_layout, ClickButton, geometry=(1100, 0, 47, 67), icon_path=self._get_icon('design_08'))
-        self.close_button = self._add_widget_item(self, self.top_layout, ClickButton, geometry=(1150, 0, 47, 67), icon_path=self._get_icon('design_09'))
+        set_full_icon(self.publish_box, 'switch_on.png')
 
-        self.stacked_widget = self._add_widget_item(self, None, StackedWidget, geometry=(120, 67, 1080, 733))
-        self._init_analysis_tab()
-        self._init_play_tab()
-        self._init_setting_tab()
+    def _set_style(self):
+        for wi, bg in background_imgs.items():
+            set_background_img(getattr(self, wi), bg)
 
-        self.stacked_widget.addWidget(self.analysis_widget)
-        self.stacked_widget.addWidget(self.play_widget)
-        self.stacked_widget.addWidget(self.setting_widget)
-        #self.stacked_widget.setCurrentIndex(1)
+        for wi, ic in button_icons.items():
+            set_full_icon(getattr(self, wi), ic)
 
-    def _init_analysis_tab(self):
-        self.analysis_widget = QtWidgets.QWidget(self.stacked_widget)
-        self.analysis_layout = QtWidgets.QGridLayout()
-        self.analysis_layout.addWidget(self.analysis_widget)
-        self.video_listwidget = self._add_widget_item(self.analysis_widget, self.analysis_layout, ListWidget, geometry=(0, 0, 620, 640))
-        # self._set_background_img(self.video_listwidget, )
+        for wi, cl in background_colors.items():
+            set_background_color(getattr(self, wi), cl)
 
-        self._add_list_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
-        self._add_list_item(self.video_listwidget, VideoItem, '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        for wi, tx in plain_text.items():
+            set_plain_text(getattr(self, wi), tx)
 
-        self.line_edit_with_label()
-
-    def _init_play_tab(self):
-        self.play_widget = QtWidgets.QWidget(self.stacked_widget)
-        self.play_layout = QtWidgets.QGridLayout()
-        self.play_layout.addWidget(self.play_widget)
-        self._add_widget_item(self.play_widget, self.play_layout, TextLabel, geometry=(0, 0, 100, 100), text='PALY')
-
-    def _init_setting_tab(self):
-        self.setting_widget = QtWidgets.QWidget(self.stacked_widget)
-        self.setting_layout = QtWidgets.QGridLayout()
-        self.setting_layout.addWidget(self.setting_widget)
-        self._add_widget_item(self.setting_widget, self.setting_layout, TextLabel, geometry=(0, 0, 100, 100), text='SETTTING')
+        for label in get_qclass_child_widgets(self.stackedWidgetPage1, QtWidgets.QLineEdit):
+            pass
 
 
-class MainUi(MainUiBaseWidget):
+class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
     def __init__(self):
         super(MainUi, self).__init__()
+        self._set_tab_listwidget_items([['1_normal.png', '1_selected.png'], ['2_normal.png', '2_selected.png'], ['3_normal.png', '3_selected.png']])
+        self.tab_listwidget.setIconSize(QSize(100, 100))
+        self._init_widget()
+        self._init_connect()
+        self._init_property()
+        self._init_default()
+
+    def _init_widget(self):
+        self._add_custome_item(self.video_listwidget, VideoItem, '', '/path/1.mp4', 'WAITING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+        self._add_custome_item(self.video_listwidget, VideoItem, '', '/path/1.mp4', 'RUNNING', 'Shanghai Dragons', 'Dallas Fuel', 'replay.png')
+
+    def _init_connect(self):
+        self.tab_listwidget.itemClicked.connect(self._tab_listwidget_item_clicked)
+        self.video_listwidget.customContextMenuRequested.connect(self._video_list_context_menu)
+
+        self.team_left_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('left'))
+        self.team_right_lineedit.editingFinished.connect(lambda: self._team_name_edit_finished('right'))
+
+        self.save_button.clicked.connect(self.save_button_clicked)
+        self.analyze_button.clicked.connect(self.analyze_button_clicked)
+        self.analyze_button.clicked.connect(self.select_video)  # TODO: need connect to add video button
+
+    def _init_property(self):
+
+        # set player's text to property like self.player_left0_text
+        for widget in get_qclass_child_widgets(self.team_setting_group, QtWidgets.QLineEdit):
+            name = widget.objectName
+            if name.startswith('player_'):
+                setattr(self, name.rstrip('lineedit') + 'text', widget.text())
 
     def _init_default(self):
         self.tab_listwidget.setCurrentRow(0)
-        self.stacked_widget.setCurrentIndex(2)
+        self.main_stackedwidget.setCurrentIndex(0)
 
+    def _set_tab_listwidget_items(self, pics):
+        for pic in pics:
+            item = QtWidgets.QListWidgetItem(QtGui.QIcon(SRC_PATH + '/tab_icons/' + pic[0]), '')
+            item.normal_icon = QtGui.QIcon(SRC_PATH + '/tab_icons/' + pic[0])
+            item.selected_icon = QtGui.QIcon(SRC_PATH + '/tab_icons/' + pic[1])
+            self.tab_listwidget.addItem(item)
 
+    def _set_tab_listwidget_normal_icon(self):
+        for i in range(0, self.tab_listwidget.count()):
+            item = self.tab_listwidget.item(i)
+            item.setIcon(item.normal_icon)
 
+    def _tab_listwidget_item_clicked(self, item):
+        self.main_stackedwidget.setCurrentIndex(self.tab_listwidget.currentRow())
+        self._set_tab_listwidget_normal_icon()
+        item.setIcon(item.selected_icon)
 
+    def _video_list_context_menu(self):
+        menu = QtWidgets.QMenu()
+        menu.addAction('删除', lambda _:remove_listwidget_item(self.video_listwidget))
+        menu.exec_(QtGui.QCursor.pos())
 
+    def _team_name_edit_finished(self, team='left'):
+        current_video_item = self.current_video_item
+        setattr(current_video_item, 'set_team_%s_text' % team, getattr(self, 'input_team_%s_text' % team))
+
+    def select_video(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, u'Select Video', filter="* (*.*)")
+        self._set_new_video(filename)
+
+    def _set_new_video(self, path):
+        self._add_custome_item(self.video_listwidget, VideoItem, path, path, 'WAITING', 'Shanghai Dragons',
+                               'Dallas Fuel', 'replay.png')
+
+    def save_button_clicked(self):
+        dirname = QtWidgets.QFileDialog.getExistingDirectory(self, u'Select Folder')
+        self.path_lineedit.setText(dirname)
+
+    def analyze_button_clicked(self):
+        pass
+
+    @property
+    def input_team_left_text(self):
+        return self.team_left_lineedit.text()
+
+    @property
+    def input_team_right_text(self):
+        return self.team_right_lineedit.text()
+
+    @property
+    def current_video_item(self):
+        item = self.video_listwidget.currentItem()
+        return self.video_listwidget.itemWidget(item)
+
+    @property
+    def is_published(self):
+        return self.publish_box.isChecked()
+
+    @property
+    def is_owl(self):
+        return True if self.type_owl_radiobutton.isChecked() else False
+
+    @property
+    def start_time(self):
+        return self.start_time_lineedit.text()
+
+    @property
+    def end_time(self):
+        return self.end_time_lineedit.text()
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    with open('style.qss') as qss:
+        app.setStyleSheet(qss.read())
     w = MainUi()
     w.show()
     sys.exit(app.exec_())
