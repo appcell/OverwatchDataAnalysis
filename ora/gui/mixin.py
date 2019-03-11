@@ -7,7 +7,7 @@ from functions import set_background_color
 
 
 class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
-    def __init__(self, normal_color="#143048'", selected_color="#111111"):
+    def __init__(self, normal_color="#143048", selected_color="#111111"):
         super(MousePressChangeBackgroundMixin, self).__init__()
         self.setMouseTracking(True)
         self.normal_color = normal_color

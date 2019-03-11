@@ -133,7 +133,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
     def _video_list_context_menu(self):
         menu = QtWidgets.QMenu()
-        menu.addAction('删除', lambda _:remove_listwidget_item(self.video_listwidget))
+        menu.addAction('删除', lambda: remove_listwidget_item(self.video_listwidget))
         menu.exec_(QtGui.QCursor.pos())
 
     def _team_name_edit_finished(self, team='left'):
