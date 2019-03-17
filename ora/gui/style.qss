@@ -1,6 +1,10 @@
 QLineEdit {
     background-color: rgb(23, 57, 86);
     border-radius: 3px;
+    color: rgb(201, 216, 229);
+}
+QCheckBox {
+    color: rgb(201, 216, 229);
 }
 QStackedWidget {
     background-color: rgb(13, 37, 59);
