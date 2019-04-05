@@ -1,4 +1,8 @@
 
+from ora import game
+from ora import pool
+from ora import overwatch as OW
+
 
 def get_video_info(video_path):
     """
@@ -15,12 +19,24 @@ def publish_analysis():
     pass
 
 
-def analyze_button_clicked(*args):
+def analyze_button_clicked(is_owl, info):
     """
     Run when click 'ANALYZE' button
     You should add args as need.
     """
-    pass
+    is_owl = OW.GAMETYPE_OWL if is_owl else OW.GAMETYPE_CUSTOM
+    game_instance = game.Game(is_owl)
+    game_instance.set_game_info(info)
+    pool.initPool()
+    try:
+        game_instance.analyze(info['start_time'], info['end_time'], is_test=False)
+    except Exception as err:
+        print(err)
+    else:
+        game_instance.output()
+
+    pool.PROCESS_POOL.close()
+    pool.PROCESS_POOL.join()
 
 
 def save_button_clicked(*args):

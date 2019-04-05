@@ -3,6 +3,7 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from widget import *
 from style import *
 from functions import *
+from gui_api import *
 
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 windowui, QtBaseClass = uic.loadUiType('main.ui')
@@ -153,7 +154,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         self.path_lineedit.setText(dirname)
 
     def analyze_button_clicked(self):
-        pass
+        return analyze_button_clicked(self.is_owl, )
 
     @property
     def input_team_left_text(self):
@@ -183,6 +184,30 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
     @property
     def end_time(self):
         return self.end_time_lineedit.text()
+
+    @property
+    def video_path_text(self):
+        pass
+
+    @property
+    def output_path_text(self):
+        pass
+
+    @property
+    def game_info(self):
+        info = {
+            "name_team_left": self.input_team_left_text,
+            "name_team_right": self.input_team_right_text,
+            "name_players_team_left": [],
+            "name_players_team_right": [],
+            "video_path": "/",
+            "output_path": "/",
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "fps": 0,
+            "game_type": 0,
+            "game_version": 1
+        }
 
 
 if __name__ == '__main__':
