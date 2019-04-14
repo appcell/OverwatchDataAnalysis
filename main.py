@@ -1,4 +1,4 @@
-import ora.gui as Gui
+import ora.gui_ as Gui
 import multiprocessing as mp
 
 def main():
