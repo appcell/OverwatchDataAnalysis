@@ -154,7 +154,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
         self.path_lineedit.setText(dirname)
 
     def analyze_button_clicked(self):
-        return analyze_button_clicked(self.is_owl, )
+        return analyze_button_clicked(self.is_owl, self.game_info)
 
     @property
     def input_team_left_text(self):
@@ -163,6 +163,14 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
     @property
     def input_team_right_text(self):
         return self.team_right_lineedit.text()
+
+    @property
+    def input_teams_left_players(self):
+        return [getattr(self, 'player_left%s_lineedit' % i) for i in range(0, 7)]
+
+    @property
+    def input_teams_right_players(self):
+        return [getattr(self, 'player_right%s_lineedit' % i) for i in range(0, 7)]
 
     @property
     def current_video_item(self):
@@ -187,21 +195,21 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
     @property
     def video_path_text(self):
-        pass
+        return self.path_lineedit.text()
 
     @property
     def output_path_text(self):
-        pass
+        return self.path_lineedit.text()
 
     @property
     def game_info(self):
         info = {
             "name_team_left": self.input_team_left_text,
             "name_team_right": self.input_team_right_text,
-            "name_players_team_left": [],
-            "name_players_team_right": [],
-            "video_path": "/",
-            "output_path": "/",
+            "name_players_team_left": self.input_teams_left_players,
+            "name_players_team_right": self.input_teams_right_players,
+            "video_path": self.video_path_text,
+            "output_path": self.output_path_text,
             "start_time": self.start_time,
             "end_time": self.end_time,
             "fps": 0,
@@ -209,6 +217,7 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
             "game_version": 1
         }
 
+        return info
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
