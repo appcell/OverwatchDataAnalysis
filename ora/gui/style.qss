@@ -20,16 +20,16 @@ QPushButton {
     border: None;
 }
 #publish_box::indicator:checked {
-    image: url(./images/widgets/switch_on_f.png);
+    image: url(./ora/gui/images/widgets/switch_on_f.png);
 }
 #publish_box::indicator:unchecked {
-    image: url(./images/widgets/switch_off_f.png);
+    image: url(./ora/gui/images/widgets/switch_off_f.png);
 }
 QRadioButton::indicator:unchecked{
-    image: url(./images/widgets/radiobox_normal_f.png);
+    image: url(./ora/gui/images/widgets/radiobox_normal_f.png);
 }
 QRadioButton::indicator:checked{
-    image: url(./images/widgets/radiobox_selected_f.png);
+    image: url(./ora/gui/images/widgets/radiobox_selected_f.png);
 }
 #analyze_button {
     border-style: solid;
@@ -38,16 +38,16 @@ QRadioButton::indicator:checked{
     color: rgb(37, 173, 231);
 }
 #save_button {
-    image: url(./images/widgets/button_save.png);
+    image: url(./ora/gui/images/widgets/button_save.png);
 }
 #save_button:hover {
-    image: url(./images/widgets/button_save_onhover.png);
+    image: url(./ora/gui/images/widgets/button_save_onhover.png);
 }
 #analyze_button {
-    image: url(./images/widgets/button_analyze.png);
+    image: url(./ora/gui/images/widgets/button_analyze.png);
 }
 #analyze_button:hover {
-    image: url(./images/widgets/button_analyze_onhover.png);
+    image: url(./ora/gui/images/widgets/button_analyze_onhover.png);
 }
 #tab_listwidget::item {
     min-height: 100px;

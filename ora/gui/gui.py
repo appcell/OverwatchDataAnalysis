@@ -6,9 +6,9 @@ from functions import *
 from gui_api import *
 
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-windowui, QtBaseClass = uic.loadUiType('main.ui')
+windowui, QtBaseClass = uic.loadUiType('./ora/gui/main.ui')
 
-SRC_PATH = './images'
+SRC_PATH = './ora/gui/images'
 
 
 class UiFunc(object):

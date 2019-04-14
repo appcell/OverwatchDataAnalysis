@@ -2,7 +2,7 @@ from os.path import join
 
 from PyQt5.Qt import QIcon, QSize
 
-SRC_PATH = './images'
+SRC_PATH = './ora/gui/images'
 
 
 def dynamic_base_class(instance, cls, cls_name):
