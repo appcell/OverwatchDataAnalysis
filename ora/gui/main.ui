@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1085</width>
-    <height>789</height>
+    <height>790</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QStackedWidget" name="main_stackedwidget">
     <property name="geometry">
      <rect>
-      <x>118</x>
-      <y>90</y>
+      <x>120</x>
+      <y>95</y>
       <width>973</width>
       <height>701</height>
      </rect>
@@ -41,7 +41,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>699</width>
+        <width>700</width>
         <height>645</height>
        </rect>
       </property>
@@ -480,7 +480,10 @@
        </property>
        <property name="font">
         <font>
+         <family>Segoe UI</family>
          <pointsize>20</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -546,6 +549,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Segoe UI</family>
          <pointsize>20</pointsize>
         </font>
        </property>
@@ -573,7 +577,7 @@
      <widget class="QGroupBox" name="analyze_group">
       <property name="geometry">
        <rect>
-        <x>4</x>
+        <x>0</x>
         <y>644</y>
         <width>697</width>
         <height>49</height>
@@ -780,10 +784,10 @@
    <widget class="QGroupBox" name="top_group">
     <property name="geometry">
      <rect>
-      <x>104</x>
-      <y>-2</y>
-      <width>989</width>
-      <height>97</height>
+      <x>120</x>
+      <y>0</y>
+      <width>976</width>
+      <height>95</height>
      </rect>
     </property>
     <property name="accessibleName">
@@ -795,10 +799,10 @@
     <widget class="QPushButton" name="back_button">
      <property name="geometry">
       <rect>
-       <x>2</x>
+       <x>0</x>
        <y>0</y>
-       <width>83</width>
-       <height>89</height>
+       <width>65</width>
+       <height>80</height>
       </rect>
      </property>
      <property name="font">
@@ -816,10 +820,10 @@
     <widget class="QPushButton" name="help_button">
      <property name="geometry">
       <rect>
-       <x>770</x>
-       <y>4</y>
+       <x>795</x>
+       <y>0</y>
        <width>65</width>
-       <height>85</height>
+       <height>80</height>
       </rect>
      </property>
      <property name="font">
@@ -846,10 +850,10 @@
     <widget class="QPushButton" name="min_button">
      <property name="geometry">
       <rect>
-       <x>842</x>
-       <y>4</y>
+       <x>860</x>
+       <y>0</y>
        <width>65</width>
-       <height>83</height>
+       <height>80</height>
       </rect>
      </property>
      <property name="font">
@@ -867,10 +871,10 @@
     <widget class="QPushButton" name="close_button">
      <property name="geometry">
       <rect>
-       <x>912</x>
-       <y>4</y>
+       <x>925</x>
+       <y>0</y>
        <width>65</width>
-       <height>81</height>
+       <height>80</height>
       </rect>
      </property>
      <property name="font">
@@ -889,10 +893,10 @@
    <widget class="QGroupBox" name="left_group">
     <property name="geometry">
      <rect>
-      <x>-1</x>
-      <y>-2</y>
-      <width>123</width>
-      <height>791</height>
+      <x>0</x>
+      <y>0</y>
+      <width>120</width>
+      <height>795</height>
      </rect>
     </property>
     <property name="accessibleName">
@@ -904,10 +908,10 @@
     <widget class="QLabel" name="logo_label">
      <property name="geometry">
       <rect>
-       <x>2</x>
-       <y>4</y>
-       <width>113</width>
-       <height>83</height>
+       <x>0</x>
+       <y>0</y>
+       <width>120</width>
+       <height>95</height>
       </rect>
      </property>
      <property name="font">
@@ -926,10 +930,10 @@
     <widget class="QListWidget" name="tab_listwidget">
      <property name="geometry">
       <rect>
-       <x>4</x>
-       <y>90</y>
-       <width>117</width>
-       <height>669</height>
+       <x>0</x>
+       <y>95</y>
+       <width>120</width>
+       <height>670</height>
       </rect>
      </property>
      <property name="horizontalScrollBarPolicy">

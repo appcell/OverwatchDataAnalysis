@@ -3,7 +3,7 @@ from default import COPY_RIGHT
 
 background_imgs = {
     'left_group': 'left_bg.png',
-    'top_group': 'top_bg.png',
+    #'top_group': 'top_bg.png',
     #'analyze_group': 'analyze_bg.png',
     'video_title_group': 'column_title_bg.png',
     'team_title_group': 'column_title_bg.png',
@@ -14,7 +14,8 @@ background_imgs = {
 }
 
 background_colors = {
-    'video_listwidget': '#143048'
+    'video_listwidget': '#143048',
+    'top_group': '#143048'
 }
 
 button_icons = {
