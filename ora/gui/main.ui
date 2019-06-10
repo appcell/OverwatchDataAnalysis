@@ -816,8 +816,8 @@
     <widget class="QPushButton" name="help_button">
      <property name="geometry">
       <rect>
-       <x>714</x>
-       <y>2</y>
+       <x>770</x>
+       <y>4</y>
        <width>65</width>
        <height>85</height>
       </rect>
@@ -846,31 +846,10 @@
     <widget class="QPushButton" name="min_button">
      <property name="geometry">
       <rect>
-       <x>778</x>
-       <y>2</y>
+       <x>842</x>
+       <y>4</y>
        <width>65</width>
        <height>83</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="max_button">
-     <property name="geometry">
-      <rect>
-       <x>842</x>
-       <y>2</y>
-       <width>71</width>
-       <height>85</height>
       </rect>
      </property>
      <property name="font">

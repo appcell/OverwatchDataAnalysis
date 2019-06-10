@@ -51,7 +51,7 @@ class BeautiUi(windowui, WindowDragMixin, ControlButtonMixin):
         self.setupUi(self)
 
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.set_control_button(self.min_button, self.max_button, self.close_button)
+        self.set_control_button(self.min_button, self.min_button, self.close_button)
 
         self.tab_listwidget.setFrameShape(QtWidgets.QFrame.NoFrame)
         # self.tab_listwidget.setSpacing(50)

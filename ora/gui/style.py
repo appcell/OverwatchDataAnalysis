@@ -21,7 +21,6 @@ button_icons = {
     'back_button': 'design_03',
     'help_button': 'design_05',
     'min_button': 'design_07',
-    'max_button': 'design_08',
     'close_button': 'design_09'
 }
 
