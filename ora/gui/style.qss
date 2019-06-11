@@ -1,3 +1,10 @@
+QMainWindow {
+    background-color: rgb(34, 78, 116);
+}
+QStackedWidget {
+    background-color: rgb(34, 78, 116);
+}
+
 QLineEdit {
     background-color: rgb(23, 57, 86);
     border-radius: 3px;
@@ -15,6 +22,7 @@ QLabel {
 }
 QGroupBox {
     border: None;
+
 }
 QPushButton {
     border: None;
@@ -51,4 +59,22 @@ QRadioButton::indicator:checked{
 }
 #tab_listwidget::item {
     min-height: 100px;
+}
+#top_group {
+    margin-bottom: 2px;
+    background-color: rgb(34, 78, 116);
+}
+#min_button {
+    margin-left: 2px;
+}
+#video_listwidget {
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+#stackedWidgetPage1 {
+    background-color: rgb(34, 78, 116);
+}
+#analyze_group {
+    background-color: rgb(340, 78, 116);
+    margin-right: 2px;
 }

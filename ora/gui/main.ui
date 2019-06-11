@@ -26,6 +26,9 @@
     <property name="whatsThis">
      <string/>
     </property>
+    <property name="accessibleName">
+     <string>main_stackedwidget</string>
+    </property>
     <property name="layoutDirection">
      <enum>Qt::LeftToRight</enum>
     </property>
@@ -36,6 +39,9 @@
      <number>0</number>
     </property>
     <widget class="QWidget" name="stackedWidgetPage1">
+     <property name="accessibleName">
+      <string>stackedWidgetPage1</string>
+     </property>
      <widget class="QListWidget" name="video_listwidget">
       <property name="geometry">
        <rect>
@@ -564,7 +570,7 @@
         <x>700</x>
         <y>200</y>
         <width>271</width>
-        <height>483</height>
+        <height>502</height>
        </rect>
       </property>
       <property name="accessibleName">
@@ -578,8 +584,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>644</y>
-        <width>697</width>
+        <y>645</y>
+        <width>700</width>
         <height>49</height>
        </rect>
       </property>
@@ -860,6 +866,9 @@
       <font>
        <pointsize>20</pointsize>
       </font>
+     </property>
+     <property name="accessibleName">
+      <string>min_button</string>
      </property>
      <property name="text">
       <string/>
