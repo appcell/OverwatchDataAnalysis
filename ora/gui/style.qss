@@ -75,6 +75,6 @@ QRadioButton::indicator:checked{
     background-color: rgb(34, 78, 116);
 }
 #analyze_group {
-    background-color: rgb(340, 78, 116);
+    background-color: rgb(21, 44, 62);
     margin-right: 2px;
 }

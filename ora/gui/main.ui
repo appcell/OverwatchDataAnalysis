@@ -493,7 +493,7 @@
         </font>
        </property>
        <property name="text">
-        <string>VIDEO SETTING</string>
+        <string> VIDEO SETTING</string>
        </property>
       </widget>
      </widget>
@@ -560,7 +560,7 @@
         </font>
        </property>
        <property name="text">
-        <string>TEAM SETTING</string>
+        <string> TEAM SETTING</string>
        </property>
       </widget>
      </widget>
@@ -586,7 +586,7 @@
         <x>0</x>
         <y>645</y>
         <width>700</width>
-        <height>49</height>
+        <height>50</height>
        </rect>
       </property>
       <property name="title">
@@ -599,7 +599,7 @@
        <property name="geometry">
         <rect>
          <x>610</x>
-         <y>14</y>
+         <y>12</y>
          <width>80</width>
          <height>28</height>
         </rect>
@@ -615,7 +615,7 @@
        <property name="geometry">
         <rect>
          <x>564</x>
-         <y>12</y>
+         <y>10</y>
          <width>39</width>
          <height>31</height>
         </rect>
@@ -640,7 +640,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>12</y>
+         <y>10</y>
          <width>555</width>
          <height>31</height>
         </rect>

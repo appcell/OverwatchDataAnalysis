@@ -7,7 +7,7 @@ from functions import set_background_color
 
 
 class MousePressChangeBackgroundMixin(QtWidgets.QWidget):
-    def __init__(self, normal_color="#143048", selected_color="#111111"):
+    def __init__(self, normal_color="#143048", selected_color="#11293f"):
         super(MousePressChangeBackgroundMixin, self).__init__()
         self.setMouseTracking(True)
         self.normal_color = normal_color
@@ -67,7 +67,6 @@ class ControlButtonMixin(QtWidgets.QWidget):
         self.resize_icon = resize_icon
 
         # map(partial(set_background_color, color=bg_color), [min_button, max_button, exit_button])
-
         min_button.clicked.connect(self.showMinimized)
         # max_button.clicked.connect(self._max_button_clicked)
         exit_button.clicked.connect(self.close)
