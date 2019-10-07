@@ -13,4 +13,5 @@
 *.pyc
 *.orig
 __pycache__/
-
+env/
+venv/
