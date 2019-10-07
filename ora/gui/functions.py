@@ -1,6 +1,7 @@
 from os.path import join
 
 from PyQt5.Qt import QIcon, QSize
+from PyQt5.QtWidgets import QFileDialog
 
 SRC_PATH = './ora/gui/images'
 
@@ -35,6 +36,9 @@ def set_full_icon(widget, file_name, path='icons'):
 def remove_listwidget_item(listwidget):
     listwidget.takeItem(listwidget.currentRow())
 
+def open_file_dialog(parent):
+    filename, _ = QFileDialog.getOpenFileName(parent, u'select video')
+    return filename
 
 def set_qclass_child_widgets_style(widget, qclass, style):
     for c in get_qclass_child_widgets(widget, qclass):

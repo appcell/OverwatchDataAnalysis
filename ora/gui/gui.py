@@ -134,8 +134,16 @@ class MainUi(QtWidgets.QMainWindow, BeautiUi, UiFunc):
 
     def _video_list_context_menu(self):
         menu = QtWidgets.QMenu()
-        menu.addAction('删除', lambda: remove_listwidget_item(self.video_listwidget))
+        menu.addAction('Delete', lambda: remove_listwidget_item(self.video_listwidget))
+        menu.addAction('Add', self._select_and_add_video)
         menu.exec_(QtGui.QCursor.pos())
+
+    def _select_and_add_video(self):
+        filename = open_file_dialog(self)
+        return self._add_video(filename)
+
+    def _add_video(self, filename):
+        print(filename)
 
     def _team_name_edit_finished(self, team='left'):
         current_video_item = self.current_video_item
