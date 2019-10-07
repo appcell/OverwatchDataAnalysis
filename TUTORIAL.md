@@ -60,7 +60,7 @@ In the prompt Powershell console, input `python main.py`, then you can run the c
 
 # Windows 下 Python 运行环境搭建教程
 
-## 安装Anaconda Python 2.x
+## 安装Anaconda Python 3.x
 
 点击 https://www.anaconda.com/download/ ， 64位电脑按如下选择：
 
