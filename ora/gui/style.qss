@@ -1,0 +1,80 @@
+QMainWindow {
+    background-color: rgb(34, 78, 116);
+}
+QStackedWidget {
+    background-color: rgb(34, 78, 116);
+}
+
+QLineEdit {
+    background-color: rgb(23, 57, 86);
+    border-radius: 3px;
+    color: rgb(201, 216, 229);
+}
+QCheckBox {
+    color: rgb(201, 216, 229);
+}
+QStackedWidget {
+    background-color: rgb(13, 37, 59);
+}
+QLabel {
+    border: None;
+    color: rgb(201, 216, 229);
+}
+QGroupBox {
+    border: None;
+
+}
+QPushButton {
+    border: None;
+}
+#publish_box::indicator:checked {
+    image: url(./ora/gui/images/widgets/switch_on_f.png);
+}
+#publish_box::indicator:unchecked {
+    image: url(./ora/gui/images/widgets/switch_off_f.png);
+}
+QRadioButton::indicator:unchecked{
+    image: url(./ora/gui/images/widgets/radiobox_normal_f.png);
+}
+QRadioButton::indicator:checked{
+    image: url(./ora/gui/images/widgets/radiobox_selected_f.png);
+}
+#analyze_button {
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgb(37, 173, 231);
+    color: rgb(37, 173, 231);
+}
+#save_button {
+    image: url(./ora/gui/images/widgets/button_save.png);
+}
+#save_button:hover {
+    image: url(./ora/gui/images/widgets/button_save_onhover.png);
+}
+#analyze_button {
+    image: url(./ora/gui/images/widgets/button_analyze.png);
+}
+#analyze_button:hover {
+    image: url(./ora/gui/images/widgets/button_analyze_onhover.png);
+}
+#tab_listwidget::item {
+    min-height: 100px;
+}
+#top_group {
+    margin-bottom: 2px;
+    background-color: rgb(34, 78, 116);
+}
+#min_button {
+    margin-left: 2px;
+}
+#video_listwidget {
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+#stackedWidgetPage1 {
+    background-color: rgb(34, 78, 116);
+}
+#analyze_group {
+    background-color: rgb(21, 44, 62);
+    margin-right: 2px;
+}
