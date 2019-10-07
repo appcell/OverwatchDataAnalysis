@@ -1,3 +1,4 @@
 scikit-image
 opencv-python
 openpyxl
+requests
